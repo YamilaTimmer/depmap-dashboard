@@ -1,0 +1,71 @@
+---
+title: "pre-processing"
+author: "Yamila Timmer"
+date: "2025-02-06"
+output: html_document
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+library(tidyr)
+```
+
+# Load data
+```{r}
+expression_data <- fread("OmicsExpressionProteinCodingGenesTPMLogp1.csv")
+meta_data <- fread("Model.csv", na.strings = c("", "unknown", "Unknown", "None")) 
+# Both Unknown and unknown because they were both used in various columns and None was used for 
+# Platecoating which was all equal to none, so row can be removed
+
+```
+
+# Remove columns
+```{r}
+# Remove columns that have more than 20% NA values
+
+ncol(meta_data)
+meta_data <- meta_data %>% 
+  select(
+    where(
+      ~sum(!is.na(.x)) > nrow(meta_data) * 0.80
+    )
+  )
+ncol(meta_data)
+
+```
+
+# Merge expression data and metadata
+```{r}
+# Change colname in expression_data from "X" to "ModelID", to make the merge easier        
+colnames(expression_data)[1] <- "ModelID"
+
+# merge the datasets
+merged_data <- merge(meta_data, 
+                        expression_data, 
+                        by = "ModelID", 
+                        all = FALSE)
+
+```
+
+# Make merged data tidy
+```{r}
+# Make the data tidy
+tidy_data <- merged_data %>% 
+            pivot_longer(
+                cols = 19:ncol(merged_data),
+                names_to = "gene",
+                values_to = "expression")
+
+```
+
+# Save data
+```{r}
+# Save the data as .tsv file
+
+write.csv(x = tidy_data,
+          file = "tidy_data.tsv")
+
+```
+
+Now for launching the actual application, the tidy .tsv file can be loaded (will be included in the R package), so the user will not have to do any pre-processing themselves.
