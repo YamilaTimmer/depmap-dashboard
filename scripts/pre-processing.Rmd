@@ -13,8 +13,8 @@ library(tidyr)
 
 # Load data
 ```{r}
-expression_data <- fread("OmicsExpressionProteinCodingGenesTPMLogp1.csv")
-meta_data <- fread("Model.csv", na.strings = c("", "unknown", "Unknown", "None")) 
+expression_data <- fread("../../OmicsExpressionProteinCodingGenesTPMLogp1.csv")
+meta_data <- fread("../../Model.csv", na.strings = c("", "unknown", "Unknown", "None")) 
 # Both Unknown and unknown because they were both used in various columns and None was used for 
 # Platecoating which was all equal to none, so row can be removed
 
@@ -63,9 +63,8 @@ tidy_data <- merged_data %>%
 ```{r}
 # Save the data as .tsv file
 
-write.csv(x = tidy_data,
+fwrite(x = tidy_data,
           file = "tidy_data.tsv")
 
 ```
-
 Now for launching the actual application, the tidy .tsv file can be loaded (will be included in the R package), so the user will not have to do any pre-processing themselves.
