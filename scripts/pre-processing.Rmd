@@ -1,7 +1,7 @@
 ---
 title: "pre-processing"
-author: "Yamila Timmer"
-date: "2025-02-06"
+author: "Mirte Draaijer and Yamila Timmer"
+date: "2025-02-16"
 output: html_document
 ---
 
@@ -11,16 +11,15 @@ library(dplyr)
 library(tidyr)
 ```
 
-# Load data
+# Load data:
 ```{r}
 expression_data <- fread("../../OmicsExpressionProteinCodingGenesTPMLogp1.csv")
 meta_data <- fread("../../Model.csv", na.strings = c("", "unknown", "Unknown", "None")) 
 # Both Unknown and unknown because they were both used in various columns and None was used for 
 # Platecoating which was all equal to none, so row can be removed
-
 ```
 
-# Remove columns
+# Remove columns:
 ```{r}
 # Remove columns that have more than 20% NA values
 
@@ -32,39 +31,26 @@ meta_data <- meta_data %>%
     )
   )
 ncol(meta_data)
-
 ```
 
-# Merge expression data and metadata
-```{r}
-# Change colname in expression_data from "X" to "ModelID", to make the merge easier        
-colnames(expression_data)[1] <- "ModelID"
-
-# merge the datasets
-merged_data <- merge(meta_data, 
-                        expression_data, 
-                        by = "ModelID", 
-                        all = FALSE)
-
-```
-
-# Make merged data tidy
+# Make expression data tidy:
 ```{r}
 # Make the data tidy
-tidy_data <- merged_data %>% 
+tidy_data <- expression_data %>% 
             pivot_longer(
-                cols = 19:ncol(merged_data),
+                cols = 2:ncol(expression_data),
                 names_to = "gene",
                 values_to = "expression")
 
 ```
 
-# Save data
+# Save the two seperate data files:
 ```{r}
 # Save the data as .tsv file
 
 fwrite(x = tidy_data,
-          file = "tidy_data.tsv")
+          file = "expression_data.tsv")
 
+fwrite(x = meta_data,
+       file = "meta_data.tsv")
 ```
-Now for launching the actual application, the tidy .tsv file can be loaded (will be included in the R package), so the user will not have to do any pre-processing themselves.
