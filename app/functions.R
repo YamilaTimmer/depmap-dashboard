@@ -54,3 +54,25 @@ generate_violinplot <- function(data) {
       fill = "Cancer type:"
     )
 }
+
+#' Generate barplot
+# '
+#' This function generates a barplot using the merged data.
+#'
+#' The generated plot shows the gene name on the x-axis, and the expression level on the y-axis
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return a ggplot2 barplot object.
+#' @examples
+#' generate_barplot(merged_data)
+
+generate_barplot <- function(data) {
+  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~gene, scales = "free_y") +
+    labs(
+      x = "", 
+      y = "Expression Level (log 2TPM)",
+      title = "Expression of selected genes across cancer types",
+      fill = "Cancer type:"
+    )
+}
