@@ -24,11 +24,33 @@ theme_set(
 generate_boxplot <- function(data) {
   ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
     geom_boxplot() +
-    facet_wrap(~ gene, scales = "free_y") +
+    facet_wrap(~gene, scales = "free_y") +
     labs(
       x = "",
       y = "Expression Level (log 2TPM)",
-      title = "Expression of Selected Genes Across Cancer Types",
+      title = "Expression of selected genes across cancer types",
+      fill = "Cancer type:"
+    )
+}
+
+#' Generate violinplot
+# '
+#' This function generates a violinplot using the merged data.
+#'
+#' The generated plot shows the gene name on the x-axis, and the expression level on the y-axis
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return a ggplot2 violinplot object.
+#' @examples
+#' generate_violinplot(merged_data)
+
+generate_violinplot <- function(data) {
+  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
+    geom_violin() +
+    facet_wrap(~gene, scales = "free_y") +
+    labs(
+      x = "",
+      y = "Expression Level (log 2TPM)",
+      title = "Expression of selected genes acros cancer types",
       fill = "Cancer type:"
     )
 }
