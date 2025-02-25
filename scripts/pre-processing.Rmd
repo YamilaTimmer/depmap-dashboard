@@ -34,5 +34,5 @@ tidy_data <- expression_data %>%
 # Save the two seperate data files:
 ```{r}
 write_feather(x = tidy_data, path = "expression_data.tsv")
-write_feather(x = tidy_data, path = "meta_data.tsv")
+write_feather(x = meta_data, path = "meta_data.tsv")
 ```
