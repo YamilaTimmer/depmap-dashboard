@@ -1,12 +1,15 @@
 library(shiny)
 library(bslib)
 library(bsicons)
+library(shinyjs)
 
 ui <- page_fillable(
     
+    # Used to dynamically show accordion filters
+    useShinyjs(),
+    
     # Sidebar
     page_navbar(
-        
         
         title = "DepMap Data Dashboard",
         sidebar = sidebar(width = 350,
@@ -18,39 +21,46 @@ ui <- page_fillable(
                                               icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
                                               selectInput('use_case',
                                                           label = NULL,
-                                                          choices = c("Compare Genes", "Compare Cancer Types")
+                                                          choices = c("Compare Genes" = "compare_genes", "Compare Cancer Types" = "compare_cancer_types")
                                               ))),
-                          accordion(
-                              accordion_panel("Select gene",
-                                              selectizeInput('gene_name', 
-                                                             label = NULL, 
-                                                             choices = NULL, 
-                                                             multiple = TRUE
-                                              )),
-                              
-                              accordion_panel("Select cancer type",
-                                              selectizeInput("onco_type", 
-                                                             label = NULL, 
-                                                             choices = NULL, 
-                                                             multiple = TRUE
-                                              )),
-                              accordion_panel("Select other metadata",
-                                              selectizeInput("sex", 
-                                                             label = "Select sex", 
-                                                             choices = NULL, 
-                                                             multiple = TRUE),
-                                              
-                                              selectizeInput("race", 
-                                                             label = "Select ethnic background", 
-                                                             choices = NULL,
-                                                             multiple = TRUE),
-                                              
-                                              selectizeInput("age_category", 
-                                                             label = "Select age category", 
-                                                             choices = NULL, 
-                                                             multiple = TRUE),
-                                              
-                              ))),
+                          
+                          # Shown when selected use-case is "compare genes"
+                          accordion(id = "genes_accordion",
+                                    accordion_panel("Select Gene(s)",
+                                                    selectizeInput('gene_name', 
+                                                                   label = NULL, 
+                                                                   choices = NULL, 
+                                                                   multiple = TRUE)
+                                    )),
+                          
+                          # Shown when selected use-case is "compare cancer types"
+                          accordion(id = "cancer_types_accordion",
+                                    accordion_panel("Select Cancer Type(s)",
+                                                    selectizeInput("onco_type", 
+                                                                   label = NULL, 
+                                                                   choices = NULL, 
+                                                                   multiple = TRUE
+                                                    ))
+                          ),
+                          
+                          # Filter panel for metadata
+                          accordion(accordion_panel("Select metadata", selectizeInput("sex", 
+                                                                                      label = "Select sex", 
+                                                                                      choices = NULL, 
+                                                                                      multiple = TRUE),
+                                                    
+                                                    selectizeInput("race", 
+                                                                   label = "Select ethnic background", 
+                                                                   choices = NULL,
+                                                                   multiple = TRUE),
+                                                    
+                                                    selectizeInput("age_category", 
+                                                                   label = "Select age category", 
+                                                                   choices = NULL, 
+                                                                   multiple = TRUE),
+                                                    
+                          ))),
+        
         
         # Main part of the dashboard, containing the plots/table/statistics
         layout_columns(
@@ -75,7 +85,7 @@ ui <- page_fillable(
             layout_columns(
                 card(full_screen = TRUE, 
                      navset_card_tab(
-                         nav_panel("Table")
+                         nav_panel("Table", shinycssloaders::withSpinner(DT::DTOutput("data")))
                      )  
                 ),
                 
@@ -85,7 +95,9 @@ ui <- page_fillable(
                      )
                 ),
                 col_widths = c(12, 12)
-            ), col_widths = c(7, 5)
+            ), 
+            
+            col_widths = c(7, 5)
         ) 
         ,
         
@@ -100,7 +112,7 @@ ui <- page_fillable(
             target = "_blank", 
             bsicons::bs_icon("github", size = "2rem")
         )
-        ), 
-
+        )
+        
     )
 )
