@@ -4,7 +4,6 @@ server <- function(input, output, session) {
     
     expression_data <- read_feather("../expression_subset.tsv")
     meta_data <- read_feather("../meta_data.tsv")
-    colnames(expression_data)[1] <- "ModelID"
     
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {

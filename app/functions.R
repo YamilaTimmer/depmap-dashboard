@@ -1,4 +1,13 @@
+# Imports
 library(ggplot2) # make plots
+library(shiny)
+library(bslib)
+library(shinyjs)
+library(bsicons)
+library(shinyjqui)
+library(plotly) # make plots interactive
+library(feather)
+
 
 # Set theme for all plots globally:
 theme_set(
@@ -75,4 +84,26 @@ generate_barplot <- function(data) {
       title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
     )
+}
+
+#' Merge data
+# '
+#' 
+#'
+#' 
+#' @param filtered_metadata
+#' @param filtered_expr
+#' @return merged_data, dataframe of metadata with corresponding expression data
+#' @examples
+#' merge_data(filtered_metadata, filtered_expr)
+
+merge_data <- function(filtered_metadata, filtered_expr) {
+
+  merged_data <- merge(filtered_metadata, 
+                  filtered_expr, 
+                  by = "ModelID", 
+                  all = FALSE)
+  
+  return(merged_data)
+  
 }
