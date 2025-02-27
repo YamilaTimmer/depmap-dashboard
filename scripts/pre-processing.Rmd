@@ -20,6 +20,12 @@ meta_data <- fread("../../Model.csv", na.strings = c("", "unknown", "Unknown", "
 # Platecoating which was all equal to none, so row can be removed
 ```
 
+# Change colname in expression data
+```{r}
+# Makes merging easier
+colnames(expression_data)[1] <- "ModelID"
+```
+
 # Make expression data tidy:
 ```{r}
 # Make the data tidy

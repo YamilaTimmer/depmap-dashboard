@@ -1,7 +1,4 @@
-library(shiny)
-library(bslib)
-library(bsicons)
-library(shinyjs)
+source("functions.R")
 
 ui <- page_fillable(
     
@@ -44,10 +41,12 @@ ui <- page_fillable(
                           ),
                           
                           # Filter panel for metadata
-                          accordion(accordion_panel("Select metadata", selectizeInput("sex", 
-                                                                                      label = "Select sex", 
-                                                                                      choices = NULL, 
-                                                                                      multiple = TRUE),
+                          accordion(accordion_panel("Select metadata", 
+                                                    
+                                                    selectizeInput("sex", 
+                                                                   label = "Select sex", 
+                                                                   choices = NULL, 
+                                                                   multiple = TRUE),
                                                     
                                                     selectizeInput("race", 
                                                                    label = "Select ethnic background", 
@@ -70,13 +69,15 @@ ui <- page_fillable(
                      nav_panel("Summary plots", 
                                layout_sidebar(sidebar = sidebar(
                                    accordion(accordion_panel("Select plot type",
-                                                             radioButtons("summary_type", 
-                                                                          label = NULL, 
-                                                                          choices = c("Bar Plot", "Box Plot", "Violin Plot"), 
-                                                                          selected = "Bar Plot")
+                                                             selectInput("summary_type", 
+                                                                         label = NULL, 
+                                                                         choices = c("Bar Plot", "Box Plot", "Violin Plot"), 
+                                                                         selected = "Bar Plot")
                                    )
                                    )
-                               )
+                               ),
+                               
+                               shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
                                )
                      )
                  )
