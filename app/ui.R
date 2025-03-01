@@ -18,7 +18,7 @@ ui <- page_fillable(
                                               icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
                                               selectInput('use_case',
                                                           label = NULL,
-                                                          choices = c("Compare Genes" = "compare_genes", "Compare Cancer Types" = "compare_cancer_types")
+                                                          choices = c("Explore Expression" = "explore_expression", "Explore Genes" = "explore_genes")
                                               ))),
                           
                           # Shown when selected use-case is "compare genes"

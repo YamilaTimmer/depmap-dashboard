@@ -7,12 +7,13 @@ server <- function(input, output, session) {
     
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
-        if (input$use_case == "compare_genes") {
+        if (input$use_case == "explore_expression") {
+            show("genes_accordion")
+            show("cancer_types_accordion")
+        } else {
             show("genes_accordion")
             hide("cancer_types_accordion")
-        } else {
-            show("cancer_types_accordion")
-            hide("genes_accordion")
+            
         }
     })
     
