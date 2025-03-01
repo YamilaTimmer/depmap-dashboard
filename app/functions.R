@@ -31,7 +31,7 @@ theme_set(
 #' generate_boxplot(merged_data)
 
 generate_boxplot <- function(data) {
-  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
+  ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease)) +
     geom_boxplot() +
     facet_wrap(~gene, scales = "free_y") +
     labs(
@@ -39,7 +39,11 @@ generate_boxplot <- function(data) {
       y = "Expression Level (log 2TPM)",
       title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
-    )
+    ) + 
+    
+    if (length(unique(data$OncotreePrimaryDisease)) > 1) {
+    theme(axis.text.x = element_text(angle = -90))
+    }
 }
 
 #' Generate violinplot
@@ -86,24 +90,71 @@ generate_barplot <- function(data) {
     )
 }
 
-#' Merge data
-# '
+#' Filter metadata
+#'
+#' This function filters the metadata based on the user inputs. 
+#'
 #' 
+#' @param meta_data
+#' @param input
+#' @return filtered_metadata, dataframe of metadata that is filtered on user inputs
+#' @examples
+#' filter_metadata(meta_data, input)
+
+filter_metadata <- function(meta_data, input) {
+  
+  filtered_metadata <- meta_data %>% 
+    filter(Sex %in% input$sex
+           & PatientRace %in% input$race
+           & AgeCategory %in% input$age_category
+           & OncotreePrimaryDisease %in% input$onco_type
+    )
+  
+  return(filtered_metadata)
+}
+
+
+#' Merge data
+#'
+#' This function merges the filtered metadata with the corresponding expression data,
+#' using the model-ID column.
 #'
 #' 
 #' @param filtered_metadata
-#' @param filtered_expr
+#' @param expression_data 
 #' @return merged_data, dataframe of metadata with corresponding expression data
 #' @examples
-#' merge_data(filtered_metadata, filtered_expr)
+#' merge_data(filtered_metadata, expression_data)
 
-merge_data <- function(filtered_metadata, filtered_expr) {
-
+merge_data <- function(filtered_metadata, expression_data) {
+  
   merged_data <- merge(filtered_metadata, 
-                  filtered_expr, 
-                  by = "ModelID", 
-                  all = FALSE)
+                       expression_data, 
+                       by = "ModelID", 
+                       all = FALSE)
   
   return(merged_data)
   
+}
+
+
+#' Filter gene
+#'
+#' This function filters the merged data based off of the user-chosen gene(s) 
+#'
+#' 
+#' @param merged_data
+#' @param input
+#' @return filtered_gene, dataframe of metadata + expression data that is filtered on all user inputs
+#' @examples
+#' filter_gene(merged_data, input)
+#' 
+
+filter_gene <- function(merged_data, input) {
+  
+  filtered_gene <- merged_data %>% 
+    filter(gene %in% input$gene_name
+    )
+  
+  return(filtered_gene)
 }
