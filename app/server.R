@@ -6,9 +6,10 @@ server <- function(input, output, session) {
     expression_data <- read_feather("../expression_subset.tsv")
     meta_data <- read_feather("../meta_data.tsv")
     
-    # Move this to pre-processing
+    # Move this to pre-processing (change column name so expression and metadata 
+    # can be merged on column with same name)
     colnames(expression_data)[1] <- "ModelID"
-
+    
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
         if (input$use_case == "explore_expression") {
@@ -58,7 +59,7 @@ server <- function(input, output, session) {
         filter_metadata(meta_data, input)
     })
     
-    # calls function to merge filtered metadata with the corresponding expression data
+    # Calls function to merge filtered metadata with the corresponding expression data
     merged_data <- reactive({
         merge_data(filtered_metadata(), expression_data)
     })
@@ -66,18 +67,33 @@ server <- function(input, output, session) {
     # Calls function to filter the merged data on the user-chosen gene(s)
     selected_data <- reactive({
         filter_gene(merged_data(), input)
-        })
+    })
     
-    # Generate output for plot
+    # Generate output for plot (x/y plots for now)
     output$plot <- renderPlotly({
         
+        # Retrieve data from reactive function
+        data <- selected_data()
         
+        # Prevent error where plot tries to render before data has loaded in
+        req(nrow(data) >= 1)
+        
+        # If statement that determines which plot should be generated (based on user input)
         if (input$summary_type == "Box Plot"){
-            # Call function with arguments to generate the plot
-            data <- selected_data()
+            
             plot <- generate_boxplot(data)
         }
-
+        
+        else if (input$summary_type == "Violin Plot"){
+            
+            plot <- generate_violinplot(data)
+        }
+        
+        else if (input$summary_type == "Bar Plot"){
+            
+            plot <- generate_barplot(data)
+        }
+        
     })
     
 }

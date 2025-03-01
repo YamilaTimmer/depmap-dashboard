@@ -42,7 +42,7 @@ generate_boxplot <- function(data) {
     ) + 
     
     if (length(unique(data$OncotreePrimaryDisease)) > 1) {
-    theme(axis.text.x = element_text(angle = -90))
+      theme(axis.text.x = element_text(angle = -90))
     }
 }
 
@@ -94,9 +94,8 @@ generate_barplot <- function(data) {
 #'
 #' This function filters the metadata based on the user inputs. 
 #'
-#' 
-#' @param meta_data
-#' @param input
+#' @param meta_data dataframe with all the metadata
+#' @param input user input from filter options in application
 #' @return filtered_metadata, dataframe of metadata that is filtered on user inputs
 #' @examples
 #' filter_metadata(meta_data, input)
@@ -118,10 +117,9 @@ filter_metadata <- function(meta_data, input) {
 #'
 #' This function merges the filtered metadata with the corresponding expression data,
 #' using the model-ID column.
-#'
 #' 
-#' @param filtered_metadata
-#' @param expression_data 
+#' @param filtered_metadata dataframe with filtered metadata (based on user input)
+#' @param expression_data dataframe with all expression data
 #' @return merged_data, dataframe of metadata with corresponding expression data
 #' @examples
 #' merge_data(filtered_metadata, expression_data)
@@ -142,9 +140,8 @@ merge_data <- function(filtered_metadata, expression_data) {
 #'
 #' This function filters the merged data based off of the user-chosen gene(s) 
 #'
-#' 
-#' @param merged_data
-#' @param input
+#' @param merged_data dataframe of metadata with corresponding expression data
+#' @param input user input from filter options in application
 #' @return filtered_gene, dataframe of metadata + expression data that is filtered on all user inputs
 #' @examples
 #' filter_gene(merged_data, input)
