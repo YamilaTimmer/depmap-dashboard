@@ -65,7 +65,11 @@ generate_violinplot <- function(data) {
       y = "Expression Level (log 2TPM)",
       title = "Expression of selected genes acros cancer types",
       fill = "Cancer type:"
-    )
+    ) + 
+    
+    if (length(unique(data$OncotreePrimaryDisease)) > 1) {
+      theme(axis.text.x = element_text(angle = -90))
+    }
 }
 
 #' Generate barplot
@@ -79,16 +83,22 @@ generate_violinplot <- function(data) {
 #' generate_barplot(merged_data)
 
 generate_barplot <- function(data) {
-  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
-    geom_bar(stat = "identity", position = "dodge") +
+  ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease)) +
+    stat_summary(geom = "bar", fun = "mean", position = "dodge") +
+    stat_summary(geom = "errorbar", fun.data = mean_se, width = 0.2, position = position_dodge(0.9)) +
     facet_wrap(~gene, scales = "free_y") +
     labs(
-      x = "", 
+      x = "Cancer Type",
       y = "Expression Level (log 2TPM)",
-      title = "Expression of selected genes across cancer types",
+      title = "Mean Expression of Selected Genes Across Cancer Types",
       fill = "Cancer type:"
-    )
+    ) +
+  
+    if (length(unique(data$OncotreePrimaryDisease)) > 1) {
+      theme(axis.text.x = element_text(angle = -90))
+    }
 }
+
 
 #' Filter metadata
 #'
