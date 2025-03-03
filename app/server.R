@@ -69,31 +69,19 @@ server <- function(input, output, session) {
         filter_gene(merged_data(), input)
     })
     
-    # Generate output for plot (x/y plots for now)
+    # Generate output for XY plots
     output$plot <- renderPlotly({
-        
-        # Retrieve data from reactive function
-        data <- selected_data()
-        
-        # Prevent error where plot tries to render before data has loaded in
-        req(nrow(data) >= 1)
-        
-        # If statement that determines which plot should be generated (based on user input)
-        if (input$summary_type == "Box Plot"){
-            
-            plot <- generate_boxplot(data)
-        }
-        
-        else if (input$summary_type == "Violin Plot"){
-            
-            plot <- generate_violinplot(data)
-        }
-        
-        else if (input$summary_type == "Bar Plot"){
-            
-            plot <- generate_barplot(data)
-        }
-        
+      
+      # Retrieve data from reactive function
+      data <- selected_data()
+      
+      # Prevent error where plot tries to render before data has loaded in
+      req(nrow(data) >= 1)
+      
+      plot <- xyplots(data, type = switch(input$summary_type, 
+                                          "Box Plot" = "boxplot",
+                                          "Violin Plot" = "violin",
+                                          "Bar Plot" = "bar"))
     })
     
     # Generate output for data table
