@@ -96,4 +96,16 @@ server <- function(input, output, session) {
         
     })
     
+    # Generate output for data table
+    output$data <- renderDataTable({
+      # Retrieve data from reactive function
+      data <- selected_data()
+      
+      # Prevent error where plot tries to render before data has loaded in
+      req(nrow(data) >= 1)
+      
+      generate_datatable(data)
+    })
+    
+    
 }

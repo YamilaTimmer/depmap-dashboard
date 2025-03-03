@@ -7,6 +7,7 @@ library(bsicons)
 library(shinyjqui)
 library(plotly) # make plots interactive
 library(feather)
+library(DT)
 
 
 # Set theme for all plots globally:
@@ -97,6 +98,34 @@ generate_barplot <- function(data) {
     if (length(unique(data$OncotreePrimaryDisease)) > 1) {
       theme(axis.text.x = element_text(angle = -90))
     }
+}
+
+#' Generate datatable
+# '
+#' This function generates a datatable using the merged data.
+#'
+#' The generated table shows the cell line name, the gene name, and the expression value.
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return a datatable.
+#' @examples
+#' generate_datatable(merged_data)
+#' 
+generate_datatable <- function(data) {
+  validate(
+    need(nrow(data) > 0, "No data available for the selected settings. Please adjust your filters.")
+  )
+  
+  
+  # Make the gene symbol clickable, linking to GeneCards
+  data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
+                              data$gene, "' target='_blank'>", data$gene, "</a>")
+  
+  data <- data[,c("StrippedCellLineName", "gene", "expression")]
+  
+  datatable(data, 
+            colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
+            rownames = FALSE, 
+            escape = FALSE)  # escape = FALSE allows HTML links
 }
 
 
