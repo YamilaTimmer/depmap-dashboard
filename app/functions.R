@@ -7,6 +7,7 @@ library(bsicons)
 library(shinyjqui)
 library(plotly) # make plots interactive
 library(feather)
+library(DT)
 
 
 # Set theme for all plots globally:
@@ -20,75 +21,82 @@ theme_set(
     )
 )
 
-#' Generate boxplot
-# '
-#' This function generates a boxplot using the merged data.
-#'
-#' The generated plot shows the gene name on the x-axis, and the expression level on the y-axis
-#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
-#' @return a ggplot2 boxplot object.
-#' @examples
-#' generate_boxplot(merged_data)
+#' Generate XY plots  
+#'  
+#' This function generates different types of expression plots (boxplot, violin plot, or bar plot)  
+#' using the provided dataset. The plot shows gene expression levels across cancer types.  
+#'  
+#' @param data a dataframe containing atleast gene names, expression values, and cancer types. 
+#' @param type a string specifying the type of plot to generate. Options:  
+#'   - `"boxplot"`: Boxplot of expression values  
+#'   - `"violin"`: Violin plot of expression values  
+#'   - `"bar"`: Bar plot showing mean expression with error bars  
+#' @return A ggplot2 plot object  
+#' @examples  
+#' xyplots(merged_data, type = "boxplot")  
+#' xyplots(merged_data, type = "violin")  
+#' xyplots(merged_data, type = "bar")  
 
-generate_boxplot <- function(data) {
-  ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease)) +
-    geom_boxplot() +
+xyplots <- function(data, type = "boxplot") {
+  p <- ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease))
+  # Adjusting settings according to plot type
+  if (type == "boxplot") {
+    p <- p + geom_boxplot()
+  } else if (type == "violin") {
+    p <- p + geom_violin()
+  } else if (type == "bar") {
+    p <- p + 
+      stat_summary(geom = "bar", fun = "mean", position = "dodge") +
+      stat_summary(geom = "errorbar", fun.data = mean_se, width = 0.2, position = position_dodge(0.9))
+  } else {
+    stop("Invalid plot type. Choose 'boxplot', 'violin', or 'bar'.")
+  }
+  
+  # Adding titles and labels to plot
+  p <- p + 
     facet_wrap(~gene, scales = "free_y") +
     labs(
       x = "",
-      y = "Expression Level (log 2TPM)",
-      title = "Expression of selected genes across cancer types",
-      fill = "Cancer type:"
-    ) + 
-    
-    if (length(unique(data$OncotreePrimaryDisease)) > 1) {
-      theme(axis.text.x = element_text(angle = -90))
-    }
-}
-
-#' Generate violinplot
-# '
-#' This function generates a violinplot using the merged data.
-#'
-#' The generated plot shows the gene name on the x-axis, and the expression level on the y-axis
-#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
-#' @return a ggplot2 violinplot object.
-#' @examples
-#' generate_violinplot(merged_data)
-
-generate_violinplot <- function(data) {
-  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
-    geom_violin() +
-    facet_wrap(~gene, scales = "free_y") +
-    labs(
-      x = "",
-      y = "Expression Level (log 2TPM)",
-      title = "Expression of selected genes acros cancer types",
-      fill = "Cancer type:"
-    )
-}
-
-#' Generate barplot
-# '
-#' This function generates a barplot using the merged data.
-#'
-#' The generated plot shows the gene name on the x-axis, and the expression level on the y-axis
-#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
-#' @return a ggplot2 barplot object.
-#' @examples
-#' generate_barplot(merged_data)
-
-generate_barplot <- function(data) {
-  ggplot(data, aes(x = "", y = expression, fill = OncotreePrimaryDisease)) +
-    geom_bar(stat = "identity", position = "dodge") +
-    facet_wrap(~gene, scales = "free_y") +
-    labs(
-      x = "", 
-      y = "Expression Level (log 2TPM)",
+      y = "Expression level (log 2TPM)",
       title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
     )
+  
+  # If multiple cancertypes are selected, axis labels get adjusted
+  if (length(unique(data$OncotreePrimaryDisease)) > 1) {
+    p <- p + theme(axis.text.x = element_text(angle = -90))
+  }
+  return(p)
 }
+
+#' Generate datatable
+# '
+#' This function generates a datatable using the merged data.
+#'
+#' The generated table shows the cell line name, the gene name, and the expression value.
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return a datatable.
+#' @examples
+#' generate_datatable(merged_data)
+
+generate_datatable <- function(data) {
+  validate(
+    need(nrow(data) > 0, "No data available for the selected settings. Please adjust your filters.")
+  )
+  
+  
+  # Make the gene symbol clickable, linking to GeneCards
+  data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
+                              data$gene, "' target='_blank'>", data$gene, "</a>")
+  
+  data <- data[,c("StrippedCellLineName", "gene", "expression")]
+  
+  datatable(data, 
+            colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
+            rownames = FALSE, 
+            escape = FALSE)  # escape = FALSE allows HTML links
+}
+
 
 #' Filter metadata
 #'

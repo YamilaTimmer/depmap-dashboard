@@ -37,6 +37,12 @@ tidy_data <- expression_data %>%
 
 ```
 
+# Removing entrez ID from the gene column:
+```{r}
+tidy_data$gene <- gsub(" \\(\\d+\\)", "", tidy_data$gene)
+```
+
+
 # Save the two seperate data files:
 ```{r}
 write_feather(x = tidy_data, path = "expression_data.tsv")
