@@ -3,7 +3,7 @@ source("functions.R")
 server <- function(input, output, session) {
     
     # Read in .tsv files with expression data and metadata
-    expression_data <- read_feather("../expression_subset.tsv")
+    expression_data <- read_feather("../expression_data_subset.tsv")
     meta_data <- read_feather("../meta_data.tsv")
     
     # Move this to pre-processing (change column name so expression and metadata 
