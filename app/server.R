@@ -1,10 +1,11 @@
 source("functions.R")
+source("../config.R")
 
 server <- function(input, output, session) {
     
     # Read in .tsv files with expression data and metadata
-    expression_data <- read_feather("../expression_data_subset.tsv")
-    meta_data <- read_feather("../meta_data.tsv")
+    expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
+    meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
