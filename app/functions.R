@@ -58,7 +58,7 @@ xyplots <- function(data, type = "boxplot") {
     labs(
       x = "",
       y = "Expression level (log 2TPM)",
-      title = "Expression of selected genes across cancer types",
+      title = "Expression across cancer types",
       fill = "Cancer type:"
     )
   
@@ -100,8 +100,6 @@ generate_heatmap <- function(data){
   }
   return(p)
 }
-
-
 
 
 #' Generate datatable
