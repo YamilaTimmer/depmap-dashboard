@@ -6,10 +6,6 @@ server <- function(input, output, session) {
     expression_data <- read_feather("../expression_data_subset.tsv")
     meta_data <- read_feather("../meta_data.tsv")
     
-    # Move this to pre-processing (change column name so expression and metadata 
-    # can be merged on column with same name)
-    colnames(expression_data)[1] <- "ModelID"
-    
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
         if (input$use_case == "explore_expression") {

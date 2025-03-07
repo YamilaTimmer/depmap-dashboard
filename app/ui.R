@@ -101,14 +101,7 @@ ui <- page_fillable(
                      navset_card_tab(
                          nav_panel("Table", shinycssloaders::withSpinner(DT::DTOutput("data")))
                      )  
-                ),
-                
-                card(full_screen = TRUE, 
-                     navset_card_tab(
-                         nav_panel("Statistics")
-                     )
-                ),
-                col_widths = c(12, 12)
+                )
             ), 
             
             col_widths = c(7, 5)
