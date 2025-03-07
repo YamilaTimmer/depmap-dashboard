@@ -79,7 +79,20 @@ ui <- page_fillable(
                                
                                shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
                                )
-                     )
+                     ),
+                     nav_panel("Heatmap",                               
+                               layout_sidebar(sidebar = sidebar(
+                                   accordion(accordion_panel("Select options",
+                                                             selectInput("heatmap_options", 
+                                                                         label = NULL, 
+                                                                         choices = c("Option"), 
+                                                                         selected = "Option")
+                                   )
+                                   )
+                               ),
+                               
+                               shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                               ))
                  )
             ),
             

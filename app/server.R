@@ -84,6 +84,19 @@ server <- function(input, output, session) {
                                           "Bar Plot" = "bar"))
     })
     
+    output$heatmap <- renderPlotly({
+        
+        # Retrieve data from reactive function
+        data <- selected_data()
+        
+        # Prevent error where plot tries to render before data has loaded in
+        req(nrow(data) >= 1)
+        
+        heatmap <- generate_heatmap(data)
+        
+        
+    })
+    
     # Generate output for data table
     output$data <- renderDataTable({
       # Retrieve data from reactive function
@@ -93,6 +106,7 @@ server <- function(input, output, session) {
       req(nrow(data) >= 1)
       
       generate_datatable(data)
+      
     })
     
     
