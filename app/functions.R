@@ -91,6 +91,8 @@ generate_datatable <- function(data) {
   
   data <- data[,c("StrippedCellLineName", "gene", "expression")]
   
+  data$expression <- round(data$expression, 3)
+  
   datatable(data, 
             colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
             rownames = FALSE, 
