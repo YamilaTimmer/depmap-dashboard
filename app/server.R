@@ -82,6 +82,14 @@ server <- function(input, output, session) {
                                           "Box Plot" = "boxplot",
                                           "Violin Plot" = "violin",
                                           "Bar Plot" = "bar"))
+      
+      if (input$summary_type == "Box Plot"){
+        output = ggplotly(plot)
+        output$x$data[[1]]$marker = list(opacity = 0)
+        output}
+      else{
+        plot
+      }
     })
     
     # Generate output for data table

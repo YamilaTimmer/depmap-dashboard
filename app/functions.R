@@ -61,7 +61,7 @@ xyplots <- function(data, type = "boxplot") {
       title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
     )
-  
+
   # If multiple cancertypes are selected, axis labels get adjusted
   if (length(unique(data$OncotreePrimaryDisease)) > 1) {
     p <- p + theme(axis.text.x = element_text(angle = -90))
