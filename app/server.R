@@ -92,7 +92,7 @@ server <- function(input, output, session) {
       # Prevent error where plot tries to render before data has loaded in
       req(nrow(data) >= 1)
       
-      generate_datatable(data)
+      generate_datatable(data, filter = "top")
     })
     
     

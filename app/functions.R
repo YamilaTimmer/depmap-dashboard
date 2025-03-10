@@ -79,7 +79,7 @@ xyplots <- function(data, type = "boxplot") {
 #' @examples
 #' generate_datatable(merged_data)
 
-generate_datatable <- function(data) {
+generate_datatable <- function(data, filter = "top") {
   validate(
     need(nrow(data) > 0, "No data available for the selected settings. Please adjust your filters.")
   )
@@ -96,7 +96,8 @@ generate_datatable <- function(data) {
   datatable(data, 
             colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
             rownames = FALSE, 
-            escape = FALSE)  # escape = FALSE allows HTML links
+            escape = FALSE,
+            filter = filter)
 }
 
 
