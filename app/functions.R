@@ -97,7 +97,16 @@ generate_datatable <- function(data, filter = "top") {
             colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
             rownames = FALSE, 
             escape = FALSE,
-            filter = filter)
+            filter = filter,
+            extensions = "Buttons",
+            options = list(
+              dom = 'Btip',  # Define layout of the table (B = buttons, t = table, i = info, p = pagination)
+              buttons = list(
+                list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
+                list(extend = 'excel', title = 'download.xlsx', text = 'Download Excel')
+              )
+            )
+  )
 }
 
 
