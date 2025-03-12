@@ -81,32 +81,40 @@ xyplots <- function(data, type = "boxplot") {
 
 generate_datatable <- function(data, filter = "top") {
   validate(
-    need(nrow(data) > 0, "No data available for the selected settings. Please adjust your filters.")
+    need(nrow(data) > 0, "No data available for the selected settings.")
   )
-  
   
   # Make the gene symbol clickable, linking to GeneCards
   data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
-                              data$gene, "' target='_blank'>", data$gene, "</a>")
-  
-  data <- data[,c("StrippedCellLineName", "gene", "expression")]
+                      data$gene, "' target='_blank'>", data$gene, "</a>")
   
   data$expression <- round(data$expression, 3)
   
+  # Identify the total number of columns
+  num_cols <- ncol(data)
+  
+  # Specify which columns to show at start up
+  visible_columns <- c(3, 7, 47, 48)
+  
+  # Create a vector of columns to hide
+  hidden_columns <- setdiff(seq(0, num_cols - 1), visible_columns)
+  
   datatable(data, 
-            colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
             rownames = FALSE, 
             escape = FALSE,
             filter = filter,
             extensions = "Buttons",
             options = list(
-              dom = 'Btip',  # Define layout of the table (B = buttons, t = table, i = info, p = pagination)
+              dom = 'Btip',
               buttons = list(
+                list(extend = "colvis"),
                 list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
                 list(extend = 'excel', title = 'download.xlsx', text = 'Download Excel')
+              ),
+              columnDefs = list(
+                list(targets = hidden_columns, visible = FALSE)
               )
-            )
-  )
+            ))
 }
 
 
