@@ -84,20 +84,26 @@ generate_datatable <- function(data, filter = "top") {
     need(nrow(data) > 0, "No data available for the selected settings.")
   )
   
+  # Create a new column containing a link to PubMed
+  data$research_links <- paste0(
+    "<a href='https://pubmed.ncbi.nlm.nih.gov/?term=", 
+    URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
+  
+  
   # Make the gene symbol clickable, linking to GeneCards
   data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
                       data$gene, "' target='_blank'>", data$gene, "</a>")
   
   data$expression <- round(data$expression, 3)
-  
-  # Identify the total number of columns
+
+  # Identify total number of columns
   num_cols <- ncol(data)
   
-  # Specify which columns to show at start up
-  visible_columns <- c(3, 7, 47, 48)
+  # Specify which columns to show
+  visible_columns <- c(3,7,47,48,49,50)
   
-  # Create a vector of columns to hide
-  hidden_columns <- setdiff(seq(0, num_cols - 1), visible_columns)
+  # Specify which columns to hide
+  hidden_columns <- setdiff(seq(0, num_cols), visible_columns)
   
   datatable(data, 
             rownames = FALSE, 
@@ -107,15 +113,18 @@ generate_datatable <- function(data, filter = "top") {
             options = list(
               dom = 'Btip',
               buttons = list(
-                list(extend = "colvis"),
+                list(extend = "colvis", text = "Select columns"),
                 list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
                 list(extend = 'excel', title = 'download.xlsx', text = 'Download Excel')
               ),
               columnDefs = list(
                 list(targets = hidden_columns, visible = FALSE)
               )
-            ))
+            ),
+            colnames = c(colnames(data)[-num_cols], "Research")
+  )
 }
+
 
 
 #' Filter metadata
