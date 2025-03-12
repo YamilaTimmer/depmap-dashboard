@@ -1,14 +1,11 @@
 source("functions.R")
+source("../config.R")
 
 server <- function(input, output, session) {
     
     # Read in .tsv files with expression data and metadata
-    expression_data <- read_feather("../expression_data_subset.tsv")
-    meta_data <- read_feather("../meta_data.tsv")
-    
-    # Move this to pre-processing (change column name so expression and metadata 
-    # can be merged on column with same name)
-    colnames(expression_data)[1] <- "ModelID"
+    expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
+    meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
@@ -84,6 +81,19 @@ server <- function(input, output, session) {
                                           "Bar Plot" = "bar"))
     })
     
+    output$heatmap <- renderPlotly({
+        
+        # Retrieve data from reactive function
+        data <- selected_data()
+        
+        # Prevent error where plot tries to render before data has loaded in
+        req(nrow(data) >= 1)
+        
+        heatmap <- generate_heatmap(data)
+        
+        
+    })
+    
     # Generate output for data table
     output$data <- renderDataTable({
       # Retrieve data from reactive function
@@ -93,6 +103,7 @@ server <- function(input, output, session) {
       req(nrow(data) >= 1)
       
       generate_datatable(data)
+      
     })
     
     
