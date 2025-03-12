@@ -38,7 +38,7 @@ theme_set(
 #' xyplots(merged_data, type = "bar")  
 
 xyplots <- function(data, type = "boxplot") {
-  p <- ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease))
+  p <- ggplot(data, aes(x = OncotreeCode, y = expression, fill = OncotreePrimaryDisease))
   # Adjusting settings according to plot type
   if (type == "boxplot") {
     p <- p + geom_boxplot()
