@@ -1,0 +1,96 @@
+---
+title: "similar_genes_finder"
+author: "Yamila Timmer"
+date: "2025-03-07"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# needs untidy format, with genes as columns and expression as rows, so each expression profile can be seen as a vector and distance between vectors can be calculated
+expression_data <- read.csv(paste0(DATA_DIR, "expression_data.csv"))
+```
+
+```{r}
+# subset to 20 columns
+expression_data <- expression_data[0:20]
+```
+
+```{r}
+# Transpose + convert to matrix
+expression_matrix <- t(expression_data)
+
+expression_matrix <- as.matrix(expression_matrix)
+```
+
+```{r}
+# Set genes as rows and samples as columns and use sample names for colnames
+expression_matrix <- setNames(data.frame(t(expression_data[,-1])), expression_data[,1])
+
+expression_matrix <- as.matrix(expression_matrix)
+```
+
+```{r}
+expression_matrix <- expression_matrix %>% 
+  # transpose the matrix so genes are as columns
+  t() %>% 
+  # apply scalling to each column of the matrix (genes)
+  scale() %>% 
+  # transpose back so genes are as rows again
+  t()
+
+```
+
+```{r}
+# Calculate distance between vectors
+gene_dist <- dist(expression_matrix)
+```
+
+```{r}
+gene_hclust <- hclust(gene_dist, method = "complete")
+
+# The default `plot()` function can be used to produce a simple dendrogram
+plot(gene_hclust, labels = FALSE)
+
+```
+
+```{r}
+gene_cluster <- cutree(gene_hclust, k = 5)
+```
+
+```{r}
+gene_cluster_tbl <- enframe(gene_cluster, name = "gene", value = "cluster")
+
+
+```
+
+```{r}
+cluster_data <- expression_data %>% 
+  rownames_to_column("gene") %>% 
+  inner_join(gene_cluster_tbl, by = "gene")
+
+head(cluster_data)
+
+```
+
+```{r}
+cluster_data %>%
+  pivot_longer(cols = -c(gene, cluster), names_to = "sample", values_to = "expression") %>%
+  ggplot(aes(x = sample, y = expression, group = gene)) +
+  geom_line(alpha = 0.3) +
+  facet_wrap(~ cluster, scales = "free_y")
+
+
+```
+
+```{r}
+trans_cts_cluster %>% 
+  ggplot(aes(, gene_cluster)) +
+  geom_line(aes(group = gene)) +
+  facet_grid(rows = vars(strain), cols = vars(cluster))
+```
+
