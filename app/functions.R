@@ -111,7 +111,7 @@ generate_datatable <- function(data, filter = "top") {
             filter = filter,
             extensions = "Buttons",
             options = list(
-              dom = 'Btip',
+              dom = 'Btip', # Define layout of the table (B = buttons, t = table, i = info, p = pagination)
               buttons = list(
                 list(extend = "colvis", text = "Select columns"),
                 list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
