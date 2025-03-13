@@ -58,7 +58,7 @@ xyplots <- function(data, type = "boxplot") {
     labs(
       x = "",
       y = "Expression level (log 2TPM)",
-      title = "Expression across cancer types",
+      title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
     )
 
@@ -68,39 +68,6 @@ xyplots <- function(data, type = "boxplot") {
   }
   return(p)
 }
-
-
-#' Generate heatmap 
-#'  
-#' This function generates a heatmap that displays the expression per gene per cell line.
-#' 
-#' The generated heat map shows the gene name on the x-axis, the cell line name on the
-#' y-axis and shows the expression levels with colour (fill).
-#' 
-#' @param data a dataframe containing atleast gene names, expression values, and cancer types. 
-#' @return A ggplot2 heat map object  
-#' @examples 
-#' generate_heatmap(merged_data) 
-
-generate_heatmap <- function(data){
-  
-  p <- ggplot(data = data, 
-         aes(x = gene, 
-             y = StrippedCellLineName, 
-             fill = expression)) +
-    geom_tile() + 
-    ylab("Tumor Cell Line") +
-    xlab("Gene") +
-    labs(fill = "Expression level (log2 TPM)")
-  
-  # Angles x-axis labels to -90 degrees when more than 3 genes are selected
-  if (length(unique(data$gene)) > 3) {
-    p <- p + theme(axis.text.x = element_text(angle = -90))
-    
-  }
-  return(p)
-}
-
 
 #' Generate datatable
 # '
@@ -133,7 +100,7 @@ generate_datatable <- function(data, filter = "top") {
   num_cols <- ncol(data)
   
   # Specify which columns to show
-  visible_columns <- c(3,7,47,48,49,50)
+  visible_columns <- c(3,7,47,48,49)
   
   # Specify which columns to hide
   hidden_columns <- setdiff(seq(0, num_cols), visible_columns)
