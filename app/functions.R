@@ -78,17 +78,14 @@ xyplots <- function(data, type = "boxplot") {
 #' @return a datatable.
 #' @examples
 #' generate_datatable(merged_data)
-
 generate_datatable <- function(data, filter = "top") {
   validate(
     need(nrow(data) > 0, "No data available for the selected settings.")
   )
   
   # Create a new column containing a link to PubMed
-  data$research_links <- paste0(
-    "<a href='https://pubmed.ncbi.nlm.nih.gov/?term=", 
-    URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
-  
+  data$research <- paste0("<a href='https://pubmed.ncbi.nlm.nih.gov/?term=", 
+                             URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
   
   # Make the gene symbol clickable, linking to GeneCards
   data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
@@ -96,35 +93,25 @@ generate_datatable <- function(data, filter = "top") {
   
   data$expression <- round(data$expression, 3)
 
-  # Identify total number of columns
-  num_cols <- ncol(data)
-  
-  # Specify which columns to show
-  visible_columns <- c(3,7,47,48,49,50)
-  
-  # Specify which columns to hide
-  hidden_columns <- setdiff(seq(0, num_cols), visible_columns)
-  
+  # Render the table
   datatable(data, 
             rownames = FALSE, 
             escape = FALSE,
-            filter = filter,
-            extensions = "Buttons",
+            filter = filter, 
+            extensions = c("Buttons"),
             options = list(
-              dom = 'Btip', # Define layout of the table (B = buttons, t = table, i = info, p = pagination)
+              dom = 'Btip',
               buttons = list(
-                list(extend = "colvis", text = "Select columns"),
+                list(extend = 'colvis', text = 'Select columns'),
                 list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
                 list(extend = 'excel', title = 'download.xlsx', text = 'Download Excel')
               ),
               columnDefs = list(
-                list(targets = hidden_columns, visible = FALSE)
+                list(targets = c(0:2,4:6,8:42), visible = FALSE)  # Specify which columns to hide
               )
-            ),
-            colnames = c(colnames(data)[-num_cols], "Research")
+            )
   )
 }
-
 
 
 #' Filter metadata
