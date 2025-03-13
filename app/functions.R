@@ -100,7 +100,7 @@ generate_datatable <- function(data, filter = "top") {
   num_cols <- ncol(data)
   
   # Specify which columns to show
-  visible_columns <- c(3,7,47,48,49)
+  visible_columns <- c(3,7,47,48,49,50)
   
   # Specify which columns to hide
   hidden_columns <- setdiff(seq(0, num_cols), visible_columns)
