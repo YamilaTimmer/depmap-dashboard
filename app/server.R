@@ -79,6 +79,14 @@ server <- function(input, output, session) {
                                           "Box Plot" = "boxplot",
                                           "Violin Plot" = "violin",
                                           "Bar Plot" = "bar"))
+      
+      if (input$summary_type == "Box Plot"){
+        output = ggplotly(plot)
+        output$x$data[[1]]$marker = list(opacity = 0)
+        output}
+      else{
+        plot
+      }
     })
     
     output$heatmap <- renderPlotly({
@@ -102,7 +110,9 @@ server <- function(input, output, session) {
       # Prevent error where plot tries to render before data has loaded in
       req(nrow(data) >= 1)
       
-      generate_datatable(data)
+
+      generate_datatable(data, filter = "top")
+
       
     })
     

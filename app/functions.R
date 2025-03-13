@@ -38,7 +38,7 @@ theme_set(
 #' xyplots(merged_data, type = "bar")  
 
 xyplots <- function(data, type = "boxplot") {
-  p <- ggplot(data, aes(x = OncotreePrimaryDisease, y = expression, fill = OncotreePrimaryDisease))
+  p <- ggplot(data, aes(x = OncotreeCode, y = expression, fill = OncotreePrimaryDisease))
   # Adjusting settings according to plot type
   if (type == "boxplot") {
     p <- p + geom_boxplot()
@@ -61,7 +61,7 @@ xyplots <- function(data, type = "boxplot") {
       title = "Expression across cancer types",
       fill = "Cancer type:"
     )
-  
+
   # If multiple cancertypes are selected, axis labels get adjusted
   if (length(unique(data$OncotreePrimaryDisease)) > 1) {
     p <- p + theme(axis.text.x = element_text(angle = -90))
@@ -112,23 +112,52 @@ generate_heatmap <- function(data){
 #' @examples
 #' generate_datatable(merged_data)
 
-generate_datatable <- function(data) {
+generate_datatable <- function(data, filter = "top") {
   validate(
-    need(nrow(data) > 0, "No data available for the selected settings. Please adjust your filters.")
+    need(nrow(data) > 0, "No data available for the selected settings.")
   )
+  
+  # Create a new column containing a link to PubMed
+  data$research_links <- paste0(
+    "<a href='https://pubmed.ncbi.nlm.nih.gov/?term=", 
+    URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
   
   
   # Make the gene symbol clickable, linking to GeneCards
   data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
-                              data$gene, "' target='_blank'>", data$gene, "</a>")
+                      data$gene, "' target='_blank'>", data$gene, "</a>")
   
-  data <- data[,c("StrippedCellLineName", "gene", "expression")]
+  data$expression <- round(data$expression, 3)
+
+  # Identify total number of columns
+  num_cols <- ncol(data)
+  
+  # Specify which columns to show
+  visible_columns <- c(3,7,47,48,49,50)
+  
+  # Specify which columns to hide
+  hidden_columns <- setdiff(seq(0, num_cols), visible_columns)
   
   datatable(data, 
-            colnames = c("Cell line", "Gene", "Expression level (log 2 TPM)"), 
             rownames = FALSE, 
-            escape = FALSE)  # escape = FALSE allows HTML links
+            escape = FALSE,
+            filter = filter,
+            extensions = "Buttons",
+            options = list(
+              dom = 'Btip', # Define layout of the table (B = buttons, t = table, i = info, p = pagination)
+              buttons = list(
+                list(extend = "colvis", text = "Select columns"),
+                list(extend = 'csv', title = 'download.csv', text = 'Download CSV'),
+                list(extend = 'excel', title = 'download.xlsx', text = 'Download Excel')
+              ),
+              columnDefs = list(
+                list(targets = hidden_columns, visible = FALSE)
+              )
+            ),
+            colnames = c(colnames(data)[-num_cols], "Research")
+  )
 }
+
 
 
 #' Filter metadata
