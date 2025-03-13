@@ -79,7 +79,20 @@ ui <- page_fillable(
                                
                                shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
                                )
-                     )
+                     ),
+                     nav_panel("Heatmap",                               
+                               layout_sidebar(sidebar = sidebar(
+                                   accordion(accordion_panel("Select options",
+                                                             selectInput("heatmap_options", 
+                                                                         label = NULL, 
+                                                                         choices = c("Option"), 
+                                                                         selected = "Option")
+                                   )
+                                   )
+                               ),
+                               
+                               shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                               ))
                  )
             ),
             
@@ -88,14 +101,7 @@ ui <- page_fillable(
                      navset_card_tab(
                          nav_panel("Table", shinycssloaders::withSpinner(DT::DTOutput("data")))
                      )  
-                ),
-                
-                card(full_screen = TRUE, 
-                     navset_card_tab(
-                         nav_panel("Statistics")
-                     )
-                ),
-                col_widths = c(12, 12)
+                )
             ), 
             
             col_widths = c(7, 5)
