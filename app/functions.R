@@ -66,6 +66,11 @@ xyplots <- function(data, type = "boxplot") {
   if (length(unique(data$OncotreePrimaryDisease)) > 1) {
     p <- p + theme(axis.text.x = element_text(angle = -90))
   }
+  
+  # Hides the legend, cant be given as an argument to ggplot, because this
+  # will not work with plotly
+  p <- ggplotly(p) %>% layout(showlegend = FALSE)
+  
   return(p)
 }
 
