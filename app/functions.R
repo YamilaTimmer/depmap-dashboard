@@ -105,6 +105,37 @@ generate_heatmap <- function(data){
   return(p)
 }
 
+#' Generate heatmap 
+#'  
+#' This function generates a heatmap that displays the expression per gene per cell line.
+#' 
+#' The generated heat map shows the gene name on the x-axis, the cell line name on the
+#' y-axis and shows the expression levels with colour (fill).
+#' 
+#' @param data a dataframe containing atleast gene names, expression values, and cancer types. 
+#' @return A ggplot2 heat map object  
+#' @examples 
+#' generate_heatmap(merged_data) 
+
+generate_heatmap <- function(data){
+  
+  p <- ggplot(data = data, 
+              aes(x = gene, 
+                  y = StrippedCellLineName, 
+                  fill = expression)) +
+    geom_tile() + 
+    ylab("Tumor Cell Line") +
+    xlab("Gene") +
+    labs(fill = "Expression level (log2 TPM)")
+  
+  # Angles x-axis labels to -90 degrees when more than 3 genes are selected
+  if (length(unique(data$gene)) > 3) {
+    p <- p + theme(axis.text.x = element_text(angle = -90))
+    
+  }
+  return(p)
+}
+
 #' Generate datatable
 # '
 #' This function generates a datatable using the merged data.
