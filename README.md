@@ -3,7 +3,7 @@
 ## Authors: 
 
 - Yamila Timmer ([https://github.com/YamilaTimmer](https://github.com/YamilaTimmer))
-- Mirte Draaijer ([https://github.com/MirteDraaijer])(https://github.com/MirteDraaijer)
+- Mirte Draaijer ([https://github.com/MirteDraaijer](https://github.com/MirteDraaijer))
 
 
 ## Description
@@ -44,16 +44,13 @@ Download the following DepMap datasets from [https://depmap.org/portal/data_page
 
 Navigate to the top of the page and enter the two dataset names in the search bar.
 
-![Where to download the data](media/download_data.png)
-
-![How to download the data](media/download_data_2.png)
 
 
 **Clone the repository**
 
 ```bash
 
-git clone git@github.com:YamilaTimmer/depmap-portal-data-visualizations.git
+git clone git@github.com:YamilaTimmer/depmap-dashboard.git
 
 ```
 
@@ -82,11 +79,11 @@ The application is made using R version [4.4.0](https://cran.r-project.org/bin/w
 | [Shiny](https://github.com/rstudio/shiny) | Package that allows creating interactive R applications |1.9.1|
 | [ggplot2](https://github.com/tidyverse/ggplot2)| Used for making all plots (bar plot, boxplot, violin plot, heatmap)|3.5.1|
 | [bslib](https://github.com/rstudio/bslib/) | Used for layout/structuring of application  |0.8.0|
-| [shinyjs]
+| [shinyjs](https://github.com/daattali/shinyjs) | Improves user experience, using JavaScript|2.1.0|
 | [bsicons](https://github.com/rstudio/bsicons)| Used to add icons to application |0.1.2|
 | [shinyjqui](https://github.com/Yang-Tang/shinyjqui)| Used for making plots resizable |0.4.1|
 | [plotly](https://github.com/plotly/plotly.R)| Package that allows creating interactive graphs |4.10.4|
-| [feather]
+| [feather](https://github.com/wesm/feather)| Package that allows storing/reading data more efficiently|0.3.5|
 | [shinycssloaders](https://github.com/daattali/shinycssloaders)| Used for adding loading icons in application |1.1.0|
 | [DT](https://github.com/rstudio/DT)| Used for interactive data table output in application |0.33|
 
@@ -130,7 +127,7 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 ## Explore data
 View the data that is generated for the selected parameters, in the table on the right side. The data table can be viewed in full screen by pressing the 'expand' button in the bottom right of the tab. What columns will be displayed can be chosen in the column selector at the top. The data can be sorted on columns from low/high, or you can perform do a specific search using the search bar in the top right. Additional metadata can be viewed in the table, by choosing additional columns in the column selector. A short description for all columns can be found in the [appendix](README.md#appendix). Keep in mind, some columns have a lot of missing values (NA values). 
 
-The data can be sorted by clicking the arrows next to the column names (from high-low or low-high) and by clicking the gene names a new window will open with a link to [https://www.genecards.org/](https://www.genecards.org/) with the page corresponding to the selected gene, for more information about the gene.
+The data can be sorted by clicking the arrows next to the column names (from high-low or low-high) and by clicking the gene names a new window will open with a link to [https://www.genecards.org/](https://www.genecards.org/) with the page corresponding to the selected gene, for more information about the gene. 
 
 ### Saving the data
 Using the download buttons, the data can be saved as either a comma-seperated-value (.csv) file, or an excel file (.xslx)
