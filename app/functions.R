@@ -8,6 +8,7 @@ library(shinyjqui)
 library(plotly) # make plots interactive
 library(feather)
 library(DT)
+library(tidyr)
 
 
 # Set theme for all plots globally:
@@ -246,3 +247,19 @@ filter_gene <- function(merged_data, input) {
   
   return(filtered_gene)
 }
+
+
+#' Reformat data for gene clustering
+#' 
+#' 
+#' 
+#' 
+#' 
+reformat_data <- function(selected_data){
+  wide_exprdata <- selected_data %>% 
+    select(ModelID, gene, expression) %>%
+    pivot_wider(names_from = "ModelID", values_from = "expression")
+  
+  return(wide_exprdata)
+}
+  
