@@ -58,7 +58,8 @@ ui <- page_fillable(
                                             icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
                                             selectInput('use_case',
                                                         label = NULL,
-                                                        choices = c("Explore Expression" = "explore_expression", "Explore Genes" = "explore_genes")
+                                                        choices = c("Explore Expression" = "explore_expression", 
+                                                                    "Gene Clustering" = "gene_clustering")
                                             ))),
                           
                           # Shown when selected use-case is "compare genes"
@@ -70,13 +71,24 @@ ui <- page_fillable(
                                                                    multiple = TRUE)
                                     )),
                           
+
                           # Shown when selected use-case is "compare cancer types"
                           accordion(id = "cancer_types_accordion",
                                     accordion_panel("Select Cancer Type(s)",
-                                                    selectizeInput("onco_type", 
+                                                    selectizeInput("onco_types", 
                                                                    label = NULL, 
                                                                    choices = NULL, 
                                                                    multiple = TRUE
+                                                    ))
+                          ),
+                          
+                          # Shown when selected use-case is "compare cancer types"
+                          accordion(id = "singular_cancer_type",
+                                    accordion_panel("Select Cancer Type",
+                                                    selectizeInput("onco_type", 
+                                                                   label = NULL, 
+                                                                   choices = NULL, 
+                                                                   multiple = FALSE
                                                     ))
                           ),
                           
@@ -103,7 +115,7 @@ ui <- page_fillable(
         # Main part of the dashboard, containing the plots/table/statistics
         layout_columns(
           card(full_screen = TRUE, 
-               navset_card_tab(
+               navset_card_tab(id = "navcards",
                  # Tab for summary plots
                  nav_panel("Summary plots", 
                            layout_sidebar(sidebar = sidebar(
@@ -128,6 +140,20 @@ ui <- page_fillable(
                                                                    selected = "Option")
                              )
                              )
+                           ),
+                           
+                           shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                           )),
+                 
+                 nav_panel("Gene Clustering",                               
+                           layout_sidebar(sidebar = sidebar(
+                               accordion(accordion_panel("Select clustering options",
+                                                         selectInput("clustering_options", 
+                                                                     label = NULL, 
+                                                                     choices = c("Option"), 
+                                                                     selected = "Option")
+                               )
+                               )
                            ),
                            
                            shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
