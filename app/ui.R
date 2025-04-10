@@ -155,8 +155,7 @@ ui <- page_fillable(
                                )
                                )
                            ),
-                           
-                           shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                           # insert plot here
                            ))
                )
           ),
