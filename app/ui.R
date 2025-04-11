@@ -65,10 +65,19 @@ ui <- page_fillable(
                           # Shown when selected use-case is "compare genes"
                           accordion(id = "genes_accordion",
                                     accordion_panel("Select Gene(s)",
-                                                    selectizeInput('gene_name', 
+                                                    selectizeInput('gene_names', 
                                                                    label = NULL, 
                                                                    choices = NULL, 
                                                                    multiple = TRUE)
+                                    )),
+                          
+                          # Shown when selected use-case is "compare genes"
+                          accordion(id = "individual_gene",
+                                    accordion_panel("Select Gene",
+                                                    selectizeInput('gene_name', 
+                                                                   label = NULL, 
+                                                                   choices = NULL, 
+                                                                   multiple = FALSE)
                                     )),
                           
 
@@ -155,7 +164,7 @@ ui <- page_fillable(
                                )
                                )
                            ),
-                           # insert plot here
+                           shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
                            ))
                )
           ),
