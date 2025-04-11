@@ -270,8 +270,9 @@ reformat_data <- function(selected_data){
   return(wide_exprdata)
 }
 
-create_query <- function(wide_exprdata){
-  query_profile <- wide_exprdata %>% select(-gene) %>% as.numeric()
+
+create_query <- function(wide_exprdata, input){
+  query_profile <- wide_exprdata %>% filter(gene==input$gene_name) %>% select(-gene) %>% as.numeric()
   return(query_profile)
 }
 
@@ -287,15 +288,16 @@ calc_dist <- function(x,y){
 #'
 #'
 #'
-generate_clusterplot <- function(clusterdata){
+generate_clusterplot <- function(tp){
   
   p <- ggplot(tp, 
               aes(x = ModelID, 
-                  y = exprval, 
-                  color=gene))
+                  y = expression, 
+                  color = gene))
   p <- p + geom_point()
   p <- p + geom_line(aes(group = gene))
   p <- p + theme(axis.text.x = element_text(angle=270)) 
-  p
+  
+  return(p)
   
 }
