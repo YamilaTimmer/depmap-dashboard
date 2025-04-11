@@ -188,7 +188,7 @@ filter_metadata <- function(meta_data, input) {
       filter(Sex %in% input$sex
              & PatientRace %in% input$race
              & AgeCategory %in% input$age_category
-             & OncotreePrimaryDisease == input$onco_types
+             & OncotreePrimaryDisease == input$onco_type
       )
     
   }
@@ -260,11 +260,10 @@ filter_gene <- function(merged_data, input) {
 #' 
 #' 
 #' 
-reformat_data <- function(selected_data){
-  wide_exprdata <- selected_data %>% 
+reformat_data <- function(merged_data){
+  wide_exprdata <- merged_data %>% 
     select(ModelID, gene, expression) %>%
     pivot_wider(names_from = "ModelID", values_from = "expression")
-  
   
   
   return(wide_exprdata)
