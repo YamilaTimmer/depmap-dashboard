@@ -139,25 +139,36 @@ server <- function(input, output, session) {
   
   output$clusterplot <- renderPlotly({
     
+    # Load and reformat data for gene clustering
+    req(selected_data())
     data <- selected_data()
-    wide_exprdata <- reformat_data(data)
+    wide_exprdata <- reformat_data(expression_data)
     target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
-    
-    query_profile <- create_query(wide_exprdata)
-    
-    
+    query_profile <- create_query(wide_exprdata, input)
+
+    # Calculate distances
     all_correlations <- apply(target_matrix,1, function(y){calc_dist(x = query_profile, y = y )})
 
     results<-list()
-    print(input$gene_name)
-    results[[input$gene]] <- tibble(
-      query_gene = input$gene,
+
+      results[[input$gene_name]] <- tibble(
+      query_gene = input$gene_name,
       target_gene = wide_exprdata %>% pull(gene),
       distance = all_correlations
     )
+    
+    all_distances <- bind_rows(results)
 
-    return(results)
-    #clusterplot <- generate_clusterplot(clusterdata)
+    # Sort genes from high to low correlation to query gene and select the top 5
+    top_scoring <- all_distances %>% 
+      filter(distance < 0.99, distance > 0.5) %>% 
+      arrange(-abs(distance)) %>% head(5)
+    
+    # Selects expression data for genes with highest correlation to query gene
+    tp <- expression_data %>% filter(gene %in% top_scoring$target_gene) 
+
+    # Generate plot
+    #clusterplot <- generate_clusterplot(tp)
   })
   
   
