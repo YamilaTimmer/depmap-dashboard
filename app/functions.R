@@ -9,6 +9,7 @@ library(plotly) # make plots interactive
 library(feather)
 library(DT)
 library(tidyr)
+library(dplyr)
 
 
 # Set theme for all plots globally:
@@ -47,8 +48,14 @@ xyplots <- function(data, type = "boxplot") {
     p <- p + geom_violin()
   } else if (type == "bar") {
     p <- p + 
-      stat_summary(geom = "bar", fun = "mean", position = "dodge") +
-      stat_summary(geom = "errorbar", fun.data = mean_se, width = 0.2, position = position_dodge(0.9))
+      stat_summary(geom = "bar", 
+                   fun = "mean", 
+                   position = "dodge") +
+      
+      stat_summary(geom = "errorbar", 
+                   fun.data = mean_se, 
+                   width = 0.2, 
+                   position = position_dodge(0.9))
   } else {
     stop("Invalid plot type. Choose 'boxplot', 'violin', or 'bar'.")
   }
@@ -62,7 +69,7 @@ xyplots <- function(data, type = "boxplot") {
       title = "Expression of selected genes across cancer types",
       fill = "Cancer type:"
     )
-
+  
   # If multiple cancertypes are selected, axis labels get adjusted
   if (length(unique(data$OncotreePrimaryDisease)) > 1) {
     p <- p + theme(axis.text.x = element_text(angle = -90))
@@ -122,14 +129,14 @@ generate_datatable <- function(data, filter = "top") {
   
   # Create a new column containing a link to PubMed
   data$research <- paste0("<a href='https://pubmed.ncbi.nlm.nih.gov/?term=", 
-                             URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
+                          URLencode(data$gene, reserved=TRUE), "+cancer' target='_blank'>PubMed</a>")
   
   # Make the gene symbol clickable, linking to GeneCards
   data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
                       data$gene, "' target='_blank'>", data$gene, "</a>")
   
   data$expression <- round(data$expression, 3)
-
+  
   # Render the table
   datatable(data, 
             rownames = FALSE, 
@@ -153,7 +160,9 @@ generate_datatable <- function(data, filter = "top") {
 
 #' Filter metadata
 #'
-#' This function filters the metadata based on the user inputs. 
+#' This function filters the metadata based on the user inputs. For usecase
+#' "explore_expression" multiple cancer types can be selected and for usecase
+#' "gene_clustering", only one cancer type can be chosen.
 #'
 #' @param meta_data dataframe with all the metadata
 #' @param input user input from filter options in application
@@ -163,12 +172,27 @@ generate_datatable <- function(data, filter = "top") {
 
 filter_metadata <- function(meta_data, input) {
   
-  filtered_metadata <- meta_data %>% 
-    filter(Sex %in% input$sex
-           & PatientRace %in% input$race
-           & AgeCategory %in% input$age_category
-           & OncotreePrimaryDisease %in% input$onco_types
-    )
+  if (input$use_case == "explore_expression"){
+    filtered_metadata <- meta_data %>% 
+      filter(Sex %in% input$sex
+             & PatientRace %in% input$race
+             & AgeCategory %in% input$age_category
+             & OncotreePrimaryDisease %in% input$onco_types
+      )
+    
+  }
+  
+  else {
+    
+    filtered_metadata <- meta_data %>% 
+      filter(Sex %in% input$sex
+             & PatientRace %in% input$race
+             & AgeCategory %in% input$age_category
+             & OncotreePrimaryDisease == input$onco_types
+      )
+    
+  }
+  
   
   return(filtered_metadata)
 }
@@ -199,7 +223,11 @@ merge_data <- function(filtered_metadata, expression_data) {
 
 #' Filter gene
 #'
-#' This function filters the merged data based off of the user-chosen gene(s) 
+#' This function filters the merged data based off of the user-chosen gene(s). 
+#' The function contains an if statement which determines how filtered_gene will 
+#' be created, based off of two different inputs, one for "explore expression",
+#' which allows the user to choose multiple genes and one for "gene clustering", 
+#' which allows te user to only choose one gene.
 #'
 #' @param merged_data dataframe of metadata with corresponding expression data
 #' @param input user input from filter options in application
@@ -210,10 +238,18 @@ merge_data <- function(filtered_metadata, expression_data) {
 
 filter_gene <- function(merged_data, input) {
   
-  filtered_gene <- merged_data %>% 
-    filter(gene %in% input$gene_name
-    )
-  
+  if (input$use_case == "explore_expression"){
+    filtered_gene <- merged_data %>% 
+      filter(gene %in% input$gene_names
+      )
+  }
+  else {
+    
+    filtered_gene <- merged_data %>% 
+      filter(gene == input$gene_name
+      )
+    
+  }
   return(filtered_gene)
 }
 
@@ -229,6 +265,37 @@ reformat_data <- function(selected_data){
     select(ModelID, gene, expression) %>%
     pivot_wider(names_from = "ModelID", values_from = "expression")
   
+  
+  
   return(wide_exprdata)
 }
+
+create_query <- function(wide_exprdata){
+  query_profile <- wide_exprdata %>% select(-gene) %>% as.numeric()
+  return(query_profile)
+}
+
+
+calc_dist <- function(x,y){
+  suppressWarnings(cor(x,y))
+}
+
+
+
+
+#' Gene clustering plot
+#'
+#'
+#'
+generate_clusterplot <- function(clusterdata){
   
+  p <- ggplot(tp, 
+              aes(x = ModelID, 
+                  y = exprval, 
+                  color=gene))
+  p <- p + geom_point()
+  p <- p + geom_line(aes(group = gene))
+  p <- p + theme(axis.text.x = element_text(angle=270)) 
+  p
+  
+}

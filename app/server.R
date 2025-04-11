@@ -18,18 +18,23 @@ server <- function(input, output, session) {
         show("genes_accordion")
         show("cancer_types_accordion")
         hide("singular_cancer_type")
+        hide("individual_gene")
+        
         nav_show("navcards", "Summary plots")
         nav_show("navcards", "Heatmap")
         nav_hide("navcards", "Gene Clustering")
         
         
       } else {
-        show("genes_accordion")
+        hide("genes_accordion")
         hide("cancer_types_accordion")
         show("singular_cancer_type")
+        show("individual_gene")
+  
         nav_hide("navcards", "Summary plots")
         nav_hide("navcards", "Heatmap")
         nav_show("navcards", "Gene Clustering")
+        
       }
     })
   
@@ -37,6 +42,12 @@ server <- function(input, output, session) {
   # Updates all dropdown inputs using server-side selectize
   updateSelectizeInput(session, 
                        'gene_name', 
+                       choices = expression_data$gene, 
+                       selected = expression_data$gene[1], 
+                       server = TRUE)
+  
+  updateSelectizeInput(session, 
+                       'gene_names', 
                        choices = expression_data$gene, 
                        selected = expression_data$gene[1], 
                        server = TRUE)
@@ -119,14 +130,36 @@ server <- function(input, output, session) {
     
     # Retrieve data from reactive function
     data <- selected_data()
-    print(data)
     # Prevent error where plot tries to render before data has loaded in
     req(nrow(data) >= 1)
     
     heatmap <- generate_heatmap(data)
     
-    
   })
+  
+  output$clusterplot <- renderPlotly({
+    
+    data <- selected_data()
+    wide_exprdata <- reformat_data(data)
+    target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
+    
+    query_profile <- create_query(wide_exprdata)
+    
+    
+    all_correlations <- apply(target_matrix,1, function(y){calc_dist(x = query_profile, y = y )})
+
+    results<-list()
+    print(input$gene_name)
+    results[[input$gene]] <- tibble(
+      query_gene = input$gene,
+      target_gene = wide_exprdata %>% pull(gene),
+      distance = all_correlations
+    )
+
+    return(results)
+    #clusterplot <- generate_clusterplot(clusterdata)
+  })
+  
   
   output$data <- renderDataTable({
     req(selected_data())  # Ensure data is available
