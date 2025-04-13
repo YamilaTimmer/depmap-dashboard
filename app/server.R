@@ -38,6 +38,14 @@ server <- function(input, output, session) {
     }
   })
   
+  # Select first tab to be shown in the UI, depending on chosen 'use_case'
+  observeEvent(input$use_case, {
+    if (input$use_case == "gene_clustering") {
+      updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
+    } else if (input$use_case == "explore_expression") {
+      updateTabsetPanel(inputId = "navcards", selected = "Summary plots")
+    }
+  })
   
   # Updates all dropdown inputs using server-side selectize
   updateSelectizeInput(session, 
@@ -163,15 +171,17 @@ server <- function(input, output, session) {
     # TODO: put this in a function and let the user filter on distance and amount of chosen genes!
     top_scoring <- all_distances %>% 
       filter(distance < 0.99, distance > 0.1) %>% 
-      arrange(-abs(distance)) %>% head(5)
+      arrange(-abs(distance)) %>% head(4)
     
     # Selects expression data for genes with highest correlation to query gene
     tp <- data %>% filter(gene %in% top_scoring$target_gene) 
     
+    # Add selected gene to dataframe
+    tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
+    
     # Generate plot
     clusterplot <- generate_clusterplot(tp)
   })
-  
   
   output$data <- renderDataTable({
     req(selected_data())  # Ensure data is available

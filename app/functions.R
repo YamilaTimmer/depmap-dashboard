@@ -288,6 +288,9 @@ calc_dist <- function(x,y){
 #'
 #'
 generate_clusterplot <- function(tp){
+  if (tp %>% pull(ModelID) %>% n_distinct() <= 1) {
+    stop("⚠️ Warning: There is only one patient (ModelID) for the selected data. No satisfactory plot can be created.")
+  }
   
   p <- ggplot(tp, 
               aes(x = ModelID, 
