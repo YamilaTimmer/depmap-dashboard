@@ -158,9 +158,9 @@ ui <- page_fillable(
                            layout_sidebar(sidebar = sidebar(
                                accordion(accordion_panel("Select clustering options",
                                                          selectInput("clustering_options", 
-                                                                     label = NULL, 
-                                                                     choices = c("Option"), 
-                                                                     selected = "Option"),
+                                                                     label = "Select correlation to show:", 
+                                                                     choices = c("Positive correlation", "Negative correlation"), 
+                                                                     selected = "Positive correlation"),
                                                          sliderInput("top_n_genes", 
                                                                      label = "Number of genes to show:", 
                                                                      min = 1, 

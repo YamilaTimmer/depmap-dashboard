@@ -168,10 +168,17 @@ server <- function(input, output, session) {
     
     # Sort genes from high to low correlation to query gene and select the top 5
     # TODO: put this in a function and let the user filter on distance and amount of chosen genes!
-    top_scoring <- all_distances %>% 
-      filter(distance < 0.99, distance > 0.1) %>% 
-      arrange(-abs(distance)) %>% 
-      head(input$top_n_genes)
+    if (input$clustering_options == "Positive correlation"){
+      top_scoring <- all_distances %>% 
+        filter(distance < 0.99, distance > 0.1) %>% 
+        arrange(-abs(distance)) %>% 
+        head(input$top_n_genes)
+    } else if (input$clustering_options == "Negative correlation"){
+      top_scoring <- all_distances %>% 
+        filter(distance < 0.99, distance > 0.1) %>% 
+        arrange(-abs(distance)) %>% 
+        tail(input$top_n_genes) 
+    }
     
     # Selects expression data for genes with highest correlation to query gene
     tp <- data %>% filter(gene %in% top_scoring$target_gene) 
