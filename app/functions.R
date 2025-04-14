@@ -292,6 +292,10 @@ generate_clusterplot <- function(tp){
     stop("⚠️ Warning: There is only one patient (ModelID) for the selected data. No satisfactory plot can be created.")
   }
   
+  if (tp %>% pull(gene) %>% n_distinct() <= 1){
+    stop("⚠️ Warning: There are no similiar genes available for the selected data. No satisfactory plot can be created.")
+  }
+  
   p <- ggplot(tp, 
               aes(x = ModelID, 
                   y = expression, 

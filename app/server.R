@@ -93,7 +93,6 @@ server <- function(input, output, session) {
                        selected = c("Fetus", "Pediatric", "Adult", "Unknown"),
                        server = TRUE)
   
-  
   # Calls function to filter metadata based on user input for cancer type and other metadata
   filtered_metadata <- reactive({
     filter_metadata(meta_data, input)
@@ -171,7 +170,8 @@ server <- function(input, output, session) {
     # TODO: put this in a function and let the user filter on distance and amount of chosen genes!
     top_scoring <- all_distances %>% 
       filter(distance < 0.99, distance > 0.1) %>% 
-      arrange(-abs(distance)) %>% head(4)
+      arrange(-abs(distance)) %>% 
+      head(input$top_n_genes)
     
     # Selects expression data for genes with highest correlation to query gene
     tp <- data %>% filter(gene %in% top_scoring$target_gene) 

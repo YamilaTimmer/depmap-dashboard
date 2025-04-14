@@ -160,7 +160,12 @@ ui <- page_fillable(
                                                          selectInput("clustering_options", 
                                                                      label = NULL, 
                                                                      choices = c("Option"), 
-                                                                     selected = "Option")
+                                                                     selected = "Option"),
+                                                         sliderInput("top_n_genes", 
+                                                                     label = "Number of genes to show:", 
+                                                                     min = 1, 
+                                                                     max = 10, 
+                                                                     value = 5)
                                )
                                )
                            ),
