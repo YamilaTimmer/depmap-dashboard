@@ -12,6 +12,7 @@ library(tidyr)
 library(dplyr)
 
 
+
 # Set theme for all plots globally:
 theme_set(
   theme_minimal() +
@@ -94,7 +95,15 @@ xyplots <- function(data, type = "boxplot") {
 #' @examples 
 #' generate_heatmap(merged_data) 
 
-generate_heatmap <- function(data){
+generate_heatmap <- function(input, data){
+  
+  palettes <- list("Grayscale" = "Greys", 
+                   "Purple-Green" = "PRGn", 
+                   "Blue" = "Blues", 
+                   "Red-Blue" = "RdBu")
+  
+  # Assigns palette to heatmap that aligns with chosen option
+  palette = palettes[[input$heatmap_palette]]
   
   p <- ggplot(data = data, 
               aes(x = gene, 
@@ -103,8 +112,10 @@ generate_heatmap <- function(data){
     geom_tile() + 
     ylab("Tumor Cell Line") +
     xlab("Gene") +
-    labs(fill = "Expression level (log2 TPM)")
+    labs(fill = "Expression level (log2 TPM)") +
+    scale_fill_distiller(palette = palette)
   
+  print(palette)
   # Angles x-axis labels to -90 degrees when more than 3 genes are selected
   if (length(unique(data$gene)) > 3) {
     p <- p + theme(axis.text.x = element_text(angle = -90))
@@ -318,8 +329,6 @@ generate_corr_plot <- function(input,wide_exprdata){
   gene_exprdata = as.data.frame(t(wide_exprdata[, -1]))
   colnames(gene_exprdata) <- wide_exprdata$gene
   
-  print(head(gene_exprdata))
-  print(gene_exprdata[0])
   
   x <-gene_exprdata %>% pull(input$gene_name)
   y <- gene_exprdata %>% pull(input$correlation_gene)

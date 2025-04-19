@@ -149,7 +149,7 @@ server <- function(input, output, session) {
     # Prevent error where plot tries to render before data has loaded in
     req(nrow(data) >= 1)
     
-    heatmap <- generate_heatmap(data)
+    heatmap <- generate_heatmap(input, data)
     
   })
   

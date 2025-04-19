@@ -143,10 +143,12 @@ ui <- page_fillable(
                  nav_panel("Heatmap",                               
                            layout_sidebar(sidebar = sidebar(
                              accordion(accordion_panel("Select options",
-                                                       selectInput("heatmap_options", 
-                                                                   label = NULL, 
-                                                                   choices = c("Option"), 
-                                                                   selected = "Option")
+                                                       selectInput("heatmap_palette", 
+                                                                   label = "Select color scheme", 
+                                                                   choices = c("Grayscale", "Purple-Green", "Blue", "Red-Blue"), 
+                                                                   selected = "Blue")
+                                                       
+                                                       
                              )
                              )
                            ),
