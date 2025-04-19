@@ -23,6 +23,7 @@ server <- function(input, output, session) {
       nav_show("navcards", "Summary plots")
       nav_show("navcards", "Heatmap")
       nav_hide("navcards", "Gene Clustering")
+      nav_hide("navcards", "Correlation Plot")
       
       
     } else {
@@ -34,6 +35,8 @@ server <- function(input, output, session) {
       nav_hide("navcards", "Summary plots")
       nav_hide("navcards", "Heatmap")
       nav_show("navcards", "Gene Clustering")
+      nav_show("navcards", "Correlation Plot")
+      
       
     }
   })
@@ -93,6 +96,12 @@ server <- function(input, output, session) {
                        selected = c("Fetus", "Pediatric", "Adult", "Unknown"),
                        server = TRUE)
   
+  updateSelectizeInput(session, 
+                       'correlation_gene', 
+                       choices = expression_data$gene, 
+                       selected = expression_data$gene[1], 
+                       server = TRUE)
+  
   # Calls function to filter metadata based on user input for cancer type and other metadata
   filtered_metadata <- reactive({
     filter_metadata(meta_data, input)
@@ -146,49 +155,28 @@ server <- function(input, output, session) {
   
   output$clusterplot <- renderPlotly({
     
-    # Load and reformat data for gene clustering
     req(selected_data())
     data <- merged_data()
-    wide_exprdata <- reformat_data(data)
-    target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
-    query_profile <- create_query(wide_exprdata, input)
     
-    # Calculate distances
-    all_correlations <- apply(target_matrix,1, function(y){calc_dist(x = query_profile, y = y )})
-    
-    results<-list()
-    
-    results[[input$gene_name]] <- tibble(
-      query_gene = input$gene_name,
-      target_gene = wide_exprdata %>% pull(gene),
-      distance = all_correlations
-    )
-    
-    all_distances <- bind_rows(results)
-    
-    # Sort genes from high to low correlation to query gene and select the top 5
-    # TODO: put this in a function and let the user filter on distance and amount of chosen genes!
-    if (input$clustering_options == "Positive correlation"){
-      top_scoring <- all_distances %>% 
-        filter(distance < 0.99, distance > 0.1) %>% 
-        arrange(-abs(distance)) %>% 
-        head(input$top_n_genes)
-    } else if (input$clustering_options == "Negative correlation"){
-      top_scoring <- all_distances %>% 
-        filter(distance < 0.99, distance > 0.1) %>% 
-        arrange(-abs(distance)) %>% 
-        tail(input$top_n_genes) 
-    }
-    
-    # Selects expression data for genes with highest correlation to query gene
-    tp <- data %>% filter(gene %in% top_scoring$target_gene) 
-    
-    # Add selected gene to dataframe
-    tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
-    
+    tp <- reformat_cluster_data(data, input)
+      
     # Generate plot
     clusterplot <- generate_clusterplot(tp)
   })
+  
+  output$corr_plot <- renderPlotly({
+    
+    req(selected_data())
+    data <- merged_data()
+    wide_exprdata <- reformat_data(data)
+    print(wide_exprdata)
+    
+    #tp <- reformat_cluster_data(data, input)
+    
+    corr_plot <- generate_corr_plot(input,wide_exprdata)
+    
+  })
+  
   
   output$data <- renderDataTable({
     req(selected_data())  # Ensure data is available

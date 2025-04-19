@@ -307,3 +307,83 @@ generate_clusterplot <- function(tp){
   return(p)
   
 }
+
+
+#' Correlation plot
+#'
+#'
+#'
+generate_corr_plot <- function(input,wide_exprdata){
+
+  gene_exprdata = as.data.frame(t(wide_exprdata[, -1]))
+  colnames(gene_exprdata) <- wide_exprdata$gene
+  
+  print(head(gene_exprdata))
+  print(gene_exprdata[0])
+  
+  x <-gene_exprdata %>% pull(input$gene_name)
+  y <- gene_exprdata %>% pull(input$correlation_gene)
+  mymodel <-lm(x~y+0)
+  p <- ggplot(gene_exprdata, aes(x = .data[[input$gene_name]], 
+                                 y = .data[[input$correlation_gene]], 
+                                 label= rownames(gene_exprdata)))
+  p <-p + geom_text()
+  p <-p + geom_point(size=5, alpha=0.5)
+  p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
+  
+  #return(p)
+}
+
+
+determine_top_scoring <- function(input, all_distances, data){
+  
+  if (input$clustering_options == "Positive correlation"){
+    top_scoring <- all_distances %>% 
+      filter(distance < 0.99, distance > 0.1) %>% 
+      arrange(-abs(distance)) %>% 
+      head(input$top_n_genes)
+  } else if (input$clustering_options == "Negative correlation"){
+    top_scoring <- all_distances %>% 
+      filter(distance < 0.99, distance > 0.1) %>% 
+      arrange(-abs(distance)) %>% 
+      tail(input$top_n_genes) 
+  }
+  
+  
+  # Selects expression data for genes with highest correlation to query gene
+  tp <- data %>% filter(gene %in% top_scoring$target_gene) 
+  
+  # Add selected gene to dataframe
+  tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
+  
+  return(tp)
+}
+
+
+#' reformat for clustering
+#' 
+#' 
+reformat_cluster_data <- function(data, input){
+  
+  
+  # Load and reformat data for gene clustering
+  wide_exprdata <- reformat_data(data)
+  target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
+  query_profile <- create_query(wide_exprdata, input)
+  
+  # Calculate distances
+  all_correlations <- apply(target_matrix,1, function(y){calc_dist(x = query_profile, y = y )})
+  
+  results<-list()
+  
+  results[[input$gene_name]] <- tibble(
+    query_gene = input$gene_name,
+    target_gene = wide_exprdata %>% pull(gene),
+    distance = all_correlations
+  )
+  
+  all_distances <- bind_rows(results)
+  
+  tp <- determine_top_scoring(input, all_distances, data)
+  return(tp)
+}

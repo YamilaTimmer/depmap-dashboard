@@ -170,7 +170,22 @@ ui <- page_fillable(
                                )
                            ),
                            shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
-                           ))
+                           )),
+                 
+                 nav_panel("Correlation Plot",                               
+                           layout_sidebar(sidebar = sidebar(
+                               accordion(accordion_panel("Select correlation options",
+                                                         selectizeInput("correlation_gene", 
+                                                                     label = "Select gene to compare with:",
+                                                                     choices = NULL,
+                                                                     multiple = FALSE),
+                               )
+                               )
+                           ),
+                           shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
+                           )),
+                 
+                 
                )
           ),
           
