@@ -7,22 +7,58 @@ server <- function(input, output, session) {
   expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
   meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
   
+  # Convert NA to Unknown
+  meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
+  meta_data$PatientRace[is.na(meta_data$PatientRace)] <- "Unknown"
+  meta_data$AgeCategory[is.na(meta_data$AgeCategory)] <- "Unknown"
+  
   # Show/hide filter panels in UI, depending on chosen 'use_case'
   observeEvent(input$use_case, {
     if (input$use_case == "explore_expression") {
       show("genes_accordion")
       show("cancer_types_accordion")
+      hide("singular_cancer_type")
+      hide("individual_gene")
+      
+      nav_show("navcards", "Summary plots")
+      nav_show("navcards", "Heatmap")
+      nav_hide("navcards", "Gene Clustering")
+      nav_hide("navcards", "Correlation Plot")
+      
+      
     } else {
-      show("genes_accordion")
+      hide("genes_accordion")
       hide("cancer_types_accordion")
+      show("singular_cancer_type")
+      show("individual_gene")
+      
+      nav_hide("navcards", "Summary plots")
+      nav_hide("navcards", "Heatmap")
+      nav_show("navcards", "Gene Clustering")
+      nav_show("navcards", "Correlation Plot")
+      
       
     }
   })
   
+  # Select first tab to be shown in the UI, depending on chosen 'use_case'
+  observeEvent(input$use_case, {
+    if (input$use_case == "gene_clustering") {
+      updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
+    } else if (input$use_case == "explore_expression") {
+      updateTabsetPanel(inputId = "navcards", selected = "Summary plots")
+    }
+  })
   
   # Updates all dropdown inputs using server-side selectize
   updateSelectizeInput(session, 
                        'gene_name', 
+                       choices = expression_data$gene, 
+                       selected = expression_data$gene[1], 
+                       server = TRUE)
+  
+  updateSelectizeInput(session, 
+                       'gene_names', 
                        choices = expression_data$gene, 
                        selected = expression_data$gene[1], 
                        server = TRUE)
@@ -33,32 +69,49 @@ server <- function(input, output, session) {
                        selected = "Acute Myeloid Leukemia",
                        server = TRUE)
   
+  updateSelectizeInput(session, 
+                       'onco_types', 
+                       choices = sort(meta_data$OncotreePrimaryDisease), 
+                       selected = "Acute Myeloid Leukemia",
+                       server = TRUE)
+  
   
   updateSelectizeInput(session, 
                        "sex", 
                        choices = unique(meta_data$Sex), 
-                       selected = c("Female", "Male", "Unknown"))
+                       selected = c("Female", "Male", "Unknown"),
+                       server = TRUE)
   
   updateSelectizeInput(session, 
                        "race", 
                        choices = meta_data$PatientRace, 
                        selected = c("caucasian", "asian", "black_or_african_american",
                                     "african", "american_indian_or_native_american", 
-                                    "east_indian", "north_african", "hispanic_or_latino", "unknown"))
+                                    "east_indian", "north_african", "hispanic_or_latino", "Unknown"),
+                       server = TRUE)
   
   updateSelectizeInput(session, 
                        "age_category", 
                        choices = meta_data$AgeCategory, 
-                       selected = c("Fetus", "Pediatric", "Adult", "Unknown"))
+                       selected = c("Fetus", "Pediatric", "Adult", "Unknown"),
+                       server = TRUE)
+  
+  updateSelectizeInput(session, 
+                       'correlation_gene', 
+                       choices = expression_data$gene, 
+                       selected = expression_data$gene[1], 
+                       server = TRUE)
   
   # Calls function to filter metadata based on user input for cancer type and other metadata
   filtered_metadata <- reactive({
     filter_metadata(meta_data, input)
   })
   
+  
   # Calls function to merge filtered metadata with the corresponding expression data
   merged_data <- reactive({
     merge_data(filtered_metadata(), expression_data)
+    
   })
   
   # Calls function to filter the merged data on the user-chosen gene(s)
@@ -89,6 +142,7 @@ server <- function(input, output, session) {
     }
   })
   
+  # Call functions needed for heatmap
   output$heatmap <- renderPlotly({
     
     # Retrieve data from reactive function
@@ -97,11 +151,46 @@ server <- function(input, output, session) {
     # Prevent error where plot tries to render before data has loaded in
     req(nrow(data) >= 1)
     
-    heatmap <- generate_heatmap(data)
     
+    
+    # Generate plot
+    heatmap <- generate_heatmap(input, data)
     
   })
-
+  
+  # Call functions needed for clusterplot
+  output$clusterplot <- renderPlotly({
+    
+    req(selected_data()) # Ensure data is available
+    
+    # Load and reformat data for gene clustering
+    data <- merged_data()
+    wide_exprdata <- reformat_data(data)
+    target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
+    query_profile <- create_query(wide_exprdata, input)
+    all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
+    
+    tp <- determine_top_scoring(input, all_distances, data)
+    
+    # Generate plot
+    clusterplot <- generate_clusterplot(tp)
+  })
+  
+  # Call functions needed for correlation plot
+  output$corr_plot <- renderPlotly({
+    
+    req(selected_data()) # Ensure data is available
+    
+    # Obtain data in correct format
+    data <- merged_data()
+    wide_exprdata <- reformat_data(data)
+    
+    # Generate plot
+    corr_plot <- generate_corr_plot(input,wide_exprdata)
+    
+  })
+  
+  # Call functions needed for datatable
   output$data <- renderDataTable({
     req(selected_data())  # Ensure data is available
     
