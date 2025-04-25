@@ -181,6 +181,10 @@ xyplots <- function(input, data, type = "boxplot") {
         # Apply user-chosen color palette
         scale_fill_paletteer_d(palette)
     
+    if (input$geom_point_checkbox == TRUE){
+        p <- p + geom_point
+    }
+    
     return(p)
 }
 
@@ -214,11 +218,8 @@ generate_heatmap <- function(input, data){
         labs(fill = "Expression level \n (log2 TPM)") +
         scale_fill_paletteer_c(palette)
     
-    # Angles x-axis labels to -90 degrees when more than 3 genes are selected
-    if (length(unique(data$gene)) > 3) {
-        p <- p + theme(axis.text.x = element_text(angle = -90))
-        
-    }
+    p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
+    
     return(p)
 }
 
@@ -419,6 +420,8 @@ generate_corr_plot <- function(input, wide_exprdata){
     p <- p + geom_text()
     p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
+    
+    
     
     return(p)
 }
