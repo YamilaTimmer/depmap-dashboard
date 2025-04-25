@@ -87,7 +87,8 @@ ui <- page_fillable(
                                                             selectizeInput("onco_types", 
                                                                            label = NULL, 
                                                                            choices = NULL, 
-                                                                           multiple = TRUE
+                                                                           multiple = TRUE,
+                                                                           options = list(maxItems = 7)
                                                             ))
                                   ),
                                   
@@ -133,7 +134,20 @@ ui <- page_fillable(
                                                                                              label = NULL, 
                                                                                              choices = c("Bar Plot", "Box Plot", "Violin Plot"), 
                                                                                              selected = "Bar Plot")
-                                                       )
+                                                       ),
+                                                       
+                                                       accordion_panel("Other options",
+                                                                       selectInput("xyplot_palette", 
+                                                                                   label = "Select color palette", 
+                                                                                   choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
+                                                                                   selected = "Blue"))
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
                                                        )
                                                    ),
                                                    
@@ -143,12 +157,11 @@ ui <- page_fillable(
                                          nav_panel("Heatmap",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select options",
+                                                            
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
-                                                                                             choices = c("Grayscale", "Purple-Green", "Blue", "Red-Blue"), 
+                                                                                             choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue")
-                                                                                 
-                                                                                 
                                                        )
                                                        )
                                                    ),
