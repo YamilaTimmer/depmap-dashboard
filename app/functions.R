@@ -10,7 +10,7 @@ library(feather)
 library(DT)
 library(tidyr)
 library(dplyr)
-
+library(paletteer)
 
 #' Filter metadata
 #'
@@ -135,10 +135,14 @@ theme_set(
 #' xyplots(merged_data, type = "violin")  
 #' xyplots(merged_data, type = "bar")  
 
-xyplots <- function(data, type = "boxplot") {
+xyplots <- function(input, data, type = "boxplot") {
     p <- ggplot(data, aes(x = OncotreePrimaryDisease, 
                           y = expression, 
                           fill = OncotreePrimaryDisease))
+    
+    chosen_palette <- palettes_d_names %>% 
+        filter(palettes_d_names$palette %in% input$xyplot_palette)
+    palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
     
     # Adjusting settings according to plot type
     if (type == "boxplot") {
@@ -164,19 +168,18 @@ xyplots <- function(data, type = "boxplot") {
         facet_wrap(~gene, scales = "free_y") +
         labs(
             x = "",
-            y = "Expression level (log 2TPM)",
-            title = "Expression of selected genes across cancer types",
+            y = "Expression (log 2TPM)",
+            title = "Expression across cancer types",
             fill = "Cancer type:"
-        )
+        ) +
+        
+        # Remove X-axis labels, because they are too long
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank(),
+              axis.ticks.x = element_blank()) + 
     
-    # If multiple cancertypes are selected, axis labels get adjusted
-    if (length(unique(data$OncotreePrimaryDisease)) > 1) {
-        p <- p + theme(axis.text.x = element_text(angle = -90))
-    }
-    
-    # Hides the legend, cant be given as an argument to ggplot, because this
-    # will not work with plotly
-    p <- ggplotly(p) %>% layout(showlegend = FALSE)
+        # Apply user-chosen color palette
+        scale_fill_paletteer_d(palette)
     
     return(p)
 }
@@ -195,13 +198,11 @@ xyplots <- function(data, type = "boxplot") {
 
 generate_heatmap <- function(input, data){
     
-    palettes <- list("Grayscale" = "Greys", 
-                     "Purple-Green" = "PRGn", 
-                     "Blue" = "Blues", 
-                     "Red-Blue" = "RdBu")
-    
     # Assigns palette to heatmap that aligns with chosen option
-    palette = palettes[[input$heatmap_palette]]
+    chosen_palette <- palettes_c_names %>% 
+        filter(palettes_c_names$palette %in% input$heatmap_palette)
+    palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
+    
     
     p <- ggplot(data = data, 
                 aes(x = gene, 
@@ -210,8 +211,8 @@ generate_heatmap <- function(input, data){
         geom_tile() + 
         ylab("Tumor Cell Line") +
         xlab("Gene") +
-        labs(fill = "Expression level (log2 TPM)") +
-        scale_fill_distiller(palette = palette)
+        labs(fill = "Expression level \n (log2 TPM)") +
+        scale_fill_paletteer_c(palette)
     
     # Angles x-axis labels to -90 degrees when more than 3 genes are selected
     if (length(unique(data$gene)) > 3) {
@@ -282,8 +283,8 @@ generate_datatable <- function(data, filter = "top") {
 
 reformat_data <- function(merged_data){
     wide_exprdata <- merged_data %>% 
-        select(ModelID, gene, expression) %>%
-        pivot_wider(names_from = "ModelID", values_from = "expression")
+        select(StrippedCellLineName, gene, expression) %>%
+        pivot_wider(names_from = "StrippedCellLineName", values_from = "expression")
     
     
     return(wide_exprdata)
@@ -363,9 +364,9 @@ generate_clusterplot <- function(tp){
     # Warning when only one patient is selected, no satisfactory expression profile
     # comparison can be created
     if (tp %>% 
-        pull(ModelID) %>% 
+        pull(StrippedCellLineName) %>% 
         n_distinct() <= 1) {
-        stop("⚠️ Warning: There is only one patient (ModelID) for the selected data. No satisfactory plot can be created.")
+        stop("⚠️ Warning: There is only one patient (StrippedCellLineName) for the selected data. No satisfactory plot can be created.")
     }
     
     #TODO: look into this, as there should always be enough genes available
@@ -377,7 +378,7 @@ generate_clusterplot <- function(tp){
     
     # generate the plot
     p <- ggplot(tp, 
-                aes(x = ModelID, 
+                aes(x = StrippedCellLineName, 
                     y = expression, 
                     color = gene))
     p <- p + geom_point()
@@ -415,8 +416,8 @@ generate_corr_plot <- function(input, wide_exprdata){
     p <- ggplot(gene_exprdata, aes(x = .data[[input$gene_name]], 
                                    y = .data[[input$correlation_gene]], 
                                    label= rownames(gene_exprdata)))
-    p <-p + geom_text()
-    p <-p + geom_point(size=5, alpha=0.5)
+    p <- p + geom_text()
+    p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
     
     return(p)
