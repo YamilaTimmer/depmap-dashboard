@@ -182,7 +182,7 @@ xyplots <- function(input, data, type = "boxplot") {
         scale_fill_paletteer_d(palette)
     
     if (input$geom_point_checkbox == TRUE){
-        p <- p + geom_point
+        p <- p + geom_point()
     }
     
     return(p)
