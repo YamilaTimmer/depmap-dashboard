@@ -256,13 +256,15 @@ generate_datatable <- function(data, filter = "top") {
               filter = filter, 
               extensions = c("Buttons"),
               options = list(
-                  dom = 'Btip',
+                  dom = "Btip",
                   buttons = list(
-                      list(extend = 'colvis', 
-                           text = 'Select columns'),
-                      list(extend = 'collection',
-                           buttons = c('csv', 'excel'),
-                           text = 'Download')
+                      list(extend = "colvis", 
+                           text = "Select columns"),
+                      list(extend = "colvisRestore",
+                           text = "Reset to default columns"),
+                      list(extend = "collection",
+                           buttons = c("csv", "excel"),
+                           text = "Download")
                   ),
                   columnDefs = list(
                       # Specify which columns to hide
