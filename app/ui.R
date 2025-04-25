@@ -216,19 +216,11 @@ ui <- page_fillable(
                                                    shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
                                                    )),
                                          
+                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data")))
+                                         
                                          
                          )
-                    ),
-                    
-                    layout_columns(
-                        card(full_screen = TRUE, 
-                             navset_card_tab(
-                                 nav_panel("Table", shinycssloaders::withSpinner(DT::DTOutput("data")))
-                             )  
-                        )
-                    ), 
-                    
-                    col_widths = c(7, 5)
+                    )
                 )
             )
         )
