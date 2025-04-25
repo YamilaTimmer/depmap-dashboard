@@ -115,7 +115,8 @@ theme_set(
             plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
             axis.text = element_text(size = 14),
             axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold")
+            strip.text = element_text(size = 14, face = "bold"),
+            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
         )
 )
 
