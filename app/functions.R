@@ -259,16 +259,13 @@ generate_datatable <- function(data, filter = "top") {
                   buttons = list(
                       list(extend = 'colvis', 
                            text = 'Select columns'),
-                      list(extend = 'csv', 
-                           title = 'download.csv', 
-                           text = 'Download CSV'),
-                      list(extend = 'excel', 
-                           title = 'download.xlsx', 
-                           text = 'Download Excel')
+                      list(extend = 'collection',
+                           buttons = c('csv', 'excel'),
+                           text = 'Download')
                   ),
                   columnDefs = list(
                       # Specify which columns to hide
-                      list(targets = c(0:2,4:6,8:42), visible = FALSE)  
+                      list(targets = c(0:2,4:5,7:46), visible = FALSE)  
                   )
               )
     )
