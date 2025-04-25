@@ -59,11 +59,12 @@ ui <- page_fillable(
                                                       selectInput('use_case',
                                                                   label = NULL,
                                                                   choices = c("Explore Expression" = "explore_expression", 
-                                                                              "Gene Clustering" = "gene_clustering")
+                                                                              "Gene Clustering" = "gene_clustering",
+                                                                              "Compare Pathway Across Cancer Types" = "compare_pathway")
                                                       ))),
                                   
                                   # Shown when selected use-case is "compare genes"
-                                  accordion(id = "genes_accordion",
+                                  accordion(open=FALSE, id = "genes_accordion",
                                             accordion_panel("Select Gene(s)",
                                                             selectizeInput('gene_names', 
                                                                            label = NULL, 
@@ -72,7 +73,7 @@ ui <- page_fillable(
                                             )),
                                   
                                   # Shown when selected use-case is "compare genes"
-                                  accordion(id = "individual_gene",
+                                  accordion(open=FALSE, id = "individual_gene",
                                             accordion_panel("Select Gene",
                                                             selectizeInput('gene_name', 
                                                                            label = NULL, 
@@ -80,9 +81,18 @@ ui <- page_fillable(
                                                                            multiple = FALSE)
                                             )),
                                   
+                                  # Shown when selected use-case is "compare pathways"
+                                  accordion(open=FALSE, id = "pathway",
+                                            accordion_panel("Select Pathway",
+                                                            selectizeInput('pathway_genes', 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = FALSE)
+                                            )),
+                                  
                                   
                                   # Shown when selected use-case is "compare cancer types"
-                                  accordion(id = "cancer_types_accordion",
+                                  accordion(open=FALSE, id = "cancer_types_accordion",
                                             accordion_panel("Select Cancer Type(s)",
                                                             selectizeInput("onco_types", 
                                                                            label = NULL, 
@@ -93,7 +103,7 @@ ui <- page_fillable(
                                   ),
                                   
                                   # Shown when selected use-case is "compare cancer types"
-                                  accordion(id = "singular_cancer_type",
+                                  accordion(open=FALSE, id = "singular_cancer_type",
                                             accordion_panel("Select Cancer Type",
                                                             selectizeInput("onco_type", 
                                                                            label = NULL, 
@@ -103,24 +113,29 @@ ui <- page_fillable(
                                   ),
                                   
                                   # Filter panel for metadata
-                                  accordion(accordion_panel("Select metadata", 
-                                                            
-                                                            selectizeInput("sex", 
-                                                                           label = "Select sex", 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE),
-                                                            
-                                                            selectizeInput("race", 
-                                                                           label = "Select ethnic background", 
-                                                                           choices = NULL,
-                                                                           multiple = TRUE),
-                                                            
-                                                            selectizeInput("age_category", 
-                                                                           label = "Select age category", 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE),
-                                                            
-                                  ))),
+                                  accordion(open=FALSE, accordion_panel("Select metadata", 
+                                                                        
+                                                                        selectizeInput("sex", 
+                                                                                       label = "Select sex", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("race", 
+                                                                                       label = "Select ethnic background", 
+                                                                                       choices = NULL,
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("age_category", 
+                                                                                       label = "Select age category", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                  )),
+                                  
+                                  # When clicked, plots and table will be updated based on user-chosen parameters
+                                  #submitButton(text = "Apply Changes", icon = NULL, width = NULL)
+                                  
+                ),
                 
                 # Main part of the dashboard, containing the plots/table/statistics
                 layout_columns(
@@ -140,13 +155,14 @@ ui <- page_fillable(
                                                                        selectInput("xyplot_palette", 
                                                                                    label = "Select color palette", 
                                                                                    choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
-                                                                                   selected = "Blue"))
-                                                       
-                                                       
-                                                       
-                                                       
-                                                       
-                                                       
+                                                                                   selected = "PairedColor12Steps"),
+                                                                       checkboxInput("geom_point_checkbox", 
+                                                                                     label = "Show individual points?", 
+                                                                                     value = FALSE)
+                                                                       
+                                                                       
+                                                       )
+                                       
                                                        
                                                        )
                                                    ),
@@ -157,7 +173,7 @@ ui <- page_fillable(
                                          nav_panel("Heatmap",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select options",
-                                                            
+                                                                                 
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
