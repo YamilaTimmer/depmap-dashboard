@@ -48,3 +48,18 @@ tidy_data$gene <- gsub(" \\(\\d+\\)", "", tidy_data$gene)
 write_feather(x = tidy_data, path = "expression_data.tsv")
 write_feather(x = meta_data, path = "meta_data.tsv")
 ```
+
+# Generating table with all pathways and corresponding genes:
+```{r}
+pathway_table <- getGeneKEGGLinks(species = "hsa")
+pathway_table$Symbol <- mapIds(org.Hs.eg.db, pathway_table$GeneID, column="SYMBOL", keytype="ENTREZID")
+
+write_feather(x=pathway_table, path=paste0(DATA_DIR, "pathway_table.tsv"))
+```
+
+# Generating table with humane pathway descriptions (for user selection)
+```{r}
+
+humane_pathways <- getKEGGPathwayNames(species="hsa")
+write_feather(x=humane_pathways, path=paste0(DATA_DIR, "humane_pathways.tsv"))
+```
