@@ -84,7 +84,7 @@ ui <- page_fillable(
                                   # Shown when selected use-case is "compare pathways"
                                   accordion(open=FALSE, id = "pathway",
                                             accordion_panel("Select Pathway",
-                                                            selectizeInput('pathway_genes', 
+                                                            selectizeInput('pathway_name', 
                                                                            label = NULL, 
                                                                            choices = NULL, 
                                                                            multiple = FALSE)
