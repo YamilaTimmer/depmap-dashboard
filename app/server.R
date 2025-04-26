@@ -1,5 +1,6 @@
 source("functions.R")
 source("../config.R")
+useShinyjs()
 
 server <- function(input, output, session) {
     
@@ -12,18 +13,21 @@ server <- function(input, output, session) {
     meta_data$PatientRace[is.na(meta_data$PatientRace)] <- "Unknown"
     meta_data$AgeCategory[is.na(meta_data$AgeCategory)] <- "Unknown"
     
+    
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
+        
+        
         if (input$use_case == "explore_expression") {
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Summary plots")
             
-            show("genes_accordion")
-            show("cancer_types_accordion")
-            hide("singular_cancer_type")
-            hide("individual_gene")
-            hide("pathway")
+            shinyjs::show("genes_accordion")
+            shinyjs::show("cancer_types_accordion")
+            shinyjs::hide("singular_cancer_type")
+            shinyjs::hide("individual_gene")
+            shinyjs::hide("pathway")
             
             nav_show("navcards", "Summary plots")
             nav_show("navcards", "Heatmap")
@@ -38,17 +42,18 @@ server <- function(input, output, session) {
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
             
-            show("pathway")
-            show("cancer_types_accordion")
-            hide("singular_cancer_type")
-            hide("individual_gene")
-            hide("genes_accordion")
+            shinyjs::show("pathway")
+            shinyjs::show("cancer_types_accordion")
+            shinyjs::hide("singular_cancer_type")
+            shinyjs::hide("individual_gene")
+            shinyjs::hide("genes_accordion")
             
             nav_show("navcards", "Heatmap")
             nav_hide("navcards", "Gene Clustering")
             nav_hide("navcards", "Correlation Plot")
             nav_hide("navcards", "Summary plots")
             
+            human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
             
         } 
         
@@ -57,11 +62,11 @@ server <- function(input, output, session) {
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
             
-            hide("pathway")
-            hide("genes_accordion")
-            hide("cancer_types_accordion")
-            show("singular_cancer_type")
-            show("individual_gene")
+            shinyjs::hide("pathway")
+            shinyjs::hide("genes_accordion")
+            shinyjs::hide("cancer_types_accordion")
+            shinyjs::show("singular_cancer_type")
+            shinyjs::show("individual_gene")
             
             nav_hide("navcards", "Summary plots")
             nav_hide("navcards", "Heatmap")
@@ -70,7 +75,7 @@ server <- function(input, output, session) {
             
             
         }
-
+        
     })
     
     # Updates all dropdown inputs using server-side selectize
@@ -84,6 +89,11 @@ server <- function(input, output, session) {
                          'gene_names', 
                          choices = expression_data$gene, 
                          selected = expression_data$gene[1], 
+                         server = TRUE)
+    
+    updateSelectizeInput(session, 
+                         'pathway_name', 
+                         choices = human_pathways$Description,
                          server = TRUE)
     
     updateSelectizeInput(session, 
@@ -139,8 +149,9 @@ server <- function(input, output, session) {
     
     # Calls function to filter the merged data on the user-chosen gene(s)
     selected_data <- reactive({
-        filter_gene(merged_data(), input)
+        filter_gene(merged_data(), input, human_pathways)
     })
+    
     
     # Generate output for XY plots
     output$plot <- renderPlotly({
@@ -173,9 +184,7 @@ server <- function(input, output, session) {
         
         # Prevent error where plot tries to render before data has loaded in
         req(nrow(data) >= 1)
-        
-        
-        
+
         # Generate plot
         heatmap <- generate_heatmap(input, data)
         
@@ -189,7 +198,7 @@ server <- function(input, output, session) {
         # Load and reformat data for gene clustering
         data <- merged_data()
         wide_exprdata <- reformat_data(data)
-        target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
+        target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
         query_profile <- create_query(wide_exprdata, input)
         all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
         
