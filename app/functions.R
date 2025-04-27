@@ -11,6 +11,11 @@ library(DT)
 library(tidyr)
 library(dplyr)
 library(paletteer)
+library(BiocManager)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(limma)
+
 
 #' Filter metadata
 #'
@@ -26,27 +31,23 @@ library(paletteer)
 
 filter_metadata <- function(meta_data, input) {
     
-    if (input$use_case == "explore_expression"){
-        filtered_metadata <- meta_data %>% 
-            filter(Sex %in% input$sex
-                   & PatientRace %in% input$race
-                   & AgeCategory %in% input$age_category
-                   & OncotreePrimaryDisease %in% input$onco_types
-            )
-        
+    filtered_metadata <- meta_data %>% 
+        filter(Sex %in% input$sex
+               & PatientRace %in% input$race
+               & AgeCategory %in% input$age_category)
+    
+    if (input$use_case == 'gene_clustering') {
+        # For gene clustering, a different input is used where max 1 onco
+        # type can be selected
+        filtered_metadata <- filtered_metadata %>% 
+            filter(OncotreePrimaryDisease == input$onco_type)
     }
     
     else {
-        
-        filtered_metadata <- meta_data %>% 
-            filter(Sex %in% input$sex
-                   & PatientRace %in% input$race
-                   & AgeCategory %in% input$age_category
-                   & OncotreePrimaryDisease == input$onco_type
-            )
-        
+        # For other use cases multiple onco types can be selected
+        filtered_metadata <- filtered_metadata %>% 
+            filter(OncotreePrimaryDisease == input$onco_types)
     }
-    
     
     return(filtered_metadata)
 }
@@ -90,20 +91,34 @@ merge_data <- function(filtered_metadata, expression_data) {
 #' filter_gene(merged_data, input)
 #' 
 
-filter_gene <- function(merged_data, input) {
+filter_gene <- function(merged_data, input, human_pathways) {
     
     if (input$use_case == "explore_expression"){
         filtered_gene <- merged_data %>% 
             filter(gene %in% input$gene_names
             )
     }
-    else {
+    
+    else if (input$use_case == 'compare_pathway'){
+        #human_pathways <- getKEGGPathwayNames(species="hsa")
+        chosen_pathway <- human_pathways %>% filter(human_pathways$Description %in% input$pathway_name)
+        chosen_pathway_ID <- chosen_pathway$PathwayID
+        
+        # Create table with humanpathway ID's and corresponding genes
+        pathway_table <- read_feather(paste0(DATA_DIR, "pathway_table.tsv"))
+        
+        gene_names <- pathway_table %>% filter(pathway_table$PathwayID == chosen_pathway_ID)
         
         filtered_gene <- merged_data %>% 
-            filter(gene == input$gene_name
-            )
-        
+            filter(gene %in% gene_names$Symbol)
     }
+    else {
+        filtered_gene <- merged_data %>% 
+            filter(gene == input$gene_name)
+    }
+    
+    
+
     return(filtered_gene)
 }
 
@@ -178,7 +193,7 @@ xyplots <- function(input, data, type = "boxplot") {
         theme(axis.title.x = element_blank(),
               axis.text.x = element_blank(),
               axis.ticks.x = element_blank()) + 
-    
+        
         # Apply user-chosen color palette
         scale_fill_paletteer_d(palette)
     
@@ -209,17 +224,34 @@ generate_heatmap <- function(input, data){
     palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
     
     
-    p <- ggplot(data = data, 
-                aes(x = gene, 
-                    y = StrippedCellLineName, 
-                    fill = expression)) +
-        geom_tile() + 
-        ylab("Tumor Cell Line") +
-        xlab("Gene") +
-        labs(fill = "Expression level \n (log2 TPM)") +
-        scale_fill_paletteer_c(palette)
+    if (input$use_case == 'compare_pathway'){
+        p <- ggplot(data = data, 
+                    aes(x = gene, 
+                        y = OncotreePrimaryDisease, 
+                        fill = expression)) +
+            geom_tile() + 
+            ylab("Cancer type") +
+            xlab("Gene") +
+            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+            
+        
+    }
     
-    p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
+    else{
+        p <- ggplot(data = data, 
+                    aes(x = gene, 
+                        y = StrippedCellLineName, 
+                        fill = expression)) +
+            geom_tile() + 
+            ylab("Tumor Cell Line") +
+            xlab("Gene") +
+            labs(fill = "Expression level \n (log2 TPM)") +
+            scale_fill_paletteer_c(palette)
+        
+        p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
+        
+    }
+    
     
     return(p)
 }
@@ -284,7 +316,7 @@ generate_datatable <- function(data, filter = "top") {
 
 reformat_data <- function(merged_data){
     wide_exprdata <- merged_data %>% 
-        select(StrippedCellLineName, gene, expression) %>%
+        dplyr::select(StrippedCellLineName, gene, expression) %>%
         pivot_wider(names_from = "StrippedCellLineName", values_from = "expression")
     
     
@@ -299,7 +331,7 @@ reformat_data <- function(merged_data){
 create_query <- function(wide_exprdata, input){
     query_profile <- wide_exprdata %>% 
         filter(gene==input$gene_name) %>% 
-        select(-gene) %>% 
+        dplyr::select(-gene) %>% 
         as.numeric()
     
     return(query_profile)
@@ -460,5 +492,4 @@ determine_top_scoring <- function(input, all_distances, data){
     
     return(tp)
 }
-
 
