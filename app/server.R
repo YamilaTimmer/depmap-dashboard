@@ -3,8 +3,8 @@ source("../config.R")
 useShinyjs()
 
 server <- function(input, output, session) {
-    
-    # Read in .tsv files with expression data and metadata
+
+  # Read in .tsv files with expression data and metadata
     expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     
@@ -232,5 +232,30 @@ server <- function(input, output, session) {
         # Generate the data table with additional features
         generate_datatable(data, filter = "top")
     })
+  
+  # Call functions needed for datatable
+  output$data <- renderDataTable({
     
+    req(selected_data())  # Ensure data is available
+    
+    if (input$use_case == "gene_clustering"){
+      data <- merged_data()
+      wide_exprdata <- reformat_data(data)
+      target_matrix  <- wide_exprdata %>% select(-gene) %>% as.matrix() 
+      query_profile <- create_query(wide_exprdata, input)
+      all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
+      
+      tp <- determine_top_scoring(input, all_distances, data)
+      
+      generate_datatable(tp, filter = "top")
+    } else{
+      # Retrieve data from reactive function
+      data <- selected_data()
+      
+      # Generate the data table with additional features
+      generate_datatable(data, filter = "top")
+      
+    }
+  })
+  
 }

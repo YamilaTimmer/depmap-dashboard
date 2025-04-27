@@ -130,7 +130,8 @@ theme_set(
             plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
             axis.text = element_text(size = 14),
             axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold")
+            strip.text = element_text(size = 14, face = "bold"),
+            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
         )
 )
 
@@ -287,20 +288,19 @@ generate_datatable <- function(data, filter = "top") {
               filter = filter, 
               extensions = c("Buttons"),
               options = list(
-                  dom = 'Btip',
+                  dom = "Btip",
                   buttons = list(
-                      list(extend = 'colvis', 
-                           text = 'Select columns'),
-                      list(extend = 'csv', 
-                           title = 'download.csv', 
-                           text = 'Download CSV'),
-                      list(extend = 'excel', 
-                           title = 'download.xlsx', 
-                           text = 'Download Excel')
+                      list(extend = "colvis", 
+                           text = "Select columns"),
+                      list(extend = "colvisRestore",
+                           text = "Reset to default columns"),
+                      list(extend = "collection",
+                           buttons = c("csv", "excel"),
+                           text = "Download")
                   ),
                   columnDefs = list(
                       # Specify which columns to hide
-                      list(targets = c(0:2,4:6,8:42), visible = FALSE)  
+                    list(targets = c(0:2,4:5,7:42), visible = FALSE)  
                   )
               )
     )
