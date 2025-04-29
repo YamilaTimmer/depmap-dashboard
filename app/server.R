@@ -7,6 +7,7 @@ server <- function(input, output, session) {
   # Read in .tsv files with expression data and metadata
     expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
+    human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
     
     # Convert NA to Unknown
     meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
@@ -53,7 +54,6 @@ server <- function(input, output, session) {
             nav_hide("navcards", "Correlation Plot")
             nav_hide("navcards", "Summary plots")
             
-            human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
             
         } 
         
