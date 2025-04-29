@@ -37,9 +37,50 @@ ui <- page_fillable(
             id = "home_nav",
             "Home",
             tags$div(
-                style = "text-align: center; padding: 50px",
-                tags$h1("Welcome to the Depmap Data Dashboard!"),
-                tags$p("Explore and visualize depmap data, with various interactive plots, heatmaps, and tables.")
+                style = "max-width: 900px; margin: auto; padding: 50px;",
+                
+                # Title and description
+                tags$h1(style = "text-align: center; font-size: 36px; 
+                        font-weight: bold; margin-bottom: 10px;", 
+                        "Depmap data explorer"),
+                tags$p(style = "font-size: 16px;", 
+                       "The Dependency Map",
+                       a("(DepMap)", href = "https://depmap.org/portal/"),
+                       " project provides insight 
+                       into genetic dependecies and vulnerabilities in cancer. 
+                       This dashboard helps in exploring expression, finding 
+                       similiar genes in cancer types, and comparing pathways 
+                       across different cancer types."),
+                tags$hr(style = "margin: 40px 0;"),
+                
+                # Dataset summary
+                tags$div(
+                  tags$h3(bs_icon("bar-chart-line"),
+                          "Dataset summary"),
+                  tags$p(style = "font-size: 16px;",
+                         "On the dashboard the following data can be found:"),
+                  tags$ul(
+                    style = "font-size: 16px;",
+                    tags$li("17,000+ genes"),
+                    tags$li("80+ cancer types"),
+                    tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
+                  )
+                ),
+                tags$hr(style = "margin: 40px 0;"),
+                
+                # About us
+                tags$div(
+                  tags$h3(bs_icon("people-fill"),
+                          "About us"),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard was created by a small team of
+                         enthusiastic bio-informaticians. Yamila Timmer and 
+                         Mirte Draaijer, two students from the bio-informatics
+                         programme of the Hanze university, worked on developing
+                         the dashboard. This happened under the supervision
+                         of lector Wynand Alkema, who works for the 
+                         Kenniscentrum BioBased Economy (KCBBE).")
+                )
             )
         ),
         
