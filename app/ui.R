@@ -37,9 +37,50 @@ ui <- page_fillable(
             id = "home_nav",
             "Home",
             tags$div(
-                style = "text-align: center; padding: 50px",
-                tags$h1("Welcome to the Depmap Data Dashboard!"),
-                tags$p("Explore and visualize depmap data, with various interactive plots, heatmaps, and tables.")
+                style = "max-width: 900px; margin: auto; padding: 50px;",
+                
+                # Title and description
+                tags$h1(style = "text-align: center; font-size: 36px; 
+                        font-weight: bold; margin-bottom: 10px;", 
+                        "Depmap data explorer"),
+                tags$p(style = "font-size: 16px;", 
+                       "The Dependency Map",
+                       a("(DepMap)", href = "https://depmap.org/portal/"),
+                       " project provides insight 
+                       into genetic dependecies and vulnerabilities in cancer. 
+                       This dashboard helps in exploring expression, finding 
+                       similiar genes in cancer types, and comparing pathways 
+                       across different cancer types."),
+                tags$hr(style = "margin: 40px 0;"),
+                
+                # Dataset summary
+                tags$div(
+                  tags$h3(bs_icon("bar-chart-line"),
+                          "Dataset summary"),
+                  tags$p(style = "font-size: 16px;",
+                         "On the dashboard the following data can be found:"),
+                  tags$ul(
+                    style = "font-size: 16px;",
+                    tags$li("17,000+ genes"),
+                    tags$li("80+ cancer types"),
+                    tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
+                  )
+                ),
+                tags$hr(style = "margin: 40px 0;"),
+                
+                # About us
+                tags$div(
+                  tags$h3(bs_icon("people-fill"),
+                          "About us"),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard was created by a small team of
+                         enthusiastic bio-informaticians. Yamila Timmer and 
+                         Mirte Draaijer, two students from the bio-informatics
+                         programme of the Hanze university, worked on developing
+                         the dashboard. This happened under the supervision
+                         of lector Wynand Alkema, who works for the 
+                         Kenniscentrum BioBased Economy (KCBBE).")
+                )
             )
         ),
         
@@ -59,11 +100,12 @@ ui <- page_fillable(
                                                       selectInput('use_case',
                                                                   label = NULL,
                                                                   choices = c("Explore Expression" = "explore_expression", 
-                                                                              "Gene Clustering" = "gene_clustering")
+                                                                              "Gene Clustering" = "gene_clustering",
+                                                                              "Compare Pathway Across Cancer Types" = "compare_pathway")
                                                       ))),
                                   
                                   # Shown when selected use-case is "compare genes"
-                                  accordion(id = "genes_accordion",
+                                  accordion(open=FALSE, id = "genes_accordion",
                                             accordion_panel("Select Gene(s)",
                                                             selectizeInput('gene_names', 
                                                                            label = NULL, 
@@ -72,7 +114,7 @@ ui <- page_fillable(
                                             )),
                                   
                                   # Shown when selected use-case is "compare genes"
-                                  accordion(id = "individual_gene",
+                                  accordion(open=FALSE, id = "individual_gene",
                                             accordion_panel("Select Gene",
                                                             selectizeInput('gene_name', 
                                                                            label = NULL, 
@@ -80,19 +122,29 @@ ui <- page_fillable(
                                                                            multiple = FALSE)
                                             )),
                                   
+                                  # Shown when selected use-case is "compare pathways"
+                                  accordion(open=FALSE, id = "pathway",
+                                            accordion_panel("Select Pathway",
+                                                            selectizeInput('pathway_name', 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = FALSE)
+                                            )),
+                                  
                                   
                                   # Shown when selected use-case is "compare cancer types"
-                                  accordion(id = "cancer_types_accordion",
+                                  accordion(open=FALSE, id = "cancer_types_accordion",
                                             accordion_panel("Select Cancer Type(s)",
                                                             selectizeInput("onco_types", 
                                                                            label = NULL, 
                                                                            choices = NULL, 
-                                                                           multiple = TRUE
+                                                                           multiple = TRUE,
+                                                                           options = list(maxItems = 7)
                                                             ))
                                   ),
                                   
                                   # Shown when selected use-case is "compare cancer types"
-                                  accordion(id = "singular_cancer_type",
+                                  accordion(open=FALSE, id = "singular_cancer_type",
                                             accordion_panel("Select Cancer Type",
                                                             selectizeInput("onco_type", 
                                                                            label = NULL, 
@@ -102,24 +154,29 @@ ui <- page_fillable(
                                   ),
                                   
                                   # Filter panel for metadata
-                                  accordion(accordion_panel("Select metadata", 
-                                                            
-                                                            selectizeInput("sex", 
-                                                                           label = "Select sex", 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE),
-                                                            
-                                                            selectizeInput("race", 
-                                                                           label = "Select ethnic background", 
-                                                                           choices = NULL,
-                                                                           multiple = TRUE),
-                                                            
-                                                            selectizeInput("age_category", 
-                                                                           label = "Select age category", 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE),
-                                                            
-                                  ))),
+                                  accordion(open=FALSE, accordion_panel("Select metadata", 
+                                                                        
+                                                                        selectizeInput("sex", 
+                                                                                       label = "Select sex", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("race", 
+                                                                                       label = "Select ethnic background", 
+                                                                                       choices = NULL,
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("age_category", 
+                                                                                       label = "Select age category", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                  )),
+                                  
+                                  # When clicked, plots and table will be updated based on user-chosen parameters
+                                  #submitButton(text = "Apply Changes", icon = NULL, width = NULL)
+                                  
+                ),
                 
                 # Main part of the dashboard, containing the plots/table/statistics
                 layout_columns(
@@ -133,7 +190,21 @@ ui <- page_fillable(
                                                                                              label = NULL, 
                                                                                              choices = c("Bar Plot", "Box Plot", "Violin Plot"), 
                                                                                              selected = "Bar Plot")
+                                                       ),
+                                                       
+                                                       accordion_panel("Other options",
+                                                                       selectInput("xyplot_palette", 
+                                                                                   label = "Select color palette", 
+                                                                                   choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
+                                                                                   selected = "PairedColor12Steps"),
+                                                                       checkboxInput("geom_point_checkbox", 
+                                                                                     label = "Show individual points?", 
+                                                                                     value = FALSE)
+                                                                       
+                                                                       
                                                        )
+                                       
+                                                       
                                                        )
                                                    ),
                                                    
@@ -143,12 +214,11 @@ ui <- page_fillable(
                                          nav_panel("Heatmap",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select options",
+                                                                                 
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
-                                                                                             choices = c("Grayscale", "Purple-Green", "Blue", "Red-Blue"), 
+                                                                                             choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue")
-                                                                                 
-                                                                                 
                                                        )
                                                        )
                                                    ),
@@ -187,19 +257,11 @@ ui <- page_fillable(
                                                    shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
                                                    )),
                                          
+                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data")))
+                                         
                                          
                          )
-                    ),
-                    
-                    layout_columns(
-                        card(full_screen = TRUE, 
-                             navset_card_tab(
-                                 nav_panel("Table", shinycssloaders::withSpinner(DT::DTOutput("data")))
-                             )  
-                        )
-                    ), 
-                    
-                    col_widths = c(7, 5)
+                    )
                 )
             )
         )
