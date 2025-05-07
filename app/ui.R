@@ -64,7 +64,11 @@ ui <- page_fillable(
                     tags$li("17,000+ genes"),
                     tags$li("80+ cancer types"),
                     tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
-                  )
+                  ),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard includes data on over 80 cancer types, 
+                         the chart below shows the top 10 cancer types that 
+                         have the most available data.")
                 ),
                 plotOutput("homepage_plot", height = "400px"),
                 tags$hr(style = "margin: 40px 0;"),
