@@ -508,6 +508,8 @@ generate_homepage_viz <- function(data){
     geom_bar(width = 1) +
     coord_polar("y") +
     theme_void() +
-    labs(title = "Top 10 cancer types and others", fill = "Cancer type:") +
+    labs(title = "Top 10 cancer types in the dataset", fill = "Cancer type:") +
+    theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+          panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)) +
     scale_fill_paletteer_d("colorBlindness::PairedColor12Steps")
 }
