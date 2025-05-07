@@ -221,10 +221,11 @@ generate_heatmap <- function(input, data){
     # Assigns palette to heatmap that aligns with chosen option
     chosen_palette <- palettes_c_names %>% 
         filter(palettes_c_names$palette %in% input$heatmap_palette)
+    
     palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
-    
-    
+
     if (input$use_case == 'compare_pathway'){
+        
         p <- ggplot(data = data, 
                     aes(x = gene, 
                         y = OncotreePrimaryDisease, 
@@ -232,7 +233,10 @@ generate_heatmap <- function(input, data){
             geom_tile() + 
             ylab("Cancer type") +
             xlab("Gene") +
+            scale_fill_paletteer_c(palette) +
             theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+            
+        
             
         
     }
