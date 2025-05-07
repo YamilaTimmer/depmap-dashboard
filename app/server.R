@@ -247,4 +247,9 @@ server <- function(input, output, session) {
     }
   })
   
+  output$homepage_plot <- renderPlot({
+    req(meta_data)
+    generate_homepage_viz(meta_data)
+  })
+  
 }

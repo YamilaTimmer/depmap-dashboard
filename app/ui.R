@@ -66,6 +66,7 @@ ui <- page_fillable(
                     tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
                   )
                 ),
+                plotOutput("homepage_plot", height = "400px"),
                 tags$hr(style = "margin: 40px 0;"),
                 
                 # About us

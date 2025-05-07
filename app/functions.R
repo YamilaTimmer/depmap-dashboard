@@ -493,3 +493,20 @@ determine_top_scoring <- function(input, all_distances, data){
     return(tp)
 }
 
+#'generate_homepage_viz
+#'
+#'This function generates the piechart shown on the homepage of the dashboard.
+#'
+#'@param data: a dataframe containing the OncotreePrimaryDisease.
+#'@return
+#'@examples
+#'generate_homepage_viz(data)
+
+generate_homepage_viz <- function(data){
+  ggplot(data, aes(x = "", fill = fct_lump(OncotreePrimaryDisease, n = 10))) +
+    geom_bar(width = 1) +
+    coord_polar("y") +
+    theme_void() +
+    labs(title = "Top 10 cancer types and others", fill = "Cancer type:") +
+    scale_fill_paletteer_d("colorBlindness::PairedColor12Steps")
+}
