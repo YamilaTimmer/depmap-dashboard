@@ -16,6 +16,17 @@ library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(limma)
 
+# Set theme for all plots globally:
+theme_set(
+    theme_minimal() +
+        theme(
+            plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+            axis.text = element_text(size = 14),
+            axis.title = element_text(size = 14),
+            strip.text = element_text(size = 14, face = "bold"),
+            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
+        )
+)
 
 #' Filter metadata
 #'
@@ -37,6 +48,7 @@ filter_metadata <- function(meta_data, input) {
                & AgeCategory %in% input$age_category)
     
     if (input$use_case == 'gene_clustering') {
+        
         # For gene clustering, a different input is used where max 1 onco
         # type can be selected
         filtered_metadata <- filtered_metadata %>% 
@@ -44,6 +56,7 @@ filter_metadata <- function(meta_data, input) {
     }
     
     else {
+        
         # For other use cases multiple onco types can be selected
         filtered_metadata <- filtered_metadata %>% 
             filter(OncotreePrimaryDisease == input$onco_types)
@@ -86,9 +99,10 @@ merge_data <- function(filtered_metadata, expression_data) {
 #'
 #' @param merged_data dataframe of metadata with corresponding expression data
 #' @param input user input from filter options in application
+#' @param human_pathways dataframe of human pathways with corresponding genes per pathway
 #' @return filtered_gene, dataframe of metadata + expression data that is filtered on all user inputs
 #' @examples
-#' filter_gene(merged_data, input)
+#' filter_gene(merged_data, input, human_pathways)
 #' 
 
 filter_gene <- function(merged_data, input, human_pathways) {
@@ -118,22 +132,10 @@ filter_gene <- function(merged_data, input, human_pathways) {
     }
     
     
-
+    
     return(filtered_gene)
 }
 
-
-# Set theme for all plots globally:
-theme_set(
-    theme_minimal() +
-        theme(
-            plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
-            axis.text = element_text(size = 14),
-            axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold"),
-            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
-        )
-)
 
 #' Generate XY plots  
 #'  
@@ -223,7 +225,8 @@ generate_heatmap <- function(input, data){
         filter(palettes_c_names$palette %in% input$heatmap_palette)
     
     palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
-
+    
+    # Generate heatmap for comparing expression of pathway across cancer types 
     if (input$use_case == 'compare_pathway'){
         
         p <- ggplot(data = data, 
@@ -235,12 +238,9 @@ generate_heatmap <- function(input, data){
             xlab("Gene") +
             scale_fill_paletteer_c(palette) +
             theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-            
-        
-            
-        
     }
     
+    # Generate heatmap for visualizing gene expression across selected genes/cell lines
     else{
         p <- ggplot(data = data, 
                     aes(x = gene, 
@@ -269,6 +269,7 @@ generate_heatmap <- function(input, data){
 #' @return a datatable.
 #' @examples
 #' generate_datatable(merged_data)
+
 generate_datatable <- function(data, filter = "top") {
     validate(
         need(nrow(data) > 0, "No data available for the selected settings.")
@@ -304,7 +305,7 @@ generate_datatable <- function(data, filter = "top") {
                   ),
                   columnDefs = list(
                       # Specify which columns to hide
-                    list(targets = c(0:2,4:5,7:42), visible = FALSE)  
+                      list(targets = c(0:2,4:5,7:42), visible = FALSE)  
                   )
               )
     )
@@ -314,9 +315,11 @@ generate_datatable <- function(data, filter = "top") {
 #' Gene clustering reformat
 #' 
 #' This function reformats the data to make it suited for gene clustering/correlation plot.
-#'
-
-
+#' 
+#' @param merged_data: dataframe of metadata with corresponding expression data
+#' @return wide dataframe based of merged_data
+#' @examples
+#' reformat_data(merged_data)
 
 reformat_data <- function(merged_data){
     wide_exprdata <- merged_data %>% 
@@ -331,7 +334,14 @@ reformat_data <- function(merged_data){
 
 #' Create Query Profile
 #'
-#'
+#' This function creates the query profile, which is the expression profile of the query gene,
+#' which is needed to compare it to the profiles of other genes
+#' 
+#' @param merged_data: dataframe of metadata with corresponding expression data
+#' @param input: input from filter options in application
+#' @return numeric vector with expression profile of chosen gene
+#' @examples
+#' create_query(wide_exprdata, input)
 create_query <- function(wide_exprdata, input){
     query_profile <- wide_exprdata %>% 
         filter(gene==input$gene_name) %>% 
@@ -358,9 +368,13 @@ calc_dist <- function(x,y){
 #' 
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
 #' @param input: user input from filter options in application
-#' @return a tibble
+#' @param target_matrix: numeric vector with expression profile of target gene
+#' @param query_profile: numeric vector with expression profile of chosen query gene
+#' @param wide_exprdata: wide dataframe based of merged_data
+#' @return a tibble with 3 columns, containing the query_gene [1], the target_gen [2] 
+#' and the difference in expression between these two genes (also known as the 'distance') [3]
 #' @examples
-#' determine_distances(data, input)
+#' determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
 
 determine_distances <- function(data, input, target_matrix, query_profile, wide_exprdata){
     
@@ -385,13 +399,55 @@ determine_distances <- function(data, input, target_matrix, query_profile, wide_
 }
 
 
+#' determine_top_scoring
+#'  
+#' This function determines what target genes have the smallest or largest distance 
+#' to the query gene, where small distance points to positive correlation and large 
+#' distance points to negative correlation
+#' 
+#' @param input: user input from filter options in application
+#' @param all_distances: a tibble with 3 columns, containing the query_gene [1], the target_gen [2] 
+#' and the difference in expression between these two genes (also known as the 'distance') [3]
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return a reduced version of data, with only the "top-scoring" genes 
+#' (whether the user chose for most positive/most negative correlation)
+#' @examples 
+#' determine_top_scoring(input, all_distances, data)
+
+determine_top_scoring <- function(input, all_distances, data){
+    
+    if (input$clustering_options == "Positive correlation"){
+        top_scoring <- all_distances %>% 
+            filter(distance < 0.99, distance > 0.1) %>% 
+            arrange(-abs(distance)) %>% 
+            head(input$top_n_genes)
+    } else if (input$clustering_options == "Negative correlation"){
+        top_scoring <- all_distances %>% 
+            filter(distance < 0.99, distance > 0.1) %>% 
+            arrange(-abs(distance)) %>% 
+            tail(input$top_n_genes) 
+    }
+    
+    # Selects expression data for genes with highest correlation to query gene
+    tp <- data %>% filter(gene %in% top_scoring$target_gene) 
+    
+    # Add selected gene to dataframe
+    tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
+    
+    print(tp)
+    print(class(tp))
+    return(tp)
+}
+
+
+
 #' Gene Clustering Plot
 #'  
 #' This function generates a gene clustering plot that displays up to 10 genes 
 #' with a similar expression profile compared to a selected gene 
 #' 
-#' @param tp: tp <- determine_top_scoring(input, all_distances, data)
-#' @return A ggplot2 line plot object 
+#' @param tp: a reduced version of data, with only the "top-scoring" genes 
+#' @return A ggplot2 line plot object, displaying the top-scoring genes + query gene
 #' @examples 
 #' generate_clusterplot(tp)
 
@@ -433,8 +489,9 @@ generate_clusterplot <- function(tp){
 #' between two genes across all cell lines.
 #' 
 #' @param input: user input from filter options in application
-#' @param wide_exprdata: 
-#' @return A ggplot2 point plot object 
+#' @param wide_exprdata: wide dataframe based of merged_data
+#' @return A ggplot2 point plot object, displaying the correlation between one 
+#' query gene and one target gene
 #' @examples 
 #' generate_corr_plot(input,wide_exprdata)
 
@@ -461,39 +518,3 @@ generate_corr_plot <- function(input, wide_exprdata){
     
     return(p)
 }
-
-#' determine_top_scoring
-#'  
-#' This function ...
-#' 
-#' @param input: user input from filter options in application
-#' @param all_distances: 
-#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
-#' @return 
-#' @examples 
-#' determine_top_scoring(input, all_distances, data)
-
-determine_top_scoring <- function(input, all_distances, data){
-    
-    if (input$clustering_options == "Positive correlation"){
-        top_scoring <- all_distances %>% 
-            filter(distance < 0.99, distance > 0.1) %>% 
-            arrange(-abs(distance)) %>% 
-            head(input$top_n_genes)
-    } else if (input$clustering_options == "Negative correlation"){
-        top_scoring <- all_distances %>% 
-            filter(distance < 0.99, distance > 0.1) %>% 
-            arrange(-abs(distance)) %>% 
-            tail(input$top_n_genes) 
-    }
-    
-    
-    # Selects expression data for genes with highest correlation to query gene
-    tp <- data %>% filter(gene %in% top_scoring$target_gene) 
-    
-    # Add selected gene to dataframe
-    tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
-    
-    return(tp)
-}
-
