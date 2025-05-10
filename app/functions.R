@@ -168,9 +168,6 @@ check_significancy <- function(filtered_gene) {
         
         
         
-        print(p_value_df)
-        
-        
     }
     
     
@@ -197,8 +194,8 @@ xyplots <- function(input, data, type = "boxplot") {
     p <- ggplot(data, aes(x = OncotreePrimaryDisease, 
                           y = expression, 
                           fill = OncotreePrimaryDisease
-                          ))
-
+    ))
+    
     
     chosen_palette <- palettes_d_names %>% 
         filter(palettes_d_names$palette %in% input$xyplot_palette)
@@ -219,7 +216,7 @@ xyplots <- function(input, data, type = "boxplot") {
                          fun.data = mean_se, 
                          width = 0.2, 
                          position = position_dodge(0.9))
-
+        
     } else {
         stop("Invalid plot type. Choose 'boxplot', 'violin', or 'bar'.")
     }
@@ -252,7 +249,7 @@ xyplots <- function(input, data, type = "boxplot") {
                   width = input$plot_width) %>%
         layout(margin = list(l = 60, r = 20, b = 0, t = 80))
     
-
+    
     
     return(p)
 }
@@ -555,17 +552,21 @@ generate_corr_plot <- function(input, wide_exprdata){
     colnames(gene_exprdata) <- wide_exprdata$gene
     
     
-    x <-gene_exprdata %>% pull(input$gene_name)
+    x <- gene_exprdata %>% pull(input$gene_name)
     y <- gene_exprdata %>% pull(input$correlation_gene)
+    Cell_line <- rownames(gene_exprdata)
     
     mymodel <-lm(x~y+0)
     p <- ggplot(gene_exprdata, aes(x = .data[[input$gene_name]], 
                                    y = .data[[input$correlation_gene]], 
-                                   label= rownames(gene_exprdata)))
-    p <- p + geom_text()
+                                   label = Cell_line))
+    
     p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
     
+    if (input$label_checkbox == TRUE){
+        p <- p + geom_text()
+    }
     
     
     return(p)

@@ -55,25 +55,25 @@ ui <- page_fillable(
                 
                 # Dataset summary
                 tags$div(
-                  tags$h3(bs_icon("bar-chart-line"),
-                          "Dataset summary"),
-                  tags$p(style = "font-size: 16px;",
-                         "On the dashboard the following data can be found:"),
-                  tags$ul(
-                    style = "font-size: 16px;",
-                    tags$li("17,000+ genes"),
-                    tags$li("80+ cancer types"),
-                    tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
-                  )
+                    tags$h3(bs_icon("bar-chart-line"),
+                            "Dataset summary"),
+                    tags$p(style = "font-size: 16px;",
+                           "On the dashboard the following data can be found:"),
+                    tags$ul(
+                        style = "font-size: 16px;",
+                        tags$li("17,000+ genes"),
+                        tags$li("80+ cancer types"),
+                        tags$li("Metadata consisting of sex, race, age, ethnicity, and more.")
+                    )
                 ),
                 tags$hr(style = "margin: 40px 0;"),
                 
                 # About us
                 tags$div(
-                  tags$h3(bs_icon("people-fill"),
-                          "About us"),
-                  tags$p(style = "font-size: 16px;",
-                         "The dashboard was created by a small team of
+                    tags$h3(bs_icon("people-fill"),
+                            "About us"),
+                    tags$p(style = "font-size: 16px;",
+                           "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and 
                          Mirte Draaijer, two students from the bio-informatics
                          programme of the Hanze university, worked on developing
@@ -201,7 +201,6 @@ ui <- page_fillable(
                                                                                      label = "Show individual points?", 
                                                                                      value = FALSE)
                                                                        
-                                                                       
                                                        ),
                                                        accordion(accordion_panel("Size settings",
                                                                                  sliderInput("plot_height",
@@ -219,8 +218,9 @@ ui <- page_fillable(
                                                                                              value = 1200,
                                                                                              step = 50,
                                                                                              ticks = FALSE))
+                                                                 
                                                        )
-                                       
+                                                       
                                                        
                                                        )
                                                    ),
@@ -237,66 +237,71 @@ ui <- page_fillable(
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue")),
                                                                  accordion(accordion_panel("Size settings",
-                                                                                 sliderInput("heatmap_height",
-                                                                                             label = "Adjust height",
-                                                                                             min = 500,
-                                                                                             max = 1500,
-                                                                                             value = 750,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE),
-                                                                                 
-                                                                                 sliderInput("heatmap_width",
-                                                                                             label = "Adjust width",
-                                                                                             min = 700,
-                                                                                             max = 1500,
-                                                                                             value = 1200,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE))
-                                                       )
-                                                       )
-                                                   ),
+                                                                                           sliderInput("heatmap_height",
+                                                                                                       label = "Adjust height",
+                                                                                                       min = 500,
+                                                                                                       max = 1500,
+                                                                                                       value = 750,
+                                                                                                       step = 50,
+                                                                                                       ticks = FALSE),
+                                                                                           
+                                                                                           sliderInput("heatmap_width",
+                                                                                                       label = "Adjust width",
+                                                                                                       min = 700,
+                                                                                                       max = 1500,
+                                                                                                       value = 1200,
+                                                                                                       step = 50,
+                                                                                                       ticks = FALSE))
+                                                                 )
+                                                                 )
+                                                       ),
+                                                       
+                                                       shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                                                   )),
                                                    
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
-                                                   )),
-                                         
-                                         nav_panel("Gene Clustering",                               
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select clustering options",
-                                                                                 selectInput("clustering_options", 
-                                                                                             label = "Select correlation to show:", 
-                                                                                             choices = c("Positive correlation", "Negative correlation"), 
-                                                                                             selected = "Positive correlation"),
-                                                                                 sliderInput("top_n_genes", 
-                                                                                             label = "Number of genes to show:", 
-                                                                                             min = 1, 
-                                                                                             max = 10, 
-                                                                                             value = 5)
-                                                       )
-                                                       )
-                                                   ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
-                                                   )),
-                                         
-                                         nav_panel("Correlation Plot",                               
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select correlation options",
-                                                                                 selectizeInput("correlation_gene", 
-                                                                                                label = "Select gene to compare with:",
-                                                                                                choices = NULL,
-                                                                                                multiple = FALSE),
-                                                       )
-                                                       )
-                                                   ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
-                                                   )),
-                                         
-                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data")))
-                                         
-                                         
+                                                   nav_panel("Gene Clustering",                               
+                                                             layout_sidebar(sidebar = sidebar(
+                                                                 accordion(accordion_panel("Select clustering options",
+                                                                                           selectInput("clustering_options", 
+                                                                                                       label = "Select correlation to show:", 
+                                                                                                       choices = c("Positive correlation", "Negative correlation"), 
+                                                                                                       selected = "Positive correlation"),
+                                                                                           sliderInput("top_n_genes", 
+                                                                                                       label = "Number of genes to show:", 
+                                                                                                       min = 1, 
+                                                                                                       max = 10, 
+                                                                                                       value = 5)
+                                                                 )
+                                                                 )
+                                                             ),
+                                                             shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
+                                                             )),
+                                                   
+                                                   nav_panel("Correlation Plot",                               
+                                                             layout_sidebar(sidebar = sidebar(
+                                                                 accordion(accordion_panel("Select correlation options",
+                                                                                           selectizeInput("correlation_gene", 
+                                                                                                          label = "Select gene to compare with:",
+                                                                                                          choices = NULL,
+                                                                                                          multiple = FALSE),
+                                                                 ),
+                                                                 accordion(accordion_panel("Other options",
+                                                                                           checkboxInput("label_checkbox", 
+                                                                                                          label = "Display cell line labels?",
+                                                                                                         value = TRUE),
+                                                                 
+                                                                 )))
+                                                             ),
+                                                             shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
+                                                             )),
+                                                   
+                                                   nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data")))
+                                                   
+                                                   
+                                         )
                          )
                     )
                 )
             )
         )
     )
-)
