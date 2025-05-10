@@ -59,12 +59,11 @@ filter_metadata <- function(meta_data, input) {
         
         # For other use cases multiple onco types can be selected
         filtered_metadata <- filtered_metadata %>% 
-            filter(OncotreePrimaryDisease == input$onco_types)
+            filter(OncotreePrimaryDisease %in% input$onco_types)
     }
     
     return(filtered_metadata)
 }
-
 
 #' Merge data
 #'
@@ -132,9 +131,50 @@ filter_gene <- function(merged_data, input, human_pathways) {
     }
     
     
-    
     return(filtered_gene)
 }
+
+#' Significancy checker
+#'
+#' This function checks if differences in gene expression across cancer types are
+#' statistically significant
+#'
+#'
+check_significancy <- function(filtered_gene) {
+    
+    colnames(filtered_gene)[colnames(filtered_gene) == "expression"] <- "expr"
+    
+    data <- filtered_gene
+    
+    genes <- unique(data$gene)
+    
+    p_value_df <- data.frame(
+        gene = character(),
+        p_value = numeric(),
+        stringsAsFactors = FALSE
+    )
+    
+    for (gene_name in genes) {
+        gene_data <- data[data$gene == gene_name, ]
+        
+        # Perform t test on genes from 2 groups (the 2 selected cancer types) 
+        # and determines whether the differences are statistically significant
+        res <- t.test(expr ~ OncotreePrimaryDisease, data = gene_data)
+        
+        # Add gene name + corresponding p_value to df
+        p_value_df <- rbind(p_value_df, data.frame(
+            gene = gene_name,
+            p_value = res$p.value))
+        
+        
+        
+        print(p_value_df)
+        
+        
+    }
+    
+    
+}   
 
 
 #' Generate XY plots  
@@ -156,7 +196,9 @@ filter_gene <- function(merged_data, input, human_pathways) {
 xyplots <- function(input, data, type = "boxplot") {
     p <- ggplot(data, aes(x = OncotreePrimaryDisease, 
                           y = expression, 
-                          fill = OncotreePrimaryDisease))
+                          fill = OncotreePrimaryDisease
+                          ))
+
     
     chosen_palette <- palettes_d_names %>% 
         filter(palettes_d_names$palette %in% input$xyplot_palette)
@@ -177,6 +219,7 @@ xyplots <- function(input, data, type = "boxplot") {
                          fun.data = mean_se, 
                          width = 0.2, 
                          position = position_dodge(0.9))
+
     } else {
         stop("Invalid plot type. Choose 'boxplot', 'violin', or 'bar'.")
     }
@@ -202,6 +245,14 @@ xyplots <- function(input, data, type = "boxplot") {
     if (input$geom_point_checkbox == TRUE){
         p <- p + geom_point()
     }
+    
+    # Makes plot better visible (e.g. y-axis title was cut-off before)
+    p <- ggplotly(p, 
+                  height = input$plot_height, 
+                  width = input$plot_width) %>%
+        layout(margin = list(l = 60, r = 20, b = 0, t = 80))
+    
+
     
     return(p)
 }
@@ -255,6 +306,9 @@ generate_heatmap <- function(input, data){
         p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
         
     }
+    
+    p <- ggplotly(p, height = input$heatmap_height, width = input$heatmap_width) %>%
+        layout(margin = list(l = 100, r = 10, b = 90, t = 50))
     
     
     return(p)
@@ -434,8 +488,6 @@ determine_top_scoring <- function(input, all_distances, data){
     # Add selected gene to dataframe
     tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
     
-    print(tp)
-    print(class(tp))
     return(tp)
 }
 

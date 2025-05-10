@@ -202,6 +202,23 @@ ui <- page_fillable(
                                                                                      value = FALSE)
                                                                        
                                                                        
+                                                       ),
+                                                       accordion(accordion_panel("Size settings",
+                                                                                 sliderInput("plot_height",
+                                                                                             label = "Adjust height",
+                                                                                             min = 500,
+                                                                                             max = 1500,
+                                                                                             value = 750,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE),
+                                                                                 
+                                                                                 sliderInput("plot_width",
+                                                                                             label = "Adjust width",
+                                                                                             min = 700,
+                                                                                             max = 1500,
+                                                                                             value = 1200,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE))
                                                        )
                                        
                                                        
@@ -218,7 +235,23 @@ ui <- page_fillable(
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
-                                                                                             selected = "Blue")
+                                                                                             selected = "Blue")),
+                                                                 accordion(accordion_panel("Size settings",
+                                                                                 sliderInput("heatmap_height",
+                                                                                             label = "Adjust height",
+                                                                                             min = 500,
+                                                                                             max = 1500,
+                                                                                             value = 750,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE),
+                                                                                 
+                                                                                 sliderInput("heatmap_width",
+                                                                                             label = "Adjust width",
+                                                                                             min = 700,
+                                                                                             max = 1500,
+                                                                                             value = 1200,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE))
                                                        )
                                                        )
                                                    ),
