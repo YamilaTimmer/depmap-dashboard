@@ -525,7 +525,7 @@ determine_top_scoring <- function(input, all_distances, data){
 #' generate_clusterplot(tp)
 
 
-generate_clusterplot <- function(tp){
+generate_clusterplot <- function(tp, input){
     
     # Warning when only one patient is selected, no satisfactory expression profile
     # comparison can be created
@@ -550,6 +550,9 @@ generate_clusterplot <- function(tp){
     p <- p + geom_point()
     p <- p + geom_line(aes(group = gene))
     p <- p + theme(axis.text.x = element_text(angle=270)) 
+    
+    
+    p <- ggplotly(p, height = input$cluster_height, width = input$cluster_width)
     
     return(p)
     
@@ -591,6 +594,8 @@ generate_corr_plot <- function(input, wide_exprdata){
     if (input$label_checkbox == TRUE){
         p <- p + geom_text()
     }
+    
+    p <- ggplotly(p, height = input$corr_height, width = input$corr_width)
     
     
     return(p)

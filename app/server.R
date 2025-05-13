@@ -224,7 +224,7 @@ server <- function(input, output, session) {
         tp <- determine_top_scoring(input, all_distances, data)
         
         # Generate plot
-        clusterplot <- generate_clusterplot(tp)
+        clusterplot <- generate_clusterplot(tp, input)
     })
     
     # Call functions needed for correlation plot
