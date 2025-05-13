@@ -153,6 +153,19 @@ ui <- page_fillable(
                                                             ))
                                   ),
                                   
+                                  
+                                  # Shown when selected use-case is "compare cancer types"
+                                  accordion(open=FALSE, id = "compare_pathway_cancertypes",
+                                            accordion_panel("Select 2 Cancer Types",
+                                                            selectizeInput("compare_pathway_onco_type", 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = TRUE,
+                                                                           # allows selection of max 2 onco types
+                                                                           options = list(maxItems = 2)
+                                                            ))
+                                  ),
+                                  
                                   # Filter panel for metadata
                                   accordion(open=FALSE, accordion_panel("Select metadata", 
                                                                         
@@ -235,7 +248,10 @@ ui <- page_fillable(
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
-                                                                                             selected = "Blue")),
+                                                                                             selected = "Blue"),
+                                                                                 checkboxInput("p_value_checkbox", 
+                                                                                               label = "Only show genes with p < 0.05?", 
+                                                                                               value = FALSE)),
                                                                  accordion(accordion_panel("Size settings",
                                                                                            sliderInput("heatmap_height",
                                                                                                        label = "Adjust height",

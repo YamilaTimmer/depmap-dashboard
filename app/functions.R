@@ -55,6 +55,15 @@ filter_metadata <- function(meta_data, input) {
             filter(OncotreePrimaryDisease == input$onco_type)
     }
     
+    
+    else if (input$use_case == 'compare_pathway'){
+        
+        # 2 oncotypes can be selected
+        filtered_metadata <- filtered_metadata %>% 
+            filter(OncotreePrimaryDisease %in% input$compare_pathway_onco_type)
+    }
+    
+    
     else {
         
         # For other use cases multiple onco types can be selected
@@ -106,14 +115,14 @@ merge_data <- function(filtered_metadata, expression_data) {
 
 filter_gene <- function(merged_data, input, human_pathways) {
     
-    if (input$use_case == "explore_expression"){
+    if (input$use_case == 'explore_expression'){
+        
         filtered_gene <- merged_data %>% 
-            filter(gene %in% input$gene_names
-            )
+            filter(gene %in% input$gene_names)
     }
     
     else if (input$use_case == 'compare_pathway'){
-        #human_pathways <- getKEGGPathwayNames(species="hsa")
+        
         chosen_pathway <- human_pathways %>% filter(human_pathways$Description %in% input$pathway_name)
         chosen_pathway_ID <- chosen_pathway$PathwayID
         
@@ -126,6 +135,7 @@ filter_gene <- function(merged_data, input, human_pathways) {
             filter(gene %in% gene_names$Symbol)
     }
     else {
+        
         filtered_gene <- merged_data %>% 
             filter(gene == input$gene_name)
     }
@@ -140,9 +150,7 @@ filter_gene <- function(merged_data, input, human_pathways) {
 #' statistically significant
 #'
 #'
-check_significancy <- function(filtered_gene) {
-    
-    colnames(filtered_gene)[colnames(filtered_gene) == "expression"] <- "expr"
+check_significancy <- function(filtered_gene, input) {
     
     data <- filtered_gene
     
@@ -165,11 +173,15 @@ check_significancy <- function(filtered_gene) {
         p_value_df <- rbind(p_value_df, data.frame(
             gene = gene_name,
             p_value = res$p.value))
-        
-        
-        
     }
     
+    significant_genes <- p_value_df$gene[p_value_df$p_value <= 0.05]
+    
+    
+    data <- data[data$gene == significant_genes, ]
+    
+    
+    return(data)
     
 }   
 
@@ -192,7 +204,7 @@ check_significancy <- function(filtered_gene) {
 
 xyplots <- function(input, data, type = "boxplot") {
     p <- ggplot(data, aes(x = OncotreePrimaryDisease, 
-                          y = expression, 
+                          y = expr, 
                           fill = OncotreePrimaryDisease
     ))
     
@@ -277,15 +289,27 @@ generate_heatmap <- function(input, data){
     # Generate heatmap for comparing expression of pathway across cancer types 
     if (input$use_case == 'compare_pathway'){
         
-        p <- ggplot(data = data, 
-                    aes(x = gene, 
-                        y = OncotreePrimaryDisease, 
-                        fill = expression)) +
-            geom_tile() + 
-            ylab("Cancer type") +
-            xlab("Gene") +
-            scale_fill_paletteer_c(palette) +
-            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        #req(length(input$compare_pathway_onco_type) == 2)
+        
+        if (length(input$compare_pathway_onco_type) !=2){
+            
+            stop("⚠️: Please select 2 cancer types")
+            
+        }
+        
+        else{
+            
+            p <- ggplot(data = data, 
+                        aes(x = gene, 
+                            y = OncotreePrimaryDisease, 
+                            fill = expr)) +
+                geom_tile() + 
+                ylab("Cancer type") +
+                xlab("Gene") +
+                scale_fill_paletteer_c(palette) +
+                theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+            
+        }
     }
     
     # Generate heatmap for visualizing gene expression across selected genes/cell lines
@@ -293,7 +317,7 @@ generate_heatmap <- function(input, data){
         p <- ggplot(data = data, 
                     aes(x = gene, 
                         y = StrippedCellLineName, 
-                        fill = expression)) +
+                        fill = expr)) +
             geom_tile() + 
             ylab("Tumor Cell Line") +
             xlab("Gene") +
@@ -335,7 +359,7 @@ generate_datatable <- function(data, filter = "top") {
     data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
                         data$gene, "' target='_blank'>", data$gene, "</a>")
     
-    data$expression <- round(data$expression, 3)
+    data$expr <- round(data$expr, 3)
     
     # Render the table
     datatable(data, 
@@ -374,8 +398,8 @@ generate_datatable <- function(data, filter = "top") {
 
 reformat_data <- function(merged_data){
     wide_exprdata <- merged_data %>% 
-        dplyr::select(StrippedCellLineName, gene, expression) %>%
-        pivot_wider(names_from = "StrippedCellLineName", values_from = "expression")
+        dplyr::select(StrippedCellLineName, gene, expr) %>%
+        pivot_wider(names_from = "StrippedCellLineName", values_from = "expr")
     
     
     return(wide_exprdata)
@@ -521,7 +545,7 @@ generate_clusterplot <- function(tp){
     # generate the plot
     p <- ggplot(tp, 
                 aes(x = StrippedCellLineName, 
-                    y = expression, 
+                    y = expr, 
                     color = gene))
     p <- p + geom_point()
     p <- p + geom_line(aes(group = gene))

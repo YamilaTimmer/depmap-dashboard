@@ -9,6 +9,10 @@ server <- function(input, output, session) {
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
     
+    # no longer needed if new version from pre-processing is loaded
+    colnames(expression_data)[colnames(expression_data) == "expression"] <- "expr"
+    
+    
     # Convert NA to Unknown
     meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
     meta_data$PatientRace[is.na(meta_data$PatientRace)] <- "Unknown"
@@ -29,6 +33,7 @@ server <- function(input, output, session) {
             shinyjs::hide("singular_cancer_type")
             shinyjs::hide("individual_gene")
             shinyjs::hide("pathway")
+            shinyjs::hide("compare_pathway_cancertypes")
             
             nav_show("navcards", "Summary plots")
             nav_show("navcards", "Heatmap")
@@ -38,16 +43,17 @@ server <- function(input, output, session) {
             
         } 
         
-        if (input$use_case == "compare_pathway") {
+        else if (input$use_case == "compare_pathway") {
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
             
             shinyjs::show("pathway")
-            shinyjs::show("cancer_types_accordion")
+            shinyjs::hide("cancer_types_accordion")
             shinyjs::hide("singular_cancer_type")
             shinyjs::hide("individual_gene")
             shinyjs::hide("genes_accordion")
+            shinyjs::show("compare_pathway_cancertypes")
             
             nav_show("navcards", "Heatmap")
             nav_hide("navcards", "Gene Clustering")
@@ -57,7 +63,9 @@ server <- function(input, output, session) {
             
         } 
         
-        if (input$use_case == "gene_clustering") {
+        
+        # for use case "gene_clustering"
+        else  { 
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
@@ -67,6 +75,7 @@ server <- function(input, output, session) {
             shinyjs::hide("cancer_types_accordion")
             shinyjs::show("singular_cancer_type")
             shinyjs::show("individual_gene")
+            shinyjs::hide("compare_pathway_cancertypes")
             
             nav_hide("navcards", "Summary plots")
             nav_hide("navcards", "Heatmap")
@@ -108,6 +117,12 @@ server <- function(input, output, session) {
                          selected = "Acute Myeloid Leukemia",
                          server = TRUE)
     
+    updateSelectizeInput(session, 
+                         'compare_pathway_onco_type', 
+                         choices = sort(meta_data$OncotreePrimaryDisease), 
+                         selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
+                         server = TRUE)
+   
     
     updateSelectizeInput(session, 
                          "sex", 
@@ -182,6 +197,10 @@ server <- function(input, output, session) {
         # Retrieve data from reactive function
         data <- selected_data()
         
+        if (input$p_value_checkbox == TRUE){
+            
+        data <- check_significancy(data,input)
+        }
         # Prevent error where plot tries to render before data has loaded in
         req(nrow(data) >= 1)
 
