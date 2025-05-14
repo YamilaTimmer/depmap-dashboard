@@ -131,8 +131,7 @@ theme_set(
             plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
             axis.text = element_text(size = 14),
             axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold"),
-            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
+            strip.text = element_text(size = 14, face = "bold")
         )
 )
 
@@ -201,6 +200,9 @@ xyplots <- function(input, data, type = "boxplot") {
     if (input$geom_point_checkbox == TRUE){
         p <- p + geom_point()
     }
+    if (input$border_checkbox == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
     
     return(p)
 }
@@ -253,6 +255,9 @@ generate_heatmap <- function(input, data){
         
     }
     
+    if (input$border_checkbox_heatmap == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
     
     return(p)
 }
@@ -393,7 +398,7 @@ determine_distances <- function(data, input, target_matrix, query_profile, wide_
 #' generate_clusterplot(tp)
 
 
-generate_clusterplot <- function(tp){
+generate_clusterplot <- function(tp, input){
     
     # Warning when only one patient is selected, no satisfactory expression profile
     # comparison can be created
@@ -418,6 +423,10 @@ generate_clusterplot <- function(tp){
     p <- p + geom_point()
     p <- p + geom_line(aes(group = gene))
     p <- p + theme(axis.text.x = element_text(angle=270)) 
+    
+    if (input$border_checkbox_cluster == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
     
     return(p)
     
@@ -454,6 +463,9 @@ generate_corr_plot <- function(input, wide_exprdata){
     p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
     
+    if (input$border_checkbox_correlation == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
     
     
     return(p)

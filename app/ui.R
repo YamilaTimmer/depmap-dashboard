@@ -204,6 +204,9 @@ ui <- page_fillable(
                                                                                    selected = "PairedColor12Steps"),
                                                                        checkboxInput("geom_point_checkbox", 
                                                                                      label = "Show individual points?", 
+                                                                                     value = FALSE),
+                                                                       checkboxInput("border_checkbox",
+                                                                                     label = "Show border around plots?",
                                                                                      value = FALSE)
                                                                        
                                                                        
@@ -223,7 +226,10 @@ ui <- page_fillable(
                                                                                  selectInput("heatmap_palette", 
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
-                                                                                             selected = "Blue")
+                                                                                             selected = "Blue"),
+                                                                                 checkboxInput("border_checkbox_heatmap",
+                                                                                               label = "Show border around plots?",
+                                                                                               value = FALSE)
                                                        )
                                                        )
                                                    ),
@@ -243,7 +249,11 @@ ui <- page_fillable(
                                                                                              min = 1, 
                                                                                              max = 10, 
                                                                                              value = 5)
-                                                       )
+                                                       ),
+                                                       accordion_panel("Other options",
+                                                                       checkboxInput("border_checkbox_cluster",
+                                                                                     label = "Show border around plots?",
+                                                                                     value = FALSE))
                                                        )
                                                    ),
                                                    shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
@@ -256,7 +266,11 @@ ui <- page_fillable(
                                                                                                 label = "Select gene to compare with:",
                                                                                                 choices = NULL,
                                                                                                 multiple = FALSE),
-                                                       )
+                                                       ),
+                                                       accordion_panel("Other options",
+                                                                       checkboxInput("border_checkbox_correlation",
+                                                                                     label = "Show border around plots?",
+                                                                                     value = FALSE))
                                                        )
                                                    ),
                                                    shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
