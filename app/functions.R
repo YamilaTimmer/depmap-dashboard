@@ -509,7 +509,6 @@ generate_homepage_viz <- function(data){
     coord_polar("y") +
     theme_void() +
     labs(title = "Top 10 cancer types in the dataset", fill = "Cancer type:") +
-    theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
-          panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)) +
+    theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold")) +
     scale_fill_paletteer_d("colorBlindness::PairedColor12Steps")
 }
