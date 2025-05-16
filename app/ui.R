@@ -275,7 +275,7 @@ ui <- page_fillable(
                                                    shinycssloaders::withSpinner(plotlyOutput("heatmap"))
                                                    )),
                                          
-                                         nav_panel("Gene Clustering",                               
+                                         nav_panel("Clustering Plot",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select clustering options",
                                                                                  selectInput("clustering_options", 
