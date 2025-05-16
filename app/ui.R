@@ -309,7 +309,7 @@ ui <- page_fillable(
                                                        bar plot, a box plot, and 
                                                        a violin plot on the first 
                                                        tab. Additionally, you can 
-                                                       pick a colour palette and 
+                                                       pick a color palette and 
                                                        decide whether or not to 
                                                        show the individual data 
                                                        points. Gene expression is 
@@ -319,7 +319,7 @@ ui <- page_fillable(
                                                      h3("Heatmap"),
                                                      p("On the next tab, a heatmap 
                                                        is shown. For the heatmap, 
-                                                       you can pick a colour 
+                                                       you can pick a color 
                                                        palette. Here the gene 
                                                        expression is shown across 
                                                        the selected cell lines."),
