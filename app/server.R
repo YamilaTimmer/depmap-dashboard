@@ -34,10 +34,11 @@ server <- function(input, output, session) {
             shinyjs::hide("individual_gene")
             shinyjs::hide("pathway")
             shinyjs::hide("compare_pathway_cancertypes")
+            shinyjs::hide("p_value_checkbox")
             
             nav_show("navcards", "Summary plots")
             nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Gene Clustering")
+            nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
             
             
@@ -48,6 +49,7 @@ server <- function(input, output, session) {
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
             
+            shinyjs::show("p_value_checkbox")
             shinyjs::show("pathway")
             shinyjs::hide("cancer_types_accordion")
             shinyjs::hide("singular_cancer_type")
@@ -56,7 +58,7 @@ server <- function(input, output, session) {
             shinyjs::show("compare_pathway_cancertypes")
             
             nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Gene Clustering")
+            nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
             nav_hide("navcards", "Summary plots")
             
@@ -68,7 +70,7 @@ server <- function(input, output, session) {
         else  { 
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
+            updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot")
             
             shinyjs::hide("pathway")
             shinyjs::hide("genes_accordion")
@@ -79,7 +81,7 @@ server <- function(input, output, session) {
             
             nav_hide("navcards", "Summary plots")
             nav_hide("navcards", "Heatmap")
-            nav_show("navcards", "Gene Clustering")
+            nav_show("navcards", "Clustering Plot")
             nav_show("navcards", "Correlation Plot")
             
             
@@ -219,7 +221,8 @@ server <- function(input, output, session) {
         wide_exprdata <- reformat_data(data)
         target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
         query_profile <- create_query(wide_exprdata, input)
-        all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
+        all_distances <- determine_distances(data, input, target_matrix, 
+                                             query_profile, wide_exprdata)
         
         tp <- determine_top_scoring(input, all_distances, data)
         
@@ -251,11 +254,13 @@ server <- function(input, output, session) {
       wide_exprdata <- reformat_data(data)
       target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
       query_profile <- create_query(wide_exprdata, input)
-      all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
+      all_distances <- determine_distances(data, input, target_matrix, 
+                                           query_profile, wide_exprdata)
       
       tp <- determine_top_scoring(input, all_distances, data)
       
       generate_datatable(tp, filter = "top")
+      
     } else{
       # Retrieve data from reactive function
       data <- selected_data()
