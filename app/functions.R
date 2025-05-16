@@ -28,6 +28,7 @@ theme_set(
         )
 )
 
+
 #' Filter metadata
 #'
 #' This function filters the metadata based on the user inputs. For usecase
@@ -73,6 +74,7 @@ filter_metadata <- function(meta_data, input) {
     
     return(filtered_metadata)
 }
+
 
 #' Merge data
 #'
@@ -144,42 +146,56 @@ filter_gene <- function(merged_data, input, human_pathways) {
     return(filtered_gene)
 }
 
+
 #' Significancy checker
 #'
 #' This function checks if differences in gene expression across cancer types are
 #' statistically significant
 #'
-#'
+#' @param filtered_gene dataframe of metadata + expression data that is filtered on all user inputs
+#' @param input user input from filter options in application
+#' @return data that only contains genes that are significantly differentially expressed over the two cancer types
+#' @examples
+#' check_significancy <- function(filtered_gene, input)
+
+
 check_significancy <- function(filtered_gene, input) {
     
     data <- filtered_gene
     
-    genes <- unique(data$gene)
-    
+    # Create empty dataframe to save p_value per gene (using expression over 2 cancer types)
     p_value_df <- data.frame(
         gene = character(),
-        p_value = numeric(),
-        stringsAsFactors = FALSE
+        p_value = numeric()
     )
     
+    genes <- unique(data$gene)
+    
+    
     for (gene_name in genes) {
+        
+        # Retrieve data per gene
         gene_data <- data[data$gene == gene_name, ]
         
-        # Perform t test on genes from 2 groups (the 2 selected cancer types) 
-        # and determines whether the differences are statistically significant
-        res <- t.test(expr ~ OncotreePrimaryDisease, data = gene_data)
-        
-        # Add gene name + corresponding p_value to df
-        p_value_df <- rbind(p_value_df, data.frame(
-            gene = gene_name,
-            p_value = res$p.value))
+        # Only continue if exactly 2 cancer types are selected
+        if (length(unique(gene_data$OncotreePrimaryDisease)) == 2) {
+            
+            # Perform t test on genes from 2 groups (the 2 selected cancer types) 
+            # and determines whether the differences are statistically significant
+            res <- t.test(expr ~ OncotreePrimaryDisease, data = gene_data)
+            
+            # Add gene name + corresponding p_value to df
+            p_value_df <- rbind(p_value_df, data.frame(
+                gene = gene_name,
+                p_value = res$p.value))
+        }
     }
     
+    # Vector of only significant gene names
     significant_genes <- p_value_df$gene[p_value_df$p_value <= 0.05]
     
-    
-    data <- data[data$gene == significant_genes, ]
-    
+    # Subset data on significant genes
+    data <- data[data$gene %in% significant_genes, ]
     
     return(data)
     
@@ -299,15 +315,23 @@ generate_heatmap <- function(input, data){
         
         else{
             
-            p <- ggplot(data = data, 
-                        aes(x = gene, 
-                            y = OncotreePrimaryDisease, 
-                            fill = expr)) +
+            heatmap_data <- data %>%
+                group_by(gene, OncotreePrimaryDisease) %>%
+                summarise(mean_expr = mean(expr), .groups = "drop")
+            
+            p <- ggplot(
+                data = heatmap_data, 
+                aes(x = gene,
+                    y = OncotreePrimaryDisease,
+                    fill = mean_expr
+            )) +
                 geom_tile() + 
                 ylab("Cancer type") +
                 xlab("Gene") +
                 scale_fill_paletteer_c(palette) +
-                theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+                theme(axis.text.x = element_text(angle = 90, 
+                                                 vjust = 0.5, 
+                                                 hjust=1))
             
         }
     }
@@ -324,12 +348,18 @@ generate_heatmap <- function(input, data){
             labs(fill = "Expression level \n (log2 TPM)") +
             scale_fill_paletteer_c(palette)
         
-        p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
+        p <- p +  facet_wrap(~OncotreePrimaryDisease, 
+                             scales = "free_y")
         
     }
     
-    p <- ggplotly(p, height = input$heatmap_height, width = input$heatmap_width) %>%
-        layout(margin = list(l = 100, r = 10, b = 90, t = 50))
+    p <- ggplotly(p, 
+                  height = input$heatmap_height, 
+                  width = input$heatmap_width) %>%
+        layout(margin = list(l = 100, 
+                             r = 10, 
+                             b = 90, 
+                             t = 50))
     
     
     return(p)
