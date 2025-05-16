@@ -276,7 +276,77 @@ ui <- page_fillable(
                                                    shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
                                                    )),
                                          
-                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data")))
+                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
+                                         
+                                         nav_panel("Help", 
+                                                   value = "help_explore",
+                                                   fluidPage(
+                                                     h3("Explore expression"),
+                                                     p("This use case allows the 
+                                                       user to generate visualizations 
+                                                       of expression across genes. 
+                                                       Possible plot types include 
+                                                       bar plots, box plots, violin plots, 
+                                                       and heat maps. Expression is 
+                                                       shown as log2 TPM. TPM represents 
+                                                       the number of transcripts 
+                                                       from the gene, per one million 
+                                                       RNA molecules in the RNA sample. 
+                                                       The log2 transformation is then 
+                                                       applied to normalize the data. "),
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side select 
+                                                     the gene(s) and cancer type(s) 
+                                                     you are interested in. If 
+                                                     you want you can select sex, 
+                                                     ethnic background, and age 
+                                                     category as well."),
+                                                     
+                                                     h3("Summary plots"),
+                                                     p("After making your selections, 
+                                                       you can choose between a 
+                                                       bar plot, a box plot, and 
+                                                       a violin plot on the first 
+                                                       tab. Additionally, you can 
+                                                       pick a colour palette and 
+                                                       decide whether or not to 
+                                                       show the individual data 
+                                                       points. Gene expression is 
+                                                       shown on the y-axis and 
+                                                       cancer type on the x-axis."),
+                                                     
+                                                     h3("Heatmap"),
+                                                     p("On the next tab, a heatmap 
+                                                       is shown. For the heatmap, 
+                                                       you can pick a colour 
+                                                       palette. Here the gene 
+                                                       expression is shown across 
+                                                       the selected cell lines."),
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
+                                                       table containing the data 
+                                                       is shown. At the top, you 
+                                                       can select which columns 
+                                                       to show. Furthermore, you 
+                                                       can download the raw data 
+                                                       as a .csv or .xlsx file 
+                                                       through the download button. 
+                                                       Additional information on 
+                                                       the gene(s) can be found 
+                                                       by clicking on the gene 
+                                                       name in the data table. 
+                                                       Additional information on 
+                                                       the gene + cancer type 
+                                                       can be found by clicking 
+                                                       on 'PubMed' in the 
+                                                       'research' column.")
+                                                   )),
+                                         
+                                         nav_panel("Help", value = "help_cluster"),
+                                         
+                                         nav_panel("Help", value = "help_compare")
                                          
                                          
                          )
