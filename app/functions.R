@@ -197,6 +197,10 @@ check_significancy <- function(filtered_gene, input) {
     # Subset data on significant genes
     data <- data[data$gene %in% significant_genes, ]
     
+    # Add p_value as column to data
+    data <- data %>%
+        left_join(p_value_df, by = "gene")
+    
     return(data)
     
 }   

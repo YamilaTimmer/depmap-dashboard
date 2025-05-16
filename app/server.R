@@ -3,8 +3,8 @@ source("../config.R")
 useShinyjs()
 
 server <- function(input, output, session) {
-
-  # Read in .tsv files with expression data and metadata
+    
+    # Read in .tsv files with expression data and metadata
     expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
@@ -124,7 +124,7 @@ server <- function(input, output, session) {
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
                          server = TRUE)
-   
+    
     
     updateSelectizeInput(session, 
                          "sex", 
@@ -201,11 +201,11 @@ server <- function(input, output, session) {
         
         if (input$p_value_checkbox == TRUE){
             
-        data <- check_significancy(data,input)
+            data <- check_significancy(data,input)
         }
         # Prevent error where plot tries to render before data has loaded in
         req(nrow(data) >= 1)
-
+        
         # Generate plot
         heatmap <- generate_heatmap(input, data)
         
@@ -244,31 +244,41 @@ server <- function(input, output, session) {
         
     })
     
-  # Call functions needed for datatable
-  output$data <- renderDataTable({
+    # Call functions needed for datatable
+    output$data <- renderDataTable({
+        
+        req(selected_data())  # Ensure data is available
+        
+        if (input$use_case == "gene_clustering"){
+            data <- merged_data()
+            wide_exprdata <- reformat_data(data)
+            target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
+            query_profile <- create_query(wide_exprdata, input)
+            all_distances <- determine_distances(data, input, target_matrix, 
+                                                 query_profile, wide_exprdata)
+            
+            data <- determine_top_scoring(input, all_distances, data)
+            
+        } else if (input$use_case == "compare_pathway"){
+            
+            # Retrieve data from reactive function
+            data <- selected_data()
+            
+            if (input$p_value_checkbox == TRUE){
+                
+                data <- check_significancy(data,input)
+            }
+        }
+        
+        
+        else{
+            # Retrieve data from reactive function
+            data <- selected_data()
+            
+        }
+        
+        # Generate the data table with additional features
+        generate_datatable(data, filter = "top")
+    })
     
-    req(selected_data())  # Ensure data is available
-    
-    if (input$use_case == "gene_clustering"){
-      data <- merged_data()
-      wide_exprdata <- reformat_data(data)
-      target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
-      query_profile <- create_query(wide_exprdata, input)
-      all_distances <- determine_distances(data, input, target_matrix, 
-                                           query_profile, wide_exprdata)
-      
-      tp <- determine_top_scoring(input, all_distances, data)
-      
-      generate_datatable(tp, filter = "top")
-      
-    } else{
-      # Retrieve data from reactive function
-      data <- selected_data()
-      
-      # Generate the data table with additional features
-      generate_datatable(data, filter = "top")
-      
-    }
-  })
-  
 }
