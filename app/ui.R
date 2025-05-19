@@ -55,6 +55,7 @@ ui <- page_fillable(
                 
                 # Dataset summary
                 tags$div(
+
                   tags$h3(bs_icon("bar-chart-line"),
                           "Dataset summary"),
                   tags$p(style = "font-size: 16px;",
@@ -75,10 +76,10 @@ ui <- page_fillable(
                 
                 # About us
                 tags$div(
-                  tags$h3(bs_icon("people-fill"),
-                          "About us"),
-                  tags$p(style = "font-size: 16px;",
-                         "The dashboard was created by a small team of
+                    tags$h3(bs_icon("people-fill"),
+                            "About us"),
+                    tags$p(style = "font-size: 16px;",
+                           "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and 
                          Mirte Draaijer, two students from the bio-informatics
                          programme of the Hanze university, worked on developing
@@ -158,6 +159,19 @@ ui <- page_fillable(
                                                             ))
                                   ),
                                   
+                                  
+                                  # Shown when selected use-case is "compare cancer types"
+                                  accordion(open=FALSE, id = "compare_pathway_cancertypes",
+                                            accordion_panel("Select 2 Cancer Types",
+                                                            selectizeInput("compare_pathway_onco_type", 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = TRUE,
+                                                                           # allows selection of max 2 onco types
+                                                                           options = list(maxItems = 2)
+                                                            ))
+                                  ),
+                                  
                                   # Filter panel for metadata
                                   accordion(open=FALSE, accordion_panel("Select metadata", 
                                                                         
@@ -209,14 +223,31 @@ ui <- page_fillable(
                                                                                      label = "Show border around plots?",
                                                                                      value = FALSE)
                                                                        
-                                                                       
+                                                       ),
+                                                       accordion(accordion_panel("Size settings",
+                                                                                 sliderInput("plot_height",
+                                                                                             label = "Adjust height",
+                                                                                             min = 500,
+                                                                                             max = 1500,
+                                                                                             value = 750,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE),
+                                                                                 
+                                                                                 sliderInput("plot_width",
+                                                                                             label = "Adjust width",
+                                                                                             min = 700,
+                                                                                             max = 1500,
+                                                                                             value = 1200,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE))
+                                                                 
                                                        )
-                                       
+                                                       
                                                        
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("plot"))
                                                    )
                                          ),
                                          nav_panel("Heatmap",                               
@@ -227,17 +258,40 @@ ui <- page_fillable(
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue"),
+
                                                                                  checkboxInput("border_checkbox_heatmap",
                                                                                                label = "Show border around plots?",
                                                                                                value = FALSE)
-                                                       )
+                                                       ),
+                                                                                 checkboxInput("p_value_checkbox", 
+                                                                                               label = "Only show genes with p < 0.05?", 
+                                                                                               value = FALSE)),
+                                                     
+                                                                 accordion(accordion_panel("Size settings",
+                                                                                           sliderInput("heatmap_height",
+                                                                                                       label = "Adjust height",
+                                                                                                       min = 500,
+                                                                                                       max = 1500,
+                                                                                                       value = 750,
+                                                                                                       step = 50,
+                                                                                                       ticks = FALSE),
+                                                                                           
+                                                                                           sliderInput("heatmap_width",
+                                                                                                       label = "Adjust width",
+                                                                                                       min = 700,
+                                                                                                       max = 1500,
+                                                                                                       value = 1200,
+                                                                                                       step = 50,
+                                                                                                       ticks = FALSE))
+                                                                 )
+
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("heatmap"))
                                                    )),
                                          
-                                         nav_panel("Gene Clustering",                               
+                                         nav_panel("Clustering Plot",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select clustering options",
                                                                                  selectInput("clustering_options", 
@@ -250,13 +304,35 @@ ui <- page_fillable(
                                                                                              max = 10, 
                                                                                              value = 5)
                                                        ),
+
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_cluster",
                                                                                      label = "Show border around plots?",
                                                                                      value = FALSE))
-                                                       )
+                                                       ),
+
+                                                       
+                                                       accordion(accordion_panel("Size settings",
+                                                                                 sliderInput("cluster_height",
+                                                                                             label = "Adjust height",
+                                                                                             min = 500,
+                                                                                             max = 1500,
+                                                                                             value = 750,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE),
+                                                                                 
+                                                                                 sliderInput("cluster_width",
+                                                                                             label = "Adjust width",
+                                                                                             min = 700,
+                                                                                             max = 1500,
+                                                                                             value = 1200,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE))
+                                                                 
+                                                       ))
+
                                                    ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("clusterplot"))
                                                    )),
                                          
                                          nav_panel("Correlation Plot",                               
@@ -267,13 +343,39 @@ ui <- page_fillable(
                                                                                                 choices = NULL,
                                                                                                 multiple = FALSE),
                                                        ),
+
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_correlation",
                                                                                      label = "Show border around plots?",
                                                                                      value = FALSE))
+                                                       
+                                                                                 checkboxInput("label_checkbox", 
+                                                                                               label = "Display cell line labels?",
+                                                                                               value = TRUE),
+                                                                                 
+                                                       )),
+                                                       accordion(accordion_panel("Size settings",
+                                                                                 sliderInput("corr_height",
+                                                                                             label = "Adjust height",
+                                                                                             min = 500,
+                                                                                             max = 1500,
+                                                                                             value = 750,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE),
+                                                                                 
+                                                                                 sliderInput("corr_width",
+                                                                                             label = "Adjust width",
+                                                                                             min = 700,
+                                                                                             max = 1500,
+                                                                                             value = 1200,
+                                                                                             step = 50,
+                                                                                             ticks = FALSE))
+                                                                 
                                                        )
+                                                       ))
+
                                                    ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
                                                    )),
                                          
                                          nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
