@@ -653,12 +653,16 @@ generate_corr_plot <- function(input, wide_exprdata){
 
 #' determine_top_scoring
 #'  
-#' This function ...
+#' This function determines what target genes have the smallest or largest distance 
+#' to the query gene, where small distance points to positive correlation and large 
+#' distance points to negative correlation
 #' 
 #' @param input: user input from filter options in application
-#' @param all_distances: 
+#' @param all_distances: a tibble with 3 columns, containing the query_gene [1], the target_gen [2] 
+#' and the difference in expression between these two genes (also known as the 'distance') [3]
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
-#' @return 
+#' @return a reduced version of data, with only the "top-scoring" genes 
+#' (whether the user chose for most positive/most negative correlation)
 #' @examples 
 #' determine_top_scoring(input, all_distances, data)
 
@@ -675,16 +679,16 @@ determine_top_scoring <- function(input, all_distances, data){
             arrange(-abs(distance)) %>% 
             tail(input$top_n_genes) 
     }
-    if (input$label_checkbox == TRUE){
-        p <- p + geom_text()
-        
-    }
     
-    p <- ggplotly(p, height = input$corr_height, width = input$corr_width)
+    # Selects expression data for genes with highest correlation to query gene
+    tp <- data %>% filter(gene %in% top_scoring$target_gene) 
     
+    # Add selected gene to dataframe
+    tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
     
-    return(p)
+    return(tp)
 }
+
 
 
 #'generate_homepage_viz
