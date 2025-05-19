@@ -28,6 +28,7 @@ theme_set(
         )
 )
 
+
 #' Filter metadata
 #'
 #' This function filters the metadata based on the user inputs. For usecase
@@ -55,11 +56,20 @@ filter_metadata <- function(meta_data, input) {
             filter(OncotreePrimaryDisease == input$onco_type)
     }
     
+    
+    else if (input$use_case == 'compare_pathway'){
+        
+        # 2 oncotypes can be selected
+        filtered_metadata <- filtered_metadata %>% 
+            filter(OncotreePrimaryDisease %in% input$compare_pathway_onco_type)
+    }
+    
+    
     else {
         
         # For other use cases multiple onco types can be selected
         filtered_metadata <- filtered_metadata %>% 
-            filter(OncotreePrimaryDisease == input$onco_types)
+            filter(OncotreePrimaryDisease %in% input$onco_types)
     }
     
     return(filtered_metadata)
@@ -107,14 +117,14 @@ merge_data <- function(filtered_metadata, expression_data) {
 
 filter_gene <- function(merged_data, input, human_pathways) {
     
-    if (input$use_case == "explore_expression"){
+    if (input$use_case == 'explore_expression'){
+        
         filtered_gene <- merged_data %>% 
-            filter(gene %in% input$gene_names
-            )
+            filter(gene %in% input$gene_names)
     }
     
     else if (input$use_case == 'compare_pathway'){
-        #human_pathways <- getKEGGPathwayNames(species="hsa")
+        
         chosen_pathway <- human_pathways %>% filter(human_pathways$Description %in% input$pathway_name)
         chosen_pathway_ID <- chosen_pathway$PathwayID
         
@@ -127,14 +137,73 @@ filter_gene <- function(merged_data, input, human_pathways) {
             filter(gene %in% gene_names$Symbol)
     }
     else {
+        
         filtered_gene <- merged_data %>% 
             filter(gene == input$gene_name)
     }
     
     
-    
     return(filtered_gene)
 }
+
+
+#' Significancy checker
+#'
+#' This function checks if differences in gene expression across cancer types are
+#' statistically significant
+#'
+#' @param filtered_gene dataframe of metadata + expression data that is filtered on all user inputs
+#' @param input user input from filter options in application
+#' @return data that only contains genes that are significantly differentially expressed over the two cancer types
+#' @examples
+#' check_significancy <- function(filtered_gene, input)
+
+
+check_significancy <- function(filtered_gene, input) {
+    
+    data <- filtered_gene
+    
+    # Create empty dataframe to save p_value per gene (using expression over 2 cancer types)
+    p_value_df <- data.frame(
+        gene = character(),
+        p_value = numeric()
+    )
+    
+    genes <- unique(data$gene)
+    
+    
+    for (gene_name in genes) {
+        
+        # Retrieve data per gene
+        gene_data <- data[data$gene == gene_name, ]
+        
+        # Only continue if exactly 2 cancer types are selected
+        if (length(unique(gene_data$OncotreePrimaryDisease)) == 2) {
+            
+            # Perform t test on genes from 2 groups (the 2 selected cancer types) 
+            # and determines whether the differences are statistically significant
+            res <- t.test(expr ~ OncotreePrimaryDisease, data = gene_data)
+            
+            # Add gene name + corresponding p_value to df
+            p_value_df <- rbind(p_value_df, data.frame(
+                gene = gene_name,
+                p_value = res$p.value))
+        }
+    }
+    
+    # Vector of only significant gene names
+    significant_genes <- p_value_df$gene[p_value_df$p_value <= 0.05]
+    
+    # Subset data on significant genes
+    data <- data[data$gene %in% significant_genes, ]
+    
+    # Add p_value as column to data
+    data <- data %>%
+        left_join(p_value_df, by = "gene")
+    
+    return(data)
+    
+}   
 
 
 #' Generate XY plots  
@@ -155,8 +224,10 @@ filter_gene <- function(merged_data, input, human_pathways) {
 
 xyplots <- function(input, data, type = "boxplot") {
     p <- ggplot(data, aes(x = OncotreePrimaryDisease, 
-                          y = expression, 
-                          fill = OncotreePrimaryDisease))
+                          y = expr, 
+                          fill = OncotreePrimaryDisease
+    ))
+    
     
     chosen_palette <- palettes_d_names %>% 
         filter(palettes_d_names$palette %in% input$xyplot_palette)
@@ -177,6 +248,7 @@ xyplots <- function(input, data, type = "boxplot") {
                          fun.data = mean_se, 
                          width = 0.2, 
                          position = position_dodge(0.9))
+        
     } else {
         stop("Invalid plot type. Choose 'boxplot', 'violin', or 'bar'.")
     }
@@ -202,6 +274,14 @@ xyplots <- function(input, data, type = "boxplot") {
     if (input$geom_point_checkbox == TRUE){
         p <- p + geom_point()
     }
+    
+    # Makes plot better visible (e.g. y-axis title was cut-off before)
+    p <- ggplotly(p, 
+                  height = input$plot_height, 
+                  width = input$plot_width) %>%
+        layout(margin = list(l = 60, r = 20, b = 0, t = 80))
+    
+    
     
     return(p)
 }
@@ -229,15 +309,35 @@ generate_heatmap <- function(input, data){
     # Generate heatmap for comparing expression of pathway across cancer types 
     if (input$use_case == 'compare_pathway'){
         
-        p <- ggplot(data = data, 
-                    aes(x = gene, 
-                        y = OncotreePrimaryDisease, 
-                        fill = expression)) +
-            geom_tile() + 
-            ylab("Cancer type") +
-            xlab("Gene") +
-            scale_fill_paletteer_c(palette) +
-            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        #req(length(input$compare_pathway_onco_type) == 2)
+        
+        if (length(input$compare_pathway_onco_type) !=2){
+            
+            stop("⚠️: Please select 2 cancer types")
+            
+        }
+        
+        else{
+            
+            heatmap_data <- data %>%
+                group_by(gene, OncotreePrimaryDisease) %>%
+                summarise(mean_expr = mean(expr), .groups = "drop")
+            
+            p <- ggplot(
+                data = heatmap_data, 
+                aes(x = gene,
+                    y = OncotreePrimaryDisease,
+                    fill = mean_expr
+            )) +
+                geom_tile() + 
+                ylab("Cancer type") +
+                xlab("Gene") +
+                scale_fill_paletteer_c(palette) +
+                theme(axis.text.x = element_text(angle = 90, 
+                                                 vjust = 0.5, 
+                                                 hjust=1))
+            
+        }
     }
     
     # Generate heatmap for visualizing gene expression across selected genes/cell lines
@@ -245,16 +345,25 @@ generate_heatmap <- function(input, data){
         p <- ggplot(data = data, 
                     aes(x = gene, 
                         y = StrippedCellLineName, 
-                        fill = expression)) +
+                        fill = expr)) +
             geom_tile() + 
             ylab("Tumor Cell Line") +
             xlab("Gene") +
             labs(fill = "Expression level \n (log2 TPM)") +
             scale_fill_paletteer_c(palette)
         
-        p <- p +  facet_wrap(~OncotreePrimaryDisease, scales = "free_y")
+        p <- p +  facet_wrap(~OncotreePrimaryDisease, 
+                             scales = "free_y")
         
     }
+    
+    p <- ggplotly(p, 
+                  height = input$heatmap_height, 
+                  width = input$heatmap_width) %>%
+        layout(margin = list(l = 100, 
+                             r = 10, 
+                             b = 90, 
+                             t = 50))
     
     
     return(p)
@@ -284,7 +393,7 @@ generate_datatable <- function(data, filter = "top") {
     data$gene <- paste0("<a href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=", 
                         data$gene, "' target='_blank'>", data$gene, "</a>")
     
-    data$expression <- round(data$expression, 3)
+    data$expr <- round(data$expr, 3)
     
     # Render the table
     datatable(data, 
@@ -323,8 +432,8 @@ generate_datatable <- function(data, filter = "top") {
 
 reformat_data <- function(merged_data){
     wide_exprdata <- merged_data %>% 
-        dplyr::select(StrippedCellLineName, gene, expression) %>%
-        pivot_wider(names_from = "StrippedCellLineName", values_from = "expression")
+        dplyr::select(StrippedCellLineName, gene, expr) %>%
+        pivot_wider(names_from = "StrippedCellLineName", values_from = "expr")
     
     
     return(wide_exprdata)
@@ -434,8 +543,6 @@ determine_top_scoring <- function(input, all_distances, data){
     # Add selected gene to dataframe
     tp <- data %>% filter(gene %in% c(top_scoring$target_gene, input$gene_name))
     
-    print(tp)
-    print(class(tp))
     return(tp)
 }
 
@@ -452,7 +559,7 @@ determine_top_scoring <- function(input, all_distances, data){
 #' generate_clusterplot(tp)
 
 
-generate_clusterplot <- function(tp){
+generate_clusterplot <- function(tp, input){
     
     # Warning when only one patient is selected, no satisfactory expression profile
     # comparison can be created
@@ -472,11 +579,14 @@ generate_clusterplot <- function(tp){
     # generate the plot
     p <- ggplot(tp, 
                 aes(x = StrippedCellLineName, 
-                    y = expression, 
+                    y = expr, 
                     color = gene))
     p <- p + geom_point()
     p <- p + geom_line(aes(group = gene))
     p <- p + theme(axis.text.x = element_text(angle=270)) 
+    
+    
+    p <- ggplotly(p, height = input$cluster_height, width = input$cluster_width)
     
     return(p)
     
@@ -503,17 +613,23 @@ generate_corr_plot <- function(input, wide_exprdata){
     colnames(gene_exprdata) <- wide_exprdata$gene
     
     
-    x <-gene_exprdata %>% pull(input$gene_name)
+    x <- gene_exprdata %>% pull(input$gene_name)
     y <- gene_exprdata %>% pull(input$correlation_gene)
+    Cell_line <- rownames(gene_exprdata)
     
     mymodel <-lm(x~y+0)
     p <- ggplot(gene_exprdata, aes(x = .data[[input$gene_name]], 
                                    y = .data[[input$correlation_gene]], 
-                                   label= rownames(gene_exprdata)))
-    p <- p + geom_text()
+                                   label = Cell_line))
+    
     p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
     
+    if (input$label_checkbox == TRUE){
+        p <- p + geom_text()
+    }
+    
+    p <- ggplotly(p, height = input$corr_height, width = input$corr_width)
     
     
     return(p)

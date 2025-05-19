@@ -33,7 +33,7 @@ tidy_data <- expression_data %>%
             pivot_longer(
                 cols = 2:ncol(expression_data),
                 names_to = "gene",
-                values_to = "expression")
+                values_to = "expr")
 
 ```
 

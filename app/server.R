@@ -3,11 +3,15 @@ source("../config.R")
 useShinyjs()
 
 server <- function(input, output, session) {
-
-  # Read in .tsv files with expression data and metadata
+    
+    # Read in .tsv files with expression data and metadata
     expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
+    
+    # no longer needed if new version from pre-processing is loaded
+    colnames(expression_data)[colnames(expression_data) == "expression"] <- "expr"
+    
     
     # Convert NA to Unknown
     meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
@@ -29,48 +33,55 @@ server <- function(input, output, session) {
             shinyjs::hide("singular_cancer_type")
             shinyjs::hide("individual_gene")
             shinyjs::hide("pathway")
+            shinyjs::hide("compare_pathway_cancertypes")
+            shinyjs::hide("p_value_checkbox")
             
             nav_show("navcards", "Summary plots")
             nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Gene Clustering")
+            nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
             
             
         } 
         
-        if (input$use_case == "compare_pathway") {
+        else if (input$use_case == "compare_pathway") {
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
             updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
             
+            shinyjs::show("p_value_checkbox")
             shinyjs::show("pathway")
-            shinyjs::show("cancer_types_accordion")
+            shinyjs::hide("cancer_types_accordion")
             shinyjs::hide("singular_cancer_type")
             shinyjs::hide("individual_gene")
             shinyjs::hide("genes_accordion")
+            shinyjs::show("compare_pathway_cancertypes")
             
             nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Gene Clustering")
+            nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
             nav_hide("navcards", "Summary plots")
             
             
         } 
         
-        if (input$use_case == "gene_clustering") {
+        
+        # for use case "gene_clustering"
+        else  { 
             
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Gene Clustering")
+            updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot")
             
             shinyjs::hide("pathway")
             shinyjs::hide("genes_accordion")
             shinyjs::hide("cancer_types_accordion")
             shinyjs::show("singular_cancer_type")
             shinyjs::show("individual_gene")
+            shinyjs::hide("compare_pathway_cancertypes")
             
             nav_hide("navcards", "Summary plots")
             nav_hide("navcards", "Heatmap")
-            nav_show("navcards", "Gene Clustering")
+            nav_show("navcards", "Clustering Plot")
             nav_show("navcards", "Correlation Plot")
             
             
@@ -106,6 +117,12 @@ server <- function(input, output, session) {
                          'onco_types', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = "Acute Myeloid Leukemia",
+                         server = TRUE)
+    
+    updateSelectizeInput(session, 
+                         'compare_pathway_onco_type', 
+                         choices = sort(meta_data$OncotreePrimaryDisease), 
+                         selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
                          server = TRUE)
     
     
@@ -182,9 +199,13 @@ server <- function(input, output, session) {
         # Retrieve data from reactive function
         data <- selected_data()
         
+        if (input$p_value_checkbox == TRUE){
+            
+            data <- check_significancy(data,input)
+        }
         # Prevent error where plot tries to render before data has loaded in
         req(nrow(data) >= 1)
-
+        
         # Generate plot
         heatmap <- generate_heatmap(input, data)
         
@@ -200,12 +221,13 @@ server <- function(input, output, session) {
         wide_exprdata <- reformat_data(data)
         target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
         query_profile <- create_query(wide_exprdata, input)
-        all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
+        all_distances <- determine_distances(data, input, target_matrix, 
+                                             query_profile, wide_exprdata)
         
         tp <- determine_top_scoring(input, all_distances, data)
         
         # Generate plot
-        clusterplot <- generate_clusterplot(tp)
+        clusterplot <- generate_clusterplot(tp, input)
     })
     
     # Call functions needed for correlation plot
@@ -222,29 +244,41 @@ server <- function(input, output, session) {
         
     })
     
-  # Call functions needed for datatable
-  output$data <- renderDataTable({
+    # Call functions needed for datatable
+    output$data <- renderDataTable({
+        
+        req(selected_data())  # Ensure data is available
+        
+        if (input$use_case == "gene_clustering"){
+            data <- merged_data()
+            wide_exprdata <- reformat_data(data)
+            target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
+            query_profile <- create_query(wide_exprdata, input)
+            all_distances <- determine_distances(data, input, target_matrix, 
+                                                 query_profile, wide_exprdata)
+            
+            data <- determine_top_scoring(input, all_distances, data)
+            
+        } else if (input$use_case == "compare_pathway"){
+            
+            # Retrieve data from reactive function
+            data <- selected_data()
+            
+            if (input$p_value_checkbox == TRUE){
+                
+                data <- check_significancy(data,input)
+            }
+        }
+        
+        
+        else{
+            # Retrieve data from reactive function
+            data <- selected_data()
+            
+        }
+        
+        # Generate the data table with additional features
+        generate_datatable(data, filter = "top")
+    })
     
-    req(selected_data())  # Ensure data is available
-    
-    if (input$use_case == "gene_clustering"){
-      data <- merged_data()
-      wide_exprdata <- reformat_data(data)
-      target_matrix  <- wide_exprdata %>% dplyr::select(-gene) %>% as.matrix() 
-      query_profile <- create_query(wide_exprdata, input)
-      all_distances <- determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
-      
-      tp <- determine_top_scoring(input, all_distances, data)
-      
-      generate_datatable(tp, filter = "top")
-    } else{
-      # Retrieve data from reactive function
-      data <- selected_data()
-      
-      # Generate the data table with additional features
-      generate_datatable(data, filter = "top")
-      
-    }
-  })
-  
 }
