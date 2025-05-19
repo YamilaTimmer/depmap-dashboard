@@ -40,6 +40,9 @@ server <- function(input, output, session) {
             nav_show("navcards", "Heatmap")
             nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
+            nav_show("navcards", "help_explore")
+            nav_hide("navcards", "help_cluster")
+            nav_hide("navcards", "help_compare")
             
             
         } 
@@ -61,6 +64,9 @@ server <- function(input, output, session) {
             nav_hide("navcards", "Clustering Plot")
             nav_hide("navcards", "Correlation Plot")
             nav_hide("navcards", "Summary plots")
+            nav_hide("navcards", "help_explore")
+            nav_hide("navcards", "help_cluster")
+            nav_show("navcards", "help_compare")
             
             
         } 
@@ -83,6 +89,9 @@ server <- function(input, output, session) {
             nav_hide("navcards", "Heatmap")
             nav_show("navcards", "Clustering Plot")
             nav_show("navcards", "Correlation Plot")
+            nav_hide("navcards", "help_explore")
+            nav_show("navcards", "help_cluster")
+            nav_hide("navcards", "help_compare")
             
             
         }
@@ -280,5 +289,9 @@ server <- function(input, output, session) {
         # Generate the data table with additional features
         generate_datatable(data, filter = "top")
     })
-    
+  
+    output$homepage_plot <- renderPlot({
+    req(meta_data)
+    generate_homepage_viz(meta_data)
+  })
 }

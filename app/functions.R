@@ -15,6 +15,7 @@ library(BiocManager)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(limma)
+library(forcats)
 
 # Set theme for all plots globally:
 theme_set(
@@ -23,8 +24,7 @@ theme_set(
             plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
             axis.text = element_text(size = 14),
             axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold"),
-            panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5)
+            strip.text = element_text(size = 14, face = "bold")
         )
 )
 
@@ -147,6 +147,7 @@ filter_gene <- function(merged_data, input, human_pathways) {
 }
 
 
+
 #' Significancy checker
 #'
 #' This function checks if differences in gene expression across cancer types are
@@ -204,6 +205,7 @@ check_significancy <- function(filtered_gene, input) {
     return(data)
     
 }   
+
 
 
 #' Generate XY plots  
@@ -273,6 +275,9 @@ xyplots <- function(input, data, type = "boxplot") {
     
     if (input$geom_point_checkbox == TRUE){
         p <- p + geom_point()
+    }
+    if (input$border_checkbox == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
     }
     
     # Makes plot better visible (e.g. y-axis title was cut-off before)
@@ -357,6 +362,11 @@ generate_heatmap <- function(input, data){
         
     }
     
+
+    if (input$border_checkbox_heatmap == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
+
     p <- ggplotly(p, 
                   height = input$heatmap_height, 
                   width = input$heatmap_width) %>%
@@ -365,6 +375,7 @@ generate_heatmap <- function(input, data){
                              b = 90, 
                              t = 50))
     
+
     
     return(p)
 }
@@ -585,8 +596,14 @@ generate_clusterplot <- function(tp, input){
     p <- p + geom_line(aes(group = gene))
     p <- p + theme(axis.text.x = element_text(angle=270)) 
     
+
+    if (input$border_checkbox_cluster == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
+
     
     p <- ggplotly(p, height = input$cluster_height, width = input$cluster_width)
+
     
     return(p)
     
@@ -625,8 +642,42 @@ generate_corr_plot <- function(input, wide_exprdata){
     p <- p + geom_point(size=5, alpha=0.5)
     p <- p + geom_abline(slope=mymodel$coefficients, intercept=0)
     
+
+    if (input$border_checkbox_correlation == TRUE){
+      p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
+    }
+    
+    
+    return(p)
+}
+
+#' determine_top_scoring
+#'  
+#' This function ...
+#' 
+#' @param input: user input from filter options in application
+#' @param all_distances: 
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
+#' @return 
+#' @examples 
+#' determine_top_scoring(input, all_distances, data)
+
+determine_top_scoring <- function(input, all_distances, data){
+    
+    if (input$clustering_options == "Positive correlation"){
+        top_scoring <- all_distances %>% 
+            filter(distance < 0.99, distance > 0.1) %>% 
+            arrange(-abs(distance)) %>% 
+            head(input$top_n_genes)
+    } else if (input$clustering_options == "Negative correlation"){
+        top_scoring <- all_distances %>% 
+            filter(distance < 0.99, distance > 0.1) %>% 
+            arrange(-abs(distance)) %>% 
+            tail(input$top_n_genes) 
+
     if (input$label_checkbox == TRUE){
         p <- p + geom_text()
+
     }
     
     p <- ggplotly(p, height = input$corr_height, width = input$corr_width)
@@ -634,3 +685,24 @@ generate_corr_plot <- function(input, wide_exprdata){
     
     return(p)
 }
+
+
+#'generate_homepage_viz
+#'
+#'This function generates the piechart shown on the homepage of the dashboard.
+#'
+#'@param data: a dataframe containing the OncotreePrimaryDisease.
+#'@return
+#'@examples
+#'generate_homepage_viz(data)
+
+generate_homepage_viz <- function(data){
+  ggplot(data, aes(x = "", fill = fct_lump(OncotreePrimaryDisease, n = 10))) +
+    geom_bar(width = 1) +
+    coord_polar("y") +
+    theme_void() +
+    labs(title = "Top 10 cancer types in the dataset", fill = "Cancer type:") +
+    theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold")) +
+    scale_fill_paletteer_d("colorBlindness::PairedColor12Steps")
+}
+
