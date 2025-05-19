@@ -647,6 +647,9 @@ generate_corr_plot <- function(input, wide_exprdata){
         p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
     }
     
+    if (input$label_checkbox == TRUE){
+        p <- p + geom_text()
+    }
     
     return(p)
 }

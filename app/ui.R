@@ -108,84 +108,91 @@ ui <- page_fillable(
                                                                   choices = c("Explore Expression" = "explore_expression", 
                                                                               "Gene Clustering" = "gene_clustering",
                                                                               "Compare Pathway Across Cancer Types" = "compare_pathway")
-                                                      ))),
-                                  
-                                  # Shown when selected use-case is "compare genes"
-                                  accordion(open=FALSE, id = "genes_accordion",
-                                            accordion_panel("Select Gene(s)",
-                                                            selectizeInput('gene_names', 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE))
-                                  ),
-                                  
-                                  # Shown when selected use-case is "compare genes"
-                                  accordion(open=FALSE, id = "individual_gene",
-                                            accordion_panel("Select Gene",
-                                                            selectizeInput('gene_name', 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = FALSE))
-                                  ),
-                                  
-                                  # Shown when selected use-case is "compare pathways"
-                                  accordion(open=FALSE, id = "pathway",
-                                            accordion_panel("Select Pathway",
-                                                            selectizeInput('pathway_name', 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = FALSE))
-                                  ),
-                                  
-                                  
-                                  # Shown when selected use-case is "compare cancer types"
-                                  accordion(open=FALSE, id = "cancer_types_accordion",
-                                            accordion_panel("Select Cancer Type(s)",
-                                                            selectizeInput("onco_types", 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE,
-                                                                           options = list(maxItems = 7)))
-                                  ),
-                                  
-                                  # Shown when selected use-case is "compare cancer types"
-                                  accordion(open=FALSE, id = "singular_cancer_type",
-                                            accordion_panel("Select Cancer Type",
-                                                            selectizeInput("onco_type", 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = FALSE))
-                                  ),
-                                  
-                                  
-                                  # Shown when selected use-case is "compare cancer types"
-                                  accordion(open=FALSE, id = "compare_pathway_cancertypes",
-                                            accordion_panel("Select 2 Cancer Types",
-                                                            selectizeInput("compare_pathway_onco_type", 
-                                                                           label = NULL, 
-                                                                           choices = NULL, 
-                                                                           multiple = TRUE,
-                                                                           # allows selection of max 2 onco types
-                                                                           options = list(maxItems = 2)))
-                                  ),
-                                  
-                                  # Filter panel for metadata
-                                  accordion(open=FALSE, accordion_panel("Select metadata", 
-                                                                        
-                                                                        selectizeInput("sex", 
-                                                                                       label = "Select sex", 
-                                                                                       choices = NULL, 
-                                                                                       multiple = TRUE),
-                                                                        
-                                                                        selectizeInput("race", 
-                                                                                       label = "Select ethnic background", 
-                                                                                       choices = NULL,
-                                                                                       multiple = TRUE),
-                                                                        
-                                                                        selectizeInput("age_category", 
-                                                                                       label = "Select age category", 
-                                                                                       choices = NULL, 
-                                                                                       multiple = TRUE))
+                                                      )),
+                                      
+                                      
+                                      # Shown when selected use-case is "compare genes"
+                                      div(id = "genes_accordion",
+                                          accordion_panel("Select Gene(s)",
+                                                          
+                                                          selectizeInput('gene_names', 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = TRUE))),
+                                      
+                                      
+                                      # Shown when selected use-case is "compare genes"
+                                      div(id = "individual_gene",
+                                          accordion_panel("Select Gene",
+                                                          
+                                                          selectizeInput('gene_name', 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = FALSE))),
+                                      
+                                      
+                                      # Shown when selected use-case is "compare pathways"
+                                      div(id = "pathway",
+                                          accordion_panel("Select Pathway",
+                                                          
+                                                          selectizeInput('pathway_name', 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = FALSE))),
+                                      
+                                      
+                                      
+                                      # Shown when selected use-case is "compare cancer types"
+                                      div(id = "cancer_types_accordion",
+                                          accordion_panel("Select Cancer Type(s)",
+                                                          
+                                                          selectizeInput("onco_types", 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = TRUE,
+                                                                         options = list(maxItems = 7)))),
+                                      
+                                      
+                                      # Shown when selected use-case is "compare cancer types"
+                                      div(id = "singular_cancer_type", 
+                                          accordion_panel("Select Cancer Type",
+                                                          
+                                                          selectizeInput("onco_type", 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = FALSE))),
+                                      
+                                      
+                                      
+                                      # Shown when selected use-case is "compare cancer types"
+                                      div(id = "compare_pathway_cancertypes",
+                                          accordion_panel("Select 2 Cancer Types", 
+                                                          
+                                                          selectizeInput("compare_pathway_onco_type", 
+                                                                         label = NULL, 
+                                                                         choices = NULL, 
+                                                                         multiple = TRUE,
+                                                                         # allows selection of max 2 onco types
+                                                                         options = list(maxItems = 2)))),
+                                      
+                                      
+                                      # Filter panel for metadata
+                                      accordion_panel("Select metadata",
+                                                      
+                                                      selectizeInput("sex", 
+                                                                     label = "Select sex", 
+                                                                     choices = NULL, 
+                                                                     multiple = TRUE),
+                                                      
+                                                      selectizeInput("race", 
+                                                                     label = "Select ethnic background", 
+                                                                     choices = NULL,
+                                                                     multiple = TRUE),
+                                                      
+                                                      selectizeInput("age_category", 
+                                                                     label = "Select age category", 
+                                                                     choices = NULL, 
+                                                                     multiple = TRUE))
                                   )
                                   
                                   # When clicked, plots and table will be updated based on user-chosen parameters
@@ -205,41 +212,41 @@ ui <- page_fillable(
                                                                                              label = NULL, 
                                                                                              choices = c("Bar Plot", "Box Plot", "Violin Plot"), 
                                                                                              selected = "Bar Plot")
-                                                       )),
+                                                       ),
                                                        
-                                                       accordion(accordion_panel("Other options",
-                                                                                 selectInput("xyplot_palette", 
-                                                                                             label = "Select color palette", 
-                                                                                             choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
-                                                                                             selected = "PairedColor12Steps"),
-                                                                                 checkboxInput("geom_point_checkbox", 
-                                                                                               label = "Show individual points?", 
-                                                                                               value = FALSE),
-                                                                                 checkboxInput("border_checkbox",
-                                                                                               label = "Show border around plots?",
-                                                                                               value = FALSE)
-                                                                                 
-                                                       )),
-                                                       accordion(accordion_panel("Size settings",
-                                                                                 sliderInput("plot_height",
-                                                                                             label = "Adjust height",
-                                                                                             min = 500,
-                                                                                             max = 1500,
-                                                                                             value = 750,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE),
-                                                                                 
-                                                                                 sliderInput("plot_width",
-                                                                                             label = "Adjust width",
-                                                                                             min = 700,
-                                                                                             max = 1500,
-                                                                                             value = 1200,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE))
-                                                                 
-                                                                 
-                                                                 
-                                                                 
+                                                       accordion_panel("Other options",
+                                                                       selectInput("xyplot_palette", 
+                                                                                   label = "Select color palette", 
+                                                                                   choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
+                                                                                   selected = "PairedColor12Steps"),
+                                                                       checkboxInput("geom_point_checkbox", 
+                                                                                     label = "Show individual points?", 
+                                                                                     value = FALSE),
+                                                                       checkboxInput("border_checkbox",
+                                                                                     label = "Show border around plots?",
+                                                                                     value = FALSE)
+                                                                       
+                                                       ),
+                                                       accordion_panel("Size settings",
+                                                                       sliderInput("plot_height",
+                                                                                   label = "Adjust height",
+                                                                                   min = 500,
+                                                                                   max = 1500,
+                                                                                   value = 750,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE),
+                                                                       
+                                                                       sliderInput("plot_width",
+                                                                                   label = "Adjust width",
+                                                                                   min = 700,
+                                                                                   max = 1500,
+                                                                                   value = 1200,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE))
+                                                       
+                                                       
+                                                       
+                                                       
                                                        )
                                                    ),
                                                    
@@ -263,11 +270,11 @@ ui <- page_fillable(
                                                                                  
                                                                                  checkboxInput("p_value_checkbox", 
                                                                                                label = "Only show genes with p < 0.05?", 
-                                                                                               value = FALSE))
-                                                       ),
-                                                       
-                                                       
-                                                       accordion(accordion_panel("Size settings",
+                                                                                               value = FALSE)),
+                                                                 
+                                                                 
+                                                                 
+                                                                 accordion_panel("Size settings",
                                                                                  sliderInput("heatmap_height",
                                                                                              label = "Adjust height",
                                                                                              min = 500,
@@ -307,27 +314,26 @@ ui <- page_fillable(
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_cluster",
                                                                                      label = "Show border around plots?",
-                                                                                     value = FALSE))
-                                                       ),
+                                                                                     value = FALSE)),
                                                        
                                                        
-                                                       accordion(accordion_panel("Size settings",
-                                                                                 sliderInput("cluster_height",
-                                                                                             label = "Adjust height",
-                                                                                             min = 500,
-                                                                                             max = 1500,
-                                                                                             value = 750,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE),
-                                                                                 
-                                                                                 sliderInput("cluster_width",
-                                                                                             label = "Adjust width",
-                                                                                             min = 700,
-                                                                                             max = 1500,
-                                                                                             value = 1200,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE))
-                                                                 
+                                                       accordion_panel("Size settings",
+                                                                       sliderInput("cluster_height",
+                                                                                   label = "Adjust height",
+                                                                                   min = 500,
+                                                                                   max = 1500,
+                                                                                   value = 750,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE),
+                                                                       
+                                                                       sliderInput("cluster_width",
+                                                                                   label = "Adjust width",
+                                                                                   min = 700,
+                                                                                   max = 1500,
+                                                                                   value = 1200,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE))
+                                                       
                                                        )
                                                        
                                                    ),
@@ -341,35 +347,35 @@ ui <- page_fillable(
                                                                                                 label = "Select gene to compare with:",
                                                                                                 choices = NULL,
                                                                                                 multiple = FALSE)
-                                                       )),
+                                                       ),
                                                        
-                                                       accordion(accordion_panel("Other options",
-                                                                                 checkboxInput("border_checkbox_correlation",
-                                                                                               label = "Show border around plots?",
-                                                                                               value = FALSE),
-                                                                                 
-                                                                                 checkboxInput("label_checkbox", 
-                                                                                               label = "Display cell line labels?",
-                                                                                               value = TRUE)
-                                                                                 
-                                                       )),
+                                                       accordion_panel("Other options",
+                                                                       checkboxInput("border_checkbox_correlation",
+                                                                                     label = "Show border around plots?",
+                                                                                     value = FALSE),
+                                                                       
+                                                                       checkboxInput("label_checkbox", 
+                                                                                     label = "Display cell line labels?",
+                                                                                     value = TRUE)
+                                                                       
+                                                       ),
                                                        
-                                                       accordion(accordion_panel("Size settings",
-                                                                                 sliderInput("corr_height",
-                                                                                             label = "Adjust height",
-                                                                                             min = 500,
-                                                                                             max = 1500,
-                                                                                             value = 750,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE),
-                                                                                 
-                                                                                 sliderInput("corr_width",
-                                                                                             label = "Adjust width",
-                                                                                             min = 700,
-                                                                                             max = 1500,
-                                                                                             value = 1200,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE)
+                                                       accordion_panel("Size settings",
+                                                                       sliderInput("corr_height",
+                                                                                   label = "Adjust height",
+                                                                                   min = 500,
+                                                                                   max = 1500,
+                                                                                   value = 750,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE),
+                                                                       
+                                                                       sliderInput("corr_width",
+                                                                                   label = "Adjust width",
+                                                                                   min = 700,
+                                                                                   max = 1500,
+                                                                                   value = 1200,
+                                                                                   step = 50,
+                                                                                   ticks = FALSE)
                                                        )                      
                                                        )
                                                    ),
