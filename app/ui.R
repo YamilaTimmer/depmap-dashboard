@@ -1,7 +1,6 @@
 source("functions.R")
 
 ui <- page_fillable(
-    
     # Used to dynamically show accordion filters
     useShinyjs(),
     
@@ -55,19 +54,18 @@ ui <- page_fillable(
                 
                 # Dataset summary
                 tags$div(
-                    
-                    tags$h3(bs_icon("bar-chart-line"),
-                            "Dataset summary"),
-                    tags$p(style = "font-size: 16px;",
-                           "On the dashboard the following data can be found:"),
-                    tags$ul(
-                        style = "font-size: 16px;",
-                        tags$li("17,000+ genes"),
-                        tags$li("80+ cancer types"),
-                        tags$li("Metadata consisting of sex, age, ethnic background, and more.")
-                    ),
-                    tags$p(style = "font-size: 16px;",
-                           "The dashboard includes data on over 80 cancer types, 
+                  tags$h3(bs_icon("bar-chart-line"),
+                          "Dataset summary"),
+                  tags$p(style = "font-size: 16px;",
+                         "On the dashboard the following data can be found:"),
+                  tags$ul(
+                    style = "font-size: 16px;",
+                    tags$li("17,000+ genes"),
+                    tags$li("80+ cancer types"),
+                    tags$li("Metadata consisting of sex, age, ethnic background, and more.")
+                  ),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard includes data on over 80 cancer types, 
                          the chart below shows the top 10 cancer types that 
                          have the most available data.")
                 ),
@@ -76,10 +74,10 @@ ui <- page_fillable(
                 
                 # About us
                 tags$div(
-                    tags$h3(bs_icon("people-fill"),
-                            "About us"),
-                    tags$p(style = "font-size: 16px;",
-                           "The dashboard was created by a small team of
+                  tags$h3(bs_icon("people-fill"),
+                          "About us"),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and 
                          Mirte Draaijer, two students from the bio-informatics
                          programme of the Hanze university, worked on developing
@@ -92,108 +90,98 @@ ui <- page_fillable(
         
         # Dashboard page
         nav_panel(
-            id = "dashboard_nav", 
-            "Dashboard",
-            
-            layout_sidebar(
-                sidebar = sidebar(width = 350,
+          id = "dashboard_nav", 
+          "Dashboard",
+          
+          layout_sidebar(
+            sidebar = sidebar(width = 350,
+                              
+                              # Input dropdown menus for all list variables
+                              accordion(
+                                accordion_panel("Select use-case",
+                                                open = TRUE,
+                                                icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
+                                                tooltip(span(bs_icon("info-circle")), 
+                                                        "Explore expression: explore the expression of one or more genes in one cancer type or compare the expression of one or more genes across multiple cancer types.
+                                                        Gene clustering: explore the correlation between expression profiles and find positively/negatively correlated genes.
+                                                        Compare pathway across cancer types: select multiple cancer types and one pathway to compare the differences in expression in genes from the chosen pathway.", 
+                                                        placement = "auto",
+                                                        options = list(trigger = "click")),
+                                                selectInput('use_case',
+                                                            label = NULL,
+                                                            choices = c("Explore Expression" = "explore_expression", 
+                                                                        "Gene Clustering" = "gene_clustering",
+                                                                        "Compare Pathway Across Cancer Types" = "compare_pathway")
+                                                ))),
+
+                                  # Shown when selected use-case is "compare genes"
+                                  accordion(open=FALSE, id = "genes_accordion",
+                                            accordion_panel("Select Gene(s)",
+                                                            selectizeInput('gene_names', 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = TRUE)
+                                            )),
                                   
-                                  # Input dropdown menus for all list variables
-                                  accordion(
-                                      accordion_panel("Select use-case",
-                                                      open = TRUE,
-                                                      icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
-                                                      selectInput('use_case',
-                                                                  label = NULL,
-                                                                  choices = c("Explore Expression" = "explore_expression", 
-                                                                              "Gene Clustering" = "gene_clustering",
-                                                                              "Compare Pathway Across Cancer Types" = "compare_pathway")
-                                                      )),
-                                      
-                                      
-                                      # Shown when selected use-case is "compare genes"
-                                      div(id = "genes_accordion",
-                                          accordion_panel("Select Gene(s)",
-                                                          
-                                                          selectizeInput('gene_names', 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = TRUE))),
-                                      
-                                      
-                                      # Shown when selected use-case is "compare genes"
-                                      div(id = "individual_gene",
-                                          accordion_panel("Select Gene",
-                                                          
-                                                          selectizeInput('gene_name', 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = FALSE))),
-                                      
-                                      
-                                      # Shown when selected use-case is "compare pathways"
-                                      div(id = "pathway",
-                                          accordion_panel("Select Pathway",
-                                                          
-                                                          selectizeInput('pathway_name', 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = FALSE))),
-                                      
-                                      
-                                      
-                                      # Shown when selected use-case is "compare cancer types"
-                                      div(id = "cancer_types_accordion",
-                                          accordion_panel("Select Cancer Type(s)",
-                                                          
-                                                          selectizeInput("onco_types", 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = TRUE,
-                                                                         options = list(maxItems = 7)))),
-                                      
-                                      
-                                      # Shown when selected use-case is "compare cancer types"
-                                      div(id = "singular_cancer_type", 
-                                          accordion_panel("Select Cancer Type",
-                                                          
-                                                          selectizeInput("onco_type", 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = FALSE))),
-                                      
-                                      
-                                      
-                                      # Shown when selected use-case is "compare cancer types"
-                                      div(id = "compare_pathway_cancertypes",
-                                          accordion_panel("Select 2 Cancer Types", 
-                                                          
-                                                          selectizeInput("compare_pathway_onco_type", 
-                                                                         label = NULL, 
-                                                                         choices = NULL, 
-                                                                         multiple = TRUE,
-                                                                         # allows selection of max 2 onco types
-                                                                         options = list(maxItems = 2)))),
-                                      
-                                      
-                                      # Filter panel for metadata
-                                      accordion_panel("Select metadata",
-                                                      
-                                                      selectizeInput("sex", 
-                                                                     label = "Select sex", 
-                                                                     choices = NULL, 
-                                                                     multiple = TRUE),
-                                                      
-                                                      selectizeInput("race", 
-                                                                     label = "Select ethnic background", 
-                                                                     choices = NULL,
-                                                                     multiple = TRUE),
-                                                      
-                                                      selectizeInput("age_category", 
-                                                                     label = "Select age category", 
-                                                                     choices = NULL, 
-                                                                     multiple = TRUE))
-                                  )
+                                  # Shown when selected use-case is "compare genes"
+                                  accordion(open=FALSE, id = "individual_gene",
+                                            accordion_panel("Select Gene",
+                                                            selectizeInput('gene_name', 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = FALSE)
+                                            )),
+                                  
+                                  # Shown when selected use-case is "compare pathways"
+                                  accordion(open=FALSE, id = "pathway",
+                                            accordion_panel("Select Pathway",
+                                                            selectizeInput('pathway_name', 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = FALSE)
+                                            )),
+                                  
+                                  
+                                  # Shown when selected use-case is "compare cancer types"
+                                  accordion(open=FALSE, id = "cancer_types_accordion",
+                                            accordion_panel("Select Cancer Type(s)",
+                                                            selectizeInput("onco_types", 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = TRUE,
+                                                                           options = list(maxItems = 7)
+                                                            ))
+                                  ),
+                                  
+                                  # Shown when selected use-case is "compare cancer types"
+                                  accordion(open=FALSE, id = "singular_cancer_type",
+                                            accordion_panel("Select Cancer Type",
+                                                            selectizeInput("onco_type", 
+                                                                           label = NULL, 
+                                                                           choices = NULL, 
+                                                                           multiple = FALSE
+                                                            ))
+                                  ),
+                                  
+                                  # Filter panel for metadata
+                                  accordion(open=FALSE, accordion_panel("Select metadata", 
+                                                                        
+                                                                        selectizeInput("sex", 
+                                                                                       label = "Select sex", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("race", 
+                                                                                       label = "Select ethnic background", 
+                                                                                       choices = NULL,
+                                                                                       multiple = TRUE),
+                                                                        
+                                                                        selectizeInput("age_category", 
+                                                                                       label = "Select age category", 
+                                                                                       choices = NULL, 
+                                                                                       multiple = TRUE),
+                                                                        
+                                  )),
                                   
                                   # When clicked, plots and table will be updated based on user-chosen parameters
                                   #submitButton(text = "Apply Changes", icon = NULL, width = NULL)
@@ -226,35 +214,16 @@ ui <- page_fillable(
                                                                                      label = "Show border around plots?",
                                                                                      value = FALSE)
                                                                        
-                                                       ),
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("plot_height",
-                                                                                   label = "Adjust height",
-                                                                                   min = 500,
-                                                                                   max = 1500,
-                                                                                   value = 750,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE),
                                                                        
-                                                                       sliderInput("plot_width",
-                                                                                   label = "Adjust width",
-                                                                                   min = 700,
-                                                                                   max = 1500,
-                                                                                   value = 1200,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE))
-                                                       
-                                                       
-                                                       
+                                                       )
+                                       
                                                        
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner(plotlyOutput("plot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
                                                    )
                                          ),
-                                         
-                                         
                                          nav_panel("Heatmap",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select options",
@@ -263,41 +232,17 @@ ui <- page_fillable(
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue"),
-                                                                                 
                                                                                  checkboxInput("border_checkbox_heatmap",
                                                                                                label = "Show border around plots?",
-                                                                                               value = FALSE),
-                                                                                 
-                                                                                 checkboxInput("p_value_checkbox", 
-                                                                                               label = "Only show genes with p < 0.05?", 
-                                                                                               value = FALSE)),
-                                                                 
-                                                                 
-                                                                 
-                                                                 accordion_panel("Size settings",
-                                                                                 sliderInput("heatmap_height",
-                                                                                             label = "Adjust height",
-                                                                                             min = 500,
-                                                                                             max = 1500,
-                                                                                             value = 750,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE),
-                                                                                 
-                                                                                 sliderInput("heatmap_width",
-                                                                                             label = "Adjust width",
-                                                                                             min = 700,
-                                                                                             max = 1500,
-                                                                                             value = 1200,
-                                                                                             step = 50,
-                                                                                             ticks = FALSE))
+                                                                                               value = FALSE)
                                                        )
-                                                       
+                                                       )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner(plotlyOutput("heatmap"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
                                                    )),
                                          
-                                         nav_panel("Clustering Plot",                               
+                                         nav_panel("Gene Clustering",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select clustering options",
                                                                                  selectInput("clustering_options", 
@@ -310,34 +255,13 @@ ui <- page_fillable(
                                                                                              max = 10, 
                                                                                              value = 5)
                                                        ),
-                                                       
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_cluster",
                                                                                      label = "Show border around plots?",
-                                                                                     value = FALSE)),
-                                                       
-                                                       
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("cluster_height",
-                                                                                   label = "Adjust height",
-                                                                                   min = 500,
-                                                                                   max = 1500,
-                                                                                   value = 750,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE),
-                                                                       
-                                                                       sliderInput("cluster_width",
-                                                                                   label = "Adjust width",
-                                                                                   min = 700,
-                                                                                   max = 1500,
-                                                                                   value = 1200,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE))
-                                                       
+                                                                                     value = FALSE))
                                                        )
-                                                       
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("clusterplot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
                                                    )),
                                          
                                          nav_panel("Correlation Plot",                               
@@ -346,40 +270,15 @@ ui <- page_fillable(
                                                                                  selectizeInput("correlation_gene", 
                                                                                                 label = "Select gene to compare with:",
                                                                                                 choices = NULL,
-                                                                                                multiple = FALSE)
+                                                                                                multiple = FALSE),
                                                        ),
-                                                       
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_correlation",
                                                                                      label = "Show border around plots?",
-                                                                                     value = FALSE),
-                                                                       
-                                                                       checkboxInput("label_checkbox", 
-                                                                                     label = "Display cell line labels?",
-                                                                                     value = TRUE)
-                                                                       
-                                                       ),
-                                                       
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("corr_height",
-                                                                                   label = "Adjust height",
-                                                                                   min = 500,
-                                                                                   max = 1500,
-                                                                                   value = 750,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE),
-                                                                       
-                                                                       sliderInput("corr_width",
-                                                                                   label = "Adjust width",
-                                                                                   min = 700,
-                                                                                   max = 1500,
-                                                                                   value = 1200,
-                                                                                   step = 50,
-                                                                                   ticks = FALSE)
-                                                       )                      
+                                                                                     value = FALSE))
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
                                                    )),
                                          
                                          nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
@@ -387,8 +286,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_explore",
                                                    fluidPage(
-                                                       h3("Explore expression"),
-                                                       p("This use case allows the 
+                                                     h3("Explore expression"),
+                                                     p("This use case allows the 
                                                        user to generate visualizations 
                                                        of expression across genes. 
                                                        Possible plot types include 
@@ -400,17 +299,17 @@ ui <- page_fillable(
                                                        RNA molecules in the RNA sample. 
                                                        The log2 transformation is then 
                                                        applied to normalize the data. "),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side select 
                                                      the gene(s) and cancer type(s) 
                                                      you are interested in. If 
                                                      you want you can select sex, 
                                                      ethnic background, and age 
                                                      category as well."),
-                                                       
-                                                       h3("Summary plots"),
-                                                       p("After making your selections, 
+                                                     
+                                                     h3("Summary plots"),
+                                                     p("After making your selections, 
                                                        you can choose between a 
                                                        bar plot, a box plot, and 
                                                        a violin plot on the first 
@@ -421,17 +320,17 @@ ui <- page_fillable(
                                                        points. Gene expression is 
                                                        shown on the y-axis and 
                                                        cancer type on the x-axis."),
-                                                       
-                                                       h3("Heatmap"),
-                                                       p("On the next tab, a heatmap 
+                                                     
+                                                     h3("Heatmap"),
+                                                     p("On the next tab, a heatmap 
                                                        is shown. For the heatmap, 
                                                        you can pick a color 
                                                        palette. Here the gene 
                                                        expression is shown across 
                                                        the selected cell lines."),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
@@ -453,8 +352,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_cluster",
                                                    fluidPage(
-                                                       h3("Gene clustering"),
-                                                       p("This use case can be used 
+                                                     h3("Gene clustering"),
+                                                     p("This use case can be used 
                                                        to find the top 10 positively 
                                                        or negatively correlated 
                                                        genes with a selected gene. 
@@ -475,24 +374,24 @@ ui <- page_fillable(
                                                        not mean that the genes have 
                                                        an equal expression, it 
                                                        just indicates their, ",
-                                                         strong("expression profile "),
-                                                         "is similar. The same goes 
+                                                       strong("expression profile "),
+                                                       "is similar. The same goes 
                                                        for a negative correlation, 
                                                        if gene A has a lowered 
                                                        expression in a cell line, 
                                                        then gene B is also 
                                                        lowered in expression."),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side, select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side, select 
                                                        the gene and the cancer 
                                                        type you are interested in. 
                                                        If you want you can select 
                                                        sex, ethnic background, 
                                                        and age category as well."),
-                                                       
-                                                       h3("Clustering plot"),
-                                                       p("Automatically the top 5 
+                                                     
+                                                     h3("Clustering plot"),
+                                                     p("Automatically the top 5 
                                                        positively correlated genes 
                                                        show up. Using the 
                                                        drop-down menu, you can 
@@ -503,9 +402,9 @@ ui <- page_fillable(
                                                        genes that are shown can 
                                                        be changed from the top 1 
                                                        all the way to the top 10."),
-                                                       
-                                                       h3("Correlation plot"),
-                                                       p("The correlation plot gives 
+                                                     
+                                                     h3("Correlation plot"),
+                                                     p("The correlation plot gives 
                                                        you the ability to compare 
                                                        the expression of your 
                                                        chosen gene to any other 
@@ -526,9 +425,9 @@ ui <- page_fillable(
                                                        display a linear line, 
                                                        indicating a correlation 
                                                        between the two genes."),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
@@ -550,8 +449,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_compare",
                                                    fluidPage(
-                                                       h3("Compare pathways"),
-                                                       p("This use case can be used 
+                                                     h3("Compare pathways"),
+                                                     p("This use case can be used 
                                                        to compare humane biological 
                                                        pathways, which are 
                                                        collections of genes working 
@@ -566,18 +465,18 @@ ui <- page_fillable(
                                                        transformation is then 
                                                        applied to normalize 
                                                        the data."),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side, select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side, select 
                                                        the pathway you are 
                                                        interested in. The dropdown 
                                                        selection for 'select pathways' 
                                                        contains all humane pathways 
                                                        from the", 
-                                                         a("KEGG pathway database",
-                                                           href = "https://www.kegg.jp/kegg/kegg2.html",
-                                                           target = "_blank")
-                                                         ," 
+                                                       a("KEGG pathway database",
+                                                         href = "https://www.kegg.jp/kegg/kegg2.html",
+                                                         target = "_blank")
+                                                       ," 
                                                        Selecting a pathway will 
                                                        auto-select all genes 
                                                        that belong to the chosen 
@@ -586,9 +485,9 @@ ui <- page_fillable(
                                                        compare expression of genes 
                                                        in the chosen pathway, 
                                                        across cancer types."),
-                                                       
-                                                       h3("Heatmap"),
-                                                       p("The result can be viewed 
+                                                     
+                                                     h3("Heatmap"),
+                                                     p("The result can be viewed 
                                                        in the heatmap, with genes 
                                                        on the x-axis and cancer 
                                                        types on the y-axis. 
@@ -596,9 +495,9 @@ ui <- page_fillable(
                                                        can be chosen and the colors 
                                                        resemble the expression 
                                                        rates in log2 TPM"),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
