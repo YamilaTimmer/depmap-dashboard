@@ -97,10 +97,20 @@ ui <- page_fillable(
             
             layout_sidebar(
                 sidebar = sidebar(width = 350,
-                                  
+                                  style = "background-color: #f0f0f0;",
                                   # Input dropdown menus for all list variables
                                   accordion(
                                       accordion_panel("Select use-case",
+                                                      style = "background-color: #f0f0f0;",
+                                                      tags$style(HTML("
+                                                                      .accordion-item .accordion-header {
+                                                                      background-color: #f0f0f0 !important;}
+                                                                      
+                                                                      .accordion-item .accordion-button:not(.collapsed){
+                                                                      background-color: #f0f0f0 !important;}
+                                                                      
+                                                                      .accordion-item .accordion-button.collapsed {
+                                                                      background-color: #f0f0f0 !important;")),
                                                       open = TRUE,
                                                       icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
                                                       selectInput('use_case',
@@ -114,6 +124,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare genes"
                                       div(id = "genes_accordion",
                                           accordion_panel("Select Gene(s)",
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput('gene_names', 
                                                                          label = NULL, 
@@ -124,6 +135,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare genes"
                                       div(id = "individual_gene",
                                           accordion_panel("Select Gene",
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput('gene_name', 
                                                                          label = NULL, 
@@ -134,6 +146,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare pathways"
                                       div(id = "pathway",
                                           accordion_panel("Select Pathway",
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput('pathway_name', 
                                                                          label = NULL, 
@@ -145,6 +158,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare cancer types"
                                       div(id = "cancer_types_accordion",
                                           accordion_panel("Select Cancer Type(s)",
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput("onco_types", 
                                                                          label = NULL, 
@@ -156,6 +170,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare cancer types"
                                       div(id = "singular_cancer_type", 
                                           accordion_panel("Select Cancer Type",
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput("onco_type", 
                                                                          label = NULL, 
@@ -167,6 +182,7 @@ ui <- page_fillable(
                                       # Shown when selected use-case is "compare cancer types"
                                       div(id = "compare_pathway_cancertypes",
                                           accordion_panel("Select 2 Cancer Types", 
+                                                          style = "background-color: #f0f0f0;",
                                                           
                                                           selectizeInput("compare_pathway_onco_type", 
                                                                          label = NULL, 
@@ -178,6 +194,7 @@ ui <- page_fillable(
                                       
                                       # Filter panel for metadata
                                       accordion_panel("Select metadata",
+                                                      style = "background-color: #f0f0f0;",
                                                       
                                                       selectizeInput("sex", 
                                                                      label = "Select sex", 
