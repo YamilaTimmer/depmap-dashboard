@@ -101,10 +101,17 @@ ui <- page_fillable(
                                 accordion_panel("Select use-case",
                                                 open = TRUE,
                                                 icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
-                                                tooltip(span(bs_icon("info-circle")), 
-                                                        "Explore expression: explore the expression of one or more genes in one cancer type or compare the expression of one or more genes across multiple cancer types.
-                                                        Gene clustering: explore the correlation between expression profiles and find positively/negatively correlated genes.
-                                                        Compare pathway across cancer types: select multiple cancer types and one pathway to compare the differences in expression in genes from the chosen pathway.", 
+                                                tooltip(span(bs_icon("info-circle")),
+                                                        HTML("<strong>Explore expression:</strong><br/>
+                                                             Explore the expression of one or more genes in one cancer type,<br/> 
+                                                             or compare the expression of one or more genes across multiple cancer types.<br/><br/>
+                                                             
+                                                             <strong>Gene clustering:</strong><br/>
+                                                             explore the correlation between expression profiles and find positively/negatively correlated genes.<br/><br/>
+                                                             
+                                                             <strong>Compare pathways: </strong><br/>
+                                                             select multiple cancer types and one pathway to compare the<br/>
+                                                             differences in expression in genes from the chosen pathway."),
                                                         placement = "auto",
                                                         options = list(trigger = "click")),
                                                 selectInput('use_case',
