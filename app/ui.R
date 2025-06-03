@@ -241,6 +241,9 @@ ui <- page_fillable(
                                                                                      value = FALSE),
                                                                        checkboxInput("border_checkbox",
                                                                                      label = "Show border around plots?",
+                                                                                     value = FALSE),
+                                                                       checkboxInput("y_labs_checkbox",
+                                                                                     label = "Use same step size on Y-axis",
                                                                                      value = FALSE)
                                                                        
                                                        ),

@@ -279,6 +279,9 @@ xyplots <- function(input, data, type = "boxplot") {
     if (input$border_checkbox == TRUE){
         p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
     }
+    if (input$y_labs_checkbox == TRUE){
+      p <- p + facet_wrap(~gene, scales = "fixed")
+    }
     
     # Makes plot better visible (e.g. y-axis title was cut-off before)
     p <- ggplotly(p, 
