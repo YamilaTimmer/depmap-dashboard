@@ -208,7 +208,7 @@ server <- function(input, output, session) {
         # Retrieve data from reactive function
         data <- selected_data()
         
-        if (input$p_value_checkbox == TRUE){
+        if (input$use_case == "compare_pathway"){
             
             data <- check_significancy(data,input)
         }
@@ -273,10 +273,10 @@ server <- function(input, output, session) {
             # Retrieve data from reactive function
             data <- selected_data()
             
-            if (input$p_value_checkbox == TRUE){
-                
-                data <- check_significancy(data,input)
-            }
+            data <- check_significancy(data,input)
+            
+            
+            
         }
         
         
@@ -289,9 +289,9 @@ server <- function(input, output, session) {
         # Generate the data table with additional features
         generate_datatable(data, filter = "top")
     })
-  
+    
     output$homepage_plot <- renderPlot({
-    req(meta_data)
-    generate_homepage_viz(meta_data)
-  })
+        req(meta_data)
+        generate_homepage_viz(meta_data)
+    })
 }

@@ -195,8 +195,12 @@ check_significancy <- function(filtered_gene, input) {
     # Vector of only significant gene names
     significant_genes <- p_value_df$gene[p_value_df$p_value <= 0.05]
     
-    # Subset data on significant genes
-    data <- data[data$gene %in% significant_genes, ]
+    
+    if (input$p_value_checkbox == TRUE){
+        # Subset data on significant genes
+        data <- data[data$gene %in% significant_genes, ]
+    }
+    
     
     # Add p_value as column to data
     data <- data %>%
@@ -323,6 +327,8 @@ generate_heatmap <- function(input, data){
         }
         
         else{
+            
+            
             
             heatmap_data <- data %>%
                 group_by(gene, OncotreePrimaryDisease) %>%
