@@ -5,7 +5,7 @@ useShinyjs()
 server <- function(input, output, session) {
     
     # Read in .tsv files with expression data and metadata
-    expression_data <- read_feather(paste0(DATA_DIR, "expression_data.tsv"))
+    expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
     
     # Load human pathways and sort by pathway ID
