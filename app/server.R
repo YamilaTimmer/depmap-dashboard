@@ -275,8 +275,6 @@ server <- function(input, output, session) {
             
             data <- check_significancy(data,input)
             
-            
-            
         }
         
         

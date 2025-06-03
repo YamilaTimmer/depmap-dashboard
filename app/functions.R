@@ -318,7 +318,6 @@ generate_heatmap <- function(input, data){
     # Generate heatmap for comparing expression of pathway across cancer types 
     if (input$use_case == 'compare_pathway'){
         
-        #req(length(input$compare_pathway_onco_type) == 2)
         
         if (length(input$compare_pathway_onco_type) !=2){
             
@@ -328,15 +327,21 @@ generate_heatmap <- function(input, data){
         
         else{
             
-            
-            
+            # Convert heatmap data to group cellines by gene, per onco type and
+            # calculate mean expr across cellines, to be displayed in heatmap
             heatmap_data <- data %>%
                 group_by(gene, OncotreePrimaryDisease) %>%
-                summarise(mean_expr = mean(expr), .groups = "drop")
+                summarise(mean_expr = mean(expr))
+            
+            # Calculate total mean between the two onco types, to reorder genes
+            # based on this order in the heatmap
+            heatmap_data <- heatmap_data %>%
+                group_by(gene) %>%
+                mutate(total_mean = mean(mean_expr))
             
             p <- ggplot(
                 data = heatmap_data, 
-                aes(x = gene,
+                aes(x = reorder(gene, total_mean),
                     y = OncotreePrimaryDisease,
                     fill = mean_expr
                 )) +
@@ -347,6 +352,7 @@ generate_heatmap <- function(input, data){
                 theme(axis.text.x = element_text(angle = 90, 
                                                  vjust = 0.5, 
                                                  hjust=1))
+            print(heatmap_data)
             
         }
     }
