@@ -204,13 +204,11 @@ check_significancy <- function(filtered_gene, input) {
     
     # Add p_value as column to data
     data <- data %>%
-        left_join(p_value_df, by = "gene")
+        inner_join(p_value_df, by = "gene")
     
     return(data)
     
 }   
-
-
 
 #' Generate XY plots  
 #'  
@@ -295,6 +293,46 @@ xyplots <- function(input, data, type = "boxplot") {
     return(p)
 }
 
+#' Calculate logfold change
+#'
+#' This function calculates mean expression and logfoldchange, which is a preparatory step
+#' needed to visualize the data in the heatmap in the 'compare pathway' usecase.
+#' 
+#' @param data: a dataframe containing atleast gene names, expression values, and cancer types. 
+#' @return A dataframe containing gene name, onco type, mean expr, 
+#' total_mean (used for reordering heatmap) and log2_fc
+calculate_logfold_change <- function(data){
+    
+    
+    # Convert heatmap data to group cellines by gene, per onco type and
+    # calculate mean expr across cellines, to be displayed in heatmap
+    heatmap_data <- data %>%
+        group_by(gene, OncotreePrimaryDisease) %>%
+        summarise(mean_expr = mean(expr), .groups = "drop") %>%
+        
+        # Calculate total mean between the two onco types, to reorder genes
+        # based on this order in the heatmap
+        group_by(gene) %>%
+        mutate(total_mean = mean(mean_expr, .groups = "drop")) %>%
+        ungroup()
+    
+    # Calculate log fold change per gene per cancer type (log2(geneA/geneB))
+    log_fold_data <- heatmap_data %>%
+        pivot_wider(
+            names_from = OncotreePrimaryDisease,
+            values_from = mean_expr) %>%
+        mutate(log2_fc = log2(.[[2]]/ .[[3]])) %>%
+        pivot_longer(
+            cols = 3:4,
+            names_to = "OncotreePrimaryDisease",
+            values_to = "mean_expr"
+        )
+    
+    
+    return(log_fold_data)
+}
+
+
 #' Generate heatmap 
 #'  
 #' This function generates a heatmap that displays the expression per gene per cell line.
@@ -327,20 +365,11 @@ generate_heatmap <- function(input, data){
         
         else{
             
-            # Convert heatmap data to group cellines by gene, per onco type and
-            # calculate mean expr across cellines, to be displayed in heatmap
-            heatmap_data <- data %>%
-                group_by(gene, OncotreePrimaryDisease) %>%
-                summarise(mean_expr = mean(expr))
+            log_fold_data <- calculate_logfold_change(data)
             
-            # Calculate total mean between the two onco types, to reorder genes
-            # based on this order in the heatmap
-            heatmap_data <- heatmap_data %>%
-                group_by(gene) %>%
-                mutate(total_mean = mean(mean_expr))
             
             p <- ggplot(
-                data = heatmap_data, 
+                data = log_fold_data, 
                 aes(x = reorder(gene, total_mean),
                     y = OncotreePrimaryDisease,
                     fill = mean_expr
@@ -352,7 +381,6 @@ generate_heatmap <- function(input, data){
                 theme(axis.text.x = element_text(angle = 90, 
                                                  vjust = 0.5, 
                                                  hjust=1))
-            print(heatmap_data)
             
         }
     }

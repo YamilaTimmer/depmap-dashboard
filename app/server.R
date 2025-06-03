@@ -272,8 +272,17 @@ server <- function(input, output, session) {
             
             # Retrieve data from reactive function
             data <- selected_data()
-            
             data <- check_significancy(data,input)
+            log_fold_data <- calculate_logfold_change(data)
+            
+            # Transform log_2 data so that it can be joined to the table data
+            log_2 <-  log_fold_data %>%
+                dplyr::select(gene, log2_fc) %>%
+                distinct(gene, .keep_all = TRUE) # Only keep one row per gene
+            
+            # Merge table data with log_fc
+            data <- data %>%
+                inner_join(log_2, by = "gene")
             
         }
         
