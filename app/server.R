@@ -117,28 +117,34 @@ server <- function(input, output, session) {
                          selected = expression_data$gene[1], 
                          server = TRUE)
     
+    
     updateSelectizeInput(session, 
                          'pathway_name', 
                          choices = human_pathways_hsa,
-                         server = TRUE)
+                         server = TRUE,
+                         options = list(maxOptions = length(human_pathways_hsa)))
     
     updateSelectizeInput(session, 
                          'onco_type', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = "Acute Myeloid Leukemia",
-                         server = TRUE)
+                         server = TRUE,
+                         # Enables user to scroll through all options
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease))) 
     
     updateSelectizeInput(session, 
                          'onco_types', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = "Acute Myeloid Leukemia",
-                         server = TRUE)
+                         server = TRUE,
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
     
     updateSelectizeInput(session, 
                          'compare_pathway_onco_type', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
-                         server = TRUE)
+                         server = TRUE,
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
     
     
     updateSelectizeInput(session, 
