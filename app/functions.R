@@ -125,9 +125,9 @@ filter_gene <- function(merged_data, input, human_pathways) {
     
     else if (input$use_case == 'compare_pathway'){
         
-        chosen_pathway <- human_pathways %>% filter(human_pathways$Description %in% input$pathway_name)
-        chosen_pathway_ID <- chosen_pathway$PathwayID
-        
+        # Chosen ID is everything that comes before ":" in input$pathway_name
+        chosen_pathway_ID <- sub(":.*", "", input$pathway_name)
+
         # Create table with humanpathway ID's and corresponding genes
         pathway_table <- read_feather(paste0(DATA_DIR, "pathway_table.tsv"))
         

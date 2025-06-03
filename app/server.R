@@ -5,13 +5,19 @@ useShinyjs()
 server <- function(input, output, session) {
     
     # Read in .tsv files with expression data and metadata
-    expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
+    expression_data <- read_feather(paste0(DATA_DIR, "expression_data.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
+    
+    # Load human pathways and sort by pathway ID
     human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
+    human_pathways <- human_pathways %>% 
+        arrange(PathwayID)
+    
+    # Rename pathway options to include both ID and description in the name
+    human_pathways_hsa <- paste0(human_pathways$PathwayID, ":", human_pathways$Description)
     
     # no longer needed if new version from pre-processing is loaded
     colnames(expression_data)[colnames(expression_data) == "expression"] <- "expr"
-    
     
     # Convert NA to Unknown
     meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
@@ -113,7 +119,7 @@ server <- function(input, output, session) {
     
     updateSelectizeInput(session, 
                          'pathway_name', 
-                         choices = human_pathways$Description,
+                         choices = human_pathways_hsa,
                          server = TRUE)
     
     updateSelectizeInput(session, 
