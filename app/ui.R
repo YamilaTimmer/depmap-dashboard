@@ -237,13 +237,13 @@ ui <- page_fillable(
                                                                                    choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"], 
                                                                                    selected = "PairedColor12Steps"),
                                                                        checkboxInput("geom_point_checkbox", 
-                                                                                     label = "Show individual points?", 
+                                                                                     label = "Individual points", 
                                                                                      value = FALSE),
                                                                        checkboxInput("border_checkbox",
-                                                                                     label = "Show border around plots?",
+                                                                                     label = "Add border",
                                                                                      value = FALSE),
                                                                        checkboxInput("y_labs_checkbox",
-                                                                                     label = "Use same step size on Y-axis",
+                                                                                     label = "Use same Y-axis",
                                                                                      value = FALSE)
                                                                        
                                                        ),
@@ -285,7 +285,7 @@ ui <- page_fillable(
                                                                                              selected = "Blue"),
                                                                                  
                                                                                  checkboxInput("border_checkbox_heatmap",
-                                                                                               label = "Show border around plots?",
+                                                                                               label = "Add border",
                                                                                                value = FALSE),
                                                                                  
                                                                                  checkboxInput("p_value_checkbox", 
@@ -333,7 +333,7 @@ ui <- page_fillable(
                                                        
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_cluster",
-                                                                                     label = "Show border around plots?",
+                                                                                     label = "Add border",
                                                                                      value = FALSE)),
                                                        
                                                        
@@ -371,7 +371,7 @@ ui <- page_fillable(
                                                        
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_correlation",
-                                                                                     label = "Show border around plots?",
+                                                                                     label = "Add border",
                                                                                      value = FALSE),
                                                                        
                                                                        checkboxInput("label_checkbox", 
