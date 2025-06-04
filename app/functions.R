@@ -409,8 +409,13 @@ generate_datatable <- function(data, filter = "top") {
     
     data$expr <- round(data$expr, 3)
     
+    # Make the P-value column use scientific notation
+    if ("p_value" %in% names(data)) {
+      data$p_value <- format(data$p_value, scientific = TRUE, digits = 3)
+    }
+    
     # Render the table
-    datatable(data, 
+    dt <- datatable(data, 
               rownames = FALSE, 
               escape = FALSE,
               filter = filter, 
