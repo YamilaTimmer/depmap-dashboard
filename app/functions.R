@@ -279,6 +279,9 @@ xyplots <- function(input, data, type = "boxplot") {
     if (input$border_checkbox == TRUE){
         p <- p + theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.5))
     }
+    if (input$y_labs_checkbox == TRUE){
+      p <- p + facet_wrap(~gene, scales = "fixed")
+    }
     
     # Makes plot better visible (e.g. y-axis title was cut-off before)
     p <- ggplotly(p, 
@@ -406,8 +409,13 @@ generate_datatable <- function(data, filter = "top") {
     
     data$expr <- round(data$expr, 3)
     
+    # Make the P-value column use scientific notation
+    if ("p_value" %in% names(data)) {
+      data$p_value <- format(data$p_value, scientific = TRUE, digits = 3)
+    }
+    
     # Render the table
-    datatable(data, 
+    dt <- datatable(data, 
               rownames = FALSE, 
               escape = FALSE,
               filter = filter, 
