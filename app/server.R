@@ -7,11 +7,17 @@ server <- function(input, output, session) {
     # Read in .tsv files with expression data and metadata
     expression_data <- read_feather(paste0(DATA_DIR, "expression_data_subset.tsv"))
     meta_data <- read_feather(paste0(DATA_DIR, "meta_data.tsv"))
+    
+    # Load human pathways and sort by pathway ID
     human_pathways <- read_feather(paste0(DATA_DIR, "human_pathways.tsv"))
+    human_pathways <- human_pathways %>% 
+        arrange(PathwayID)
+    
+    # Rename pathway options to include both ID and description in the name
+    human_pathways_hsa <- paste0(human_pathways$PathwayID, ":", human_pathways$Description)
     
     # no longer needed if new version from pre-processing is loaded
     colnames(expression_data)[colnames(expression_data) == "expression"] <- "expr"
-    
     
     # Convert NA to Unknown
     meta_data$Sex[is.na(meta_data$Sex)] <- "Unknown"
@@ -111,28 +117,34 @@ server <- function(input, output, session) {
                          selected = expression_data$gene[1], 
                          server = TRUE)
     
+    
     updateSelectizeInput(session, 
                          'pathway_name', 
-                         choices = human_pathways$Description,
-                         server = TRUE)
+                         choices = human_pathways_hsa,
+                         server = TRUE,
+                         options = list(maxOptions = length(human_pathways_hsa)))
     
     updateSelectizeInput(session, 
                          'onco_type', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = "Acute Myeloid Leukemia",
-                         server = TRUE)
+                         server = TRUE,
+                         # Enables user to scroll through all options
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease))) 
     
     updateSelectizeInput(session, 
                          'onco_types', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = "Acute Myeloid Leukemia",
-                         server = TRUE)
+                         server = TRUE,
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
     
     updateSelectizeInput(session, 
                          'compare_pathway_onco_type', 
                          choices = sort(meta_data$OncotreePrimaryDisease), 
                          selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
-                         server = TRUE)
+                         server = TRUE,
+                         options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
     
     
     updateSelectizeInput(session, 
@@ -210,7 +222,7 @@ server <- function(input, output, session) {
         # Retrieve data from reactive function
         data <- debounced_selected_data()
         
-        if (input$p_value_checkbox == TRUE){
+        if (input$use_case == "compare_pathway"){
             
             data <- check_significancy(data,input)
         }
@@ -274,11 +286,19 @@ server <- function(input, output, session) {
             
             # Retrieve data from reactive function
             data <- debounced_selected_data()
+            data <- check_significancy(data,input)
+            log_fold_data <- calculate_logfold_change(data)
             
-            if (input$p_value_checkbox == TRUE){
-                
-                data <- check_significancy(data,input)
-            }
+            # Transform log_2 data so that it can be joined to the table data
+            log_2 <-  log_fold_data %>%
+                dplyr::select(gene, log2_fc) %>%
+                distinct(gene, .keep_all = TRUE) # Only keep one row per gene
+            
+            # Merge table data with log_fc
+            data <- data %>%
+                inner_join(log_2, by = "gene")
+
+            
         }
         
         
@@ -291,9 +311,9 @@ server <- function(input, output, session) {
         # Generate the data table with additional features
         generate_datatable(data, filter = "top")
     })
-  
+    
     output$homepage_plot <- renderPlot({
-    req(meta_data)
-    generate_homepage_viz(meta_data)
-  })
+        req(meta_data)
+        generate_homepage_viz(meta_data)
+    })
 }
