@@ -284,7 +284,7 @@ ui <- page_fillable(
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("plot"))
                                                    )
                                          ),
                                          nav_panel("Heatmap",                               
@@ -326,10 +326,10 @@ ui <- page_fillable(
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("heatmap"))
                                                    )),
                                          
-                                         nav_panel("Gene Clustering",                               
+                                         nav_panel("Clustering Plot",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select clustering options",
                                                                                  selectInput("clustering_options", 
@@ -369,7 +369,7 @@ ui <- page_fillable(
 
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("clusterplot"))
                                                    )),
                                          
                                          nav_panel("Correlation Plot",                               
@@ -412,7 +412,7 @@ ui <- page_fillable(
 
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
+                                                   shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
                                                    )),
                                          
                                          nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),

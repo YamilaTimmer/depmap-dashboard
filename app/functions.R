@@ -454,6 +454,9 @@ generate_datatable <- function(data, filter = "top") {
       data$p_value <- format(data$p_value, scientific = TRUE, digits = 3)
     }
     
+    if ("log2_fc" %in% names(data)) {
+        data$log2_fc <- format(data$log2_fc, scientific = TRUE, digits = 3)
+    }
     # Render the table
     dt <- datatable(data, 
               rownames = FALSE, 
