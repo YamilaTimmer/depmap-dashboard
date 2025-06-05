@@ -190,12 +190,14 @@ server <- function(input, output, session) {
         filter_gene(merged_data(), input, human_pathways)
     })
     
+    # Debounce the selected data so that the plots do not refresh so quickly after selecting new filters.
+    debounced_selected_data <- debounce(selected_data, 350)
     
     # Generate output for XY plots
     output$plot <- renderPlotly({
         
         # Retrieve data from reactive function
-        data <- selected_data()
+        data <- debounced_selected_data()
         
         # Prevent error where plot tries to render before data has loaded in
         req(nrow(data) >= 1)
@@ -218,7 +220,7 @@ server <- function(input, output, session) {
     output$heatmap <- renderPlotly({
         
         # Retrieve data from reactive function
-        data <- selected_data()
+        data <- debounced_selected_data()
         
         if (input$use_case == "compare_pathway"){
             
@@ -235,7 +237,7 @@ server <- function(input, output, session) {
     # Call functions needed for clusterplot
     output$clusterplot <- renderPlotly({
         
-        req(selected_data()) # Ensure data is available
+        req(debounced_selected_data()) # Ensure data is available
         
         # Load and reformat data for gene clustering
         data <- merged_data()
@@ -254,7 +256,7 @@ server <- function(input, output, session) {
     # Call functions needed for correlation plot
     output$corr_plot <- renderPlotly({
         
-        req(selected_data()) # Ensure data is available
+        req(debounced_selected_data()) # Ensure data is available
         
         # Obtain data in correct format
         data <- merged_data()
@@ -268,7 +270,7 @@ server <- function(input, output, session) {
     # Call functions needed for datatable
     output$data <- renderDataTable({
         
-        req(selected_data())  # Ensure data is available
+        req(debounced_selected_data())  # Ensure data is available
         
         if (input$use_case == "gene_clustering"){
             data <- merged_data()
@@ -283,7 +285,7 @@ server <- function(input, output, session) {
         } else if (input$use_case == "compare_pathway"){
             
             # Retrieve data from reactive function
-            data <- selected_data()
+            data <- debounced_selected_data()
             data <- check_significancy(data,input)
             log_fold_data <- calculate_logfold_change(data)
             
@@ -295,13 +297,14 @@ server <- function(input, output, session) {
             # Merge table data with log_fc
             data <- data %>%
                 inner_join(log_2, by = "gene")
+
             
         }
         
         
         else{
             # Retrieve data from reactive function
-            data <- selected_data()
+            data <- debounced_selected_data()
             
         }
         
