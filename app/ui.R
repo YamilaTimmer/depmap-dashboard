@@ -1,7 +1,6 @@
 source("functions.R")
 
 ui <- page_fillable(
-    
     # Used to dynamically show accordion filters
     useShinyjs(),
     
@@ -55,19 +54,18 @@ ui <- page_fillable(
                 
                 # Dataset summary
                 tags$div(
-                    
-                    tags$h3(bs_icon("bar-chart-line"),
-                            "Dataset summary"),
-                    tags$p(style = "font-size: 16px;",
-                           "On the dashboard the following data can be found:"),
-                    tags$ul(
-                        style = "font-size: 16px;",
-                        tags$li("17,000+ genes"),
-                        tags$li("80+ cancer types"),
-                        tags$li("Metadata consisting of sex, age, ethnic background, and more.")
-                    ),
-                    tags$p(style = "font-size: 16px;",
-                           "The dashboard includes data on over 80 cancer types, 
+                  tags$h3(bs_icon("bar-chart-line"),
+                          "Dataset summary"),
+                  tags$p(style = "font-size: 16px;",
+                         "On the dashboard the following data can be found:"),
+                  tags$ul(
+                    style = "font-size: 16px;",
+                    tags$li("17,000+ genes"),
+                    tags$li("80+ cancer types"),
+                    tags$li("Metadata consisting of sex, age, ethnic background, and more.")
+                  ),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard includes data on over 80 cancer types, 
                          the chart below shows the top 10 cancer types that 
                          have the most available data.")
                 ),
@@ -76,10 +74,10 @@ ui <- page_fillable(
                 
                 # About us
                 tags$div(
-                    tags$h3(bs_icon("people-fill"),
-                            "About us"),
-                    tags$p(style = "font-size: 16px;",
-                           "The dashboard was created by a small team of
+                  tags$h3(bs_icon("people-fill"),
+                          "About us"),
+                  tags$p(style = "font-size: 16px;",
+                         "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and 
                          Mirte Draaijer, two students from the bio-informatics
                          programme of the Hanze university, worked on developing
@@ -113,6 +111,19 @@ ui <- page_fillable(
                                                                       background-color: #f0f0f0 !important;")),
                                                       open = TRUE,
                                                       icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
+                                                      tooltip(span(bs_icon("info-circle")),
+                                                        HTML("<strong>Explore expression:</strong><br/>
+                                                             Explore the expression of one or more genes in one cancer type,<br/> 
+                                                             or compare the expression of one or more genes across multiple cancer types.<br/><br/>
+                                                             
+                                                             <strong>Gene clustering:</strong><br/>
+                                                             explore the correlation between expression profiles and find positively/negatively correlated genes.<br/><br/>
+                                                             
+                                                             <strong>Compare pathways: </strong><br/>
+                                                             select multiple cancer types and one pathway to compare the<br/>
+                                                             differences in expression in genes from the chosen pathway."),
+                                                        placement = "auto",
+                                                        options = list(trigger = "click")),
                                                       selectInput('use_case',
                                                                   label = NULL,
                                                                   choices = c("Explore Expression" = "explore_expression", 
@@ -211,6 +222,7 @@ ui <- page_fillable(
                                                                      choices = NULL, 
                                                                      multiple = TRUE))
                                   )
+
                                   
                                   # When clicked, plots and table will be updated based on user-chosen parameters
                                   #submitButton(text = "Apply Changes", icon = NULL, width = NULL)
@@ -246,6 +258,7 @@ ui <- page_fillable(
                                                                                      label = "Use same Y-axis",
                                                                                      value = FALSE)
                                                                        
+
                                                        ),
                                                        accordion_panel("Size settings",
                                                                        sliderInput("plot_height",
@@ -266,15 +279,14 @@ ui <- page_fillable(
                                                        
                                                        
                                                        
+
                                                        
                                                        )
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner(plotlyOutput("plot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("plot"))))
                                                    )
                                          ),
-                                         
-                                         
                                          nav_panel("Heatmap",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select options",
@@ -283,8 +295,8 @@ ui <- page_fillable(
                                                                                              label = "Select color scheme", 
                                                                                              choices <- palettes_c_names$palette[palettes_c_names$package == "ggthemes"], 
                                                                                              selected = "Blue"),
-                                                                                 
                                                                                  checkboxInput("border_checkbox_heatmap",
+
                                                                                                label = "Add border",
                                                                                                value = FALSE),
                                                                                  
@@ -310,14 +322,14 @@ ui <- page_fillable(
                                                                                              value = 800,
                                                                                              step = 50,
                                                                                              ticks = FALSE))
+
                                                        )
-                                                       
                                                    ),
                                                    
-                                                   shinycssloaders::withSpinner(plotlyOutput("heatmap"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("heatmap"))))
                                                    )),
                                          
-                                         nav_panel("Clustering Plot",                               
+                                         nav_panel("Gene Clustering",                               
                                                    layout_sidebar(sidebar = sidebar(
                                                        accordion(accordion_panel("Select clustering options",
                                                                                  selectInput("clustering_options", 
@@ -330,9 +342,9 @@ ui <- page_fillable(
                                                                                              max = 10, 
                                                                                              value = 5)
                                                        ),
-                                                       
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_cluster",
+
                                                                                      label = "Add border",
                                                                                      value = FALSE)),
                                                        
@@ -354,10 +366,10 @@ ui <- page_fillable(
                                                                                    step = 50,
                                                                                    ticks = FALSE))
                                                        
+
                                                        )
-                                                       
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("clusterplot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("clusterplot"))))
                                                    )),
                                          
                                          nav_panel("Correlation Plot",                               
@@ -366,11 +378,11 @@ ui <- page_fillable(
                                                                                  selectizeInput("correlation_gene", 
                                                                                                 label = "Select gene to compare with:",
                                                                                                 choices = NULL,
-                                                                                                multiple = FALSE)
+                                                                                                multiple = FALSE),
                                                        ),
-                                                       
                                                        accordion_panel("Other options",
                                                                        checkboxInput("border_checkbox_correlation",
+
                                                                                      label = "Add border",
                                                                                      value = FALSE),
                                                                        
@@ -397,9 +409,10 @@ ui <- page_fillable(
                                                                                    step = 50,
                                                                                    ticks = FALSE)
                                                        )                      
+
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
+                                                   shinycssloaders::withSpinner((jqui_resizable(plotlyOutput("corr_plot"))))
                                                    )),
                                          
                                          nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
@@ -407,8 +420,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_explore",
                                                    fluidPage(
-                                                       h3("Explore expression"),
-                                                       p("This use case allows the 
+                                                     h3("Explore expression"),
+                                                     p("This use case allows the 
                                                        user to generate visualizations 
                                                        of expression across genes. 
                                                        Possible plot types include 
@@ -420,17 +433,17 @@ ui <- page_fillable(
                                                        RNA molecules in the RNA sample. 
                                                        The log2 transformation is then 
                                                        applied to normalize the data. "),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side select 
                                                      the gene(s) and cancer type(s) 
                                                      you are interested in. If 
                                                      you want you can select sex, 
                                                      ethnic background, and age 
                                                      category as well."),
-                                                       
-                                                       h3("Summary plots"),
-                                                       p("After making your selections, 
+                                                     
+                                                     h3("Summary plots"),
+                                                     p("After making your selections, 
                                                        you can choose between a 
                                                        bar plot, a box plot, and 
                                                        a violin plot on the first 
@@ -441,17 +454,17 @@ ui <- page_fillable(
                                                        points. Gene expression is 
                                                        shown on the y-axis and 
                                                        cancer type on the x-axis."),
-                                                       
-                                                       h3("Heatmap"),
-                                                       p("On the next tab, a heatmap 
+                                                     
+                                                     h3("Heatmap"),
+                                                     p("On the next tab, a heatmap 
                                                        is shown. For the heatmap, 
                                                        you can pick a color 
                                                        palette. Here the gene 
                                                        expression is shown across 
                                                        the selected cell lines."),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
@@ -473,8 +486,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_cluster",
                                                    fluidPage(
-                                                       h3("Gene clustering"),
-                                                       p("This use case can be used 
+                                                     h3("Gene clustering"),
+                                                     p("This use case can be used 
                                                        to find the top 10 positively 
                                                        or negatively correlated 
                                                        genes with a selected gene. 
@@ -495,24 +508,24 @@ ui <- page_fillable(
                                                        not mean that the genes have 
                                                        an equal expression, it 
                                                        just indicates their, ",
-                                                         strong("expression profile "),
-                                                         "is similar. The same goes 
+                                                       strong("expression profile "),
+                                                       "is similar. The same goes 
                                                        for a negative correlation, 
                                                        if gene A has a lowered 
                                                        expression in a cell line, 
                                                        then gene B is also 
                                                        lowered in expression."),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side, select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side, select 
                                                        the gene and the cancer 
                                                        type you are interested in. 
                                                        If you want you can select 
                                                        sex, ethnic background, 
                                                        and age category as well."),
-                                                       
-                                                       h3("Clustering plot"),
-                                                       p("Automatically the top 5 
+                                                     
+                                                     h3("Clustering plot"),
+                                                     p("Automatically the top 5 
                                                        positively correlated genes 
                                                        show up. Using the 
                                                        drop-down menu, you can 
@@ -523,9 +536,9 @@ ui <- page_fillable(
                                                        genes that are shown can 
                                                        be changed from the top 1 
                                                        all the way to the top 10."),
-                                                       
-                                                       h3("Correlation plot"),
-                                                       p("The correlation plot gives 
+                                                     
+                                                     h3("Correlation plot"),
+                                                     p("The correlation plot gives 
                                                        you the ability to compare 
                                                        the expression of your 
                                                        chosen gene to any other 
@@ -546,9 +559,9 @@ ui <- page_fillable(
                                                        display a linear line, 
                                                        indicating a correlation 
                                                        between the two genes."),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
@@ -570,8 +583,8 @@ ui <- page_fillable(
                                          nav_panel("Help", 
                                                    value = "help_compare",
                                                    fluidPage(
-                                                       h3("Compare pathways"),
-                                                       p("This use case can be used 
+                                                     h3("Compare pathways"),
+                                                     p("This use case can be used 
                                                        to compare humane biological 
                                                        pathways, which are 
                                                        collections of genes working 
@@ -586,18 +599,18 @@ ui <- page_fillable(
                                                        transformation is then 
                                                        applied to normalize 
                                                        the data."),
-                                                       
-                                                       h3("Selection"),
-                                                       p("On the left side, select 
+                                                     
+                                                     h3("Selection"),
+                                                     p("On the left side, select 
                                                        the pathway you are 
                                                        interested in. The dropdown 
                                                        selection for 'select pathways' 
                                                        contains all humane pathways 
                                                        from the", 
-                                                         a("KEGG pathway database",
-                                                           href = "https://www.kegg.jp/kegg/kegg2.html",
-                                                           target = "_blank")
-                                                         ," 
+                                                       a("KEGG pathway database",
+                                                         href = "https://www.kegg.jp/kegg/kegg2.html",
+                                                         target = "_blank")
+                                                       ," 
                                                        Selecting a pathway will 
                                                        auto-select all genes 
                                                        that belong to the chosen 
@@ -606,9 +619,9 @@ ui <- page_fillable(
                                                        compare expression of genes 
                                                        in the chosen pathway, 
                                                        across cancer types."),
-                                                       
-                                                       h3("Heatmap"),
-                                                       p("The result can be viewed 
+                                                     
+                                                     h3("Heatmap"),
+                                                     p("The result can be viewed 
                                                        in the heatmap, with genes 
                                                        on the x-axis and cancer 
                                                        types on the y-axis. 
@@ -616,9 +629,9 @@ ui <- page_fillable(
                                                        can be chosen and the colors 
                                                        resemble the expression 
                                                        rates in log2 TPM"),
-                                                       
-                                                       h3("Data"),
-                                                       p("On the 'data' tab a data 
+                                                     
+                                                     h3("Data"),
+                                                     p("On the 'data' tab a data 
                                                        table containing the data 
                                                        is shown. At the top, you 
                                                        can select which columns 
