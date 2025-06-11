@@ -64,7 +64,7 @@ ui <- page_fillable(
                     tags$li("Metadata consisting of sex, age, ethnic background, and more.")
                   ),
                   tags$p(style = "font-size: 16px;",
-                         "The dashboard includes data on over 80 cancer types, 
+                         "The dashboard includes data on over 60 cancer types, 
                          the chart below shows the top 10 cancer types that 
                          have the most available data.")
                 ),
