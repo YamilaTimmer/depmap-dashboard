@@ -25,6 +25,13 @@ server <- function(input, output, session) {
     meta_data$AgeCategory[is.na(meta_data$AgeCategory)] <- "Unknown"
     
     
+    # Filter to cancer types with more than 1 row, needed for onco type dropdown menus
+    valid_onco_types <- meta_data %>%
+        count(OncotreePrimaryDisease) %>%
+        filter(n > 2) %>%
+        pull(OncotreePrimaryDisease) %>%
+        sort()
+    
     # Show/hide filter panels in UI, depending on chosen 'use_case'
     observeEvent(input$use_case, {
         
@@ -126,7 +133,7 @@ server <- function(input, output, session) {
     
     updateSelectizeInput(session, 
                          'onco_type', 
-                         choices = sort(meta_data$OncotreePrimaryDisease), 
+                         choices = valid_onco_types, 
                          selected = "Acute Myeloid Leukemia",
                          server = TRUE,
                          # Enables user to scroll through all options
@@ -134,14 +141,14 @@ server <- function(input, output, session) {
     
     updateSelectizeInput(session, 
                          'onco_types', 
-                         choices = sort(meta_data$OncotreePrimaryDisease), 
+                         choices = valid_onco_types, 
                          selected = "Acute Myeloid Leukemia",
                          server = TRUE,
                          options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
     
     updateSelectizeInput(session, 
                          'compare_pathway_onco_type', 
-                         choices = sort(meta_data$OncotreePrimaryDisease), 
+                         choices = valid_onco_types, 
                          selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
                          server = TRUE,
                          options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
