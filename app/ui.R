@@ -21,9 +21,7 @@ ui <- page_fillable(
             id = "dashboard_nav"
         ),
         
-        # Dark mode button, clicking switches between light/dark mode
-        nav_item(input_dark_mode(id = "dark_mode", mode = "light")),
-        
+
         # Adds github logo to navbar that links to repo
         nav_item(tags$a(
             href = "https://github.com/YamilaTimmer/depmap-dashboard", 
