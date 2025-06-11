@@ -59,6 +59,7 @@ ui <- page_fillable(
                   tags$ul(
                     style = "font-size: 16px;",
                     tags$li("17,000+ genes"),
+                    tags$li("1900+ different cell lines"),
                     tags$li("60+ cancer types"),
                     tags$li("Metadata consisting of sex, age, ethnic background, and more.")
                   ),
