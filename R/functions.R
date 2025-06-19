@@ -1,25 +1,25 @@
 # Imports
-library(ggplot2) # make plots
-library(shiny)
-library(bslib)
-library(shinyjs)
-library(bsicons)
-library(shinyjqui)
-library(plotly) # make plots interactive
-library(feather)
-library(DT)
-library(tidyr)
-library(dplyr)
-library(paletteer)
-library(BiocManager)
-library(AnnotationDbi)
-library(org.Hs.eg.db)
-library(limma)
-library(forcats)
+usethis::use_package("ggplot2") # make plots
+usethis::use_package("shiny")
+usethis::use_package("bslib")
+usethis::use_package("shinyjs")
+usethis::use_package("bsicons")
+usethis::use_package("shinyjqui")
+usethis::use_package("plotly") # make plots interactive
+usethis::use_package("feather")
+usethis::use_package("DT")
+usethis::use_package("tidyr")
+usethis::use_package("dplyr")
+usethis::use_package("paletteer")
+usethis::use_package("BiocManager")
+usethis::use_package("AnnotationDbi")
+usethis::use_package("org.Hs.eg.db")
+usethis::use_package("limma")
+usethis::use_package("forcats")
 
 # Set theme for all plots globally:
-theme_set(
-    theme_minimal() +
+ggplot2::theme_set(
+    ggplot2::theme_minimal() +
         theme(
             plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
             axis.text = element_text(size = 14),
@@ -38,6 +38,7 @@ theme_set(
 #' @param meta_data dataframe with all the metadata
 #' @param input user input from filter options in application
 #' @return filtered_metadata, dataframe of metadata that is filtered on user inputs
+#' @importFrom dplyr filter
 #' @examples
 #' filter_metadata(meta_data, input)
 
@@ -111,6 +112,8 @@ merge_data <- function(filtered_metadata, expression_data) {
 #' @param input user input from filter options in application
 #' @param human_pathways dataframe of human pathways with corresponding genes per pathway
 #' @return filtered_gene, dataframe of metadata + expression data that is filtered on all user inputs
+#' @importFrom dplyr filter
+#' @importFrom feather read_feather
 #' @examples
 #' filter_gene(merged_data, input, human_pathways)
 #'
@@ -157,6 +160,8 @@ filter_gene <- function(merged_data, input, human_pathways) {
 #' @param filtered_gene dataframe of metadata + expression data that is filtered on all user inputs
 #' @param input user input from filter options in application
 #' @return data that only contains genes that are significantly differentially expressed over the two cancer types
+#' @importFrom stats t.test
+#' @importFrom dplyr filter inner_join
 #' @examples
 #' check_significancy <- function(filtered_gene, input)
 
@@ -222,6 +227,10 @@ check_significancy <- function(filtered_gene, input) {
 #'   - `"violin"`: Violin plot of expression values
 #'   - `"bar"`: Bar plot showing mean expression with error bars
 #' @return A ggplot2 plot object
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin stat_summary facet_wrap labs theme element_blank geom_point theme element_rect
+#' @importFrom dplyr filter
+#' @importFrom plotly ggplotly layout
+#' @importFrom paletteer scale_fill_paletteer_d
 #' @examples
 #' xyplots(merged_data, type = "boxplot")
 #' xyplots(merged_data, type = "violin")
@@ -305,6 +314,8 @@ xyplots <- function(input, data, type = "boxplot") {
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
 #' @return A dataframe containing gene name, onco type, mean expr,
 #' total_mean (used for reordering heatmap) and log2_fc
+#' @importFrom dplyr group_by summarise mutate ungroup
+#' @importFrom tidyr pivot_wider pivot_longer
 calculate_logfold_change <- function(data){
 
 
@@ -346,6 +357,10 @@ calculate_logfold_change <- function(data){
 #'
 #' @param data a dataframe containing atleast gene names, expression values, and cancer types.
 #' @return A ggplot2 heat map object
+#' @importFrom ggplot2 ggplot aes geom_tile ylab xlab labs theme element_text facet_wrap theme element_rect
+#' @importFrom dplyr filter
+#' @importFrom plotly ggplotly layout
+#' @importFrom paletteer scale_fill_paletteer_c
 #' @examples
 #' generate_heatmap(merged_data)
 
@@ -431,6 +446,8 @@ generate_heatmap <- function(input, data){
 #' The generated table shows the cell line name, the gene name, and the expression value.
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
 #' @return a datatable.
+#' @importFrom DT datatable
+#' @importFrom shiny validate need
 #' @examples
 #' generate_datatable(merged_data)
 
@@ -490,6 +507,8 @@ generate_datatable <- function(data, filter = "top") {
 #'
 #' @param merged_data: dataframe of metadata with corresponding expression data
 #' @return wide dataframe based of merged_data
+#' @importFrom dplyr select
+#' @importFrom tidyr pivot_wider
 #' @examples
 #' reformat_data(merged_data)
 
@@ -512,6 +531,7 @@ reformat_data <- function(merged_data){
 #' @param merged_data: dataframe of metadata with corresponding expression data
 #' @param input: input from filter options in application
 #' @return numeric vector with expression profile of chosen gene
+#' @importFrom dplyr filter select
 #' @examples
 #' create_query(wide_exprdata, input)
 create_query <- function(wide_exprdata, input){
@@ -527,6 +547,7 @@ create_query <- function(wide_exprdata, input){
 #' Calculate distance
 #'
 #' This function calculates the distance between two target (x and y).
+#' @importFrom stats cor
 
 calc_dist <- function(x,y){
     suppressWarnings(cor(x,y))
@@ -545,6 +566,7 @@ calc_dist <- function(x,y){
 #' @param wide_exprdata: wide dataframe based of merged_data
 #' @return a tibble with 3 columns, containing the query_gene [1], the target_gen [2]
 #' and the difference in expression between these two genes (also known as the 'distance') [3]
+#' @importFrom dplyr pull bind_rows
 #' @examples
 #' determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
 
@@ -583,6 +605,7 @@ determine_distances <- function(data, input, target_matrix, query_profile, wide_
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
 #' @return a reduced version of data, with only the "top-scoring" genes
 #' (whether the user chose for most positive/most negative correlation)
+#' @importFrom dplyr filter arrange
 #' @examples
 #' determine_top_scoring(input, all_distances, data)
 
@@ -618,6 +641,8 @@ determine_top_scoring <- function(input, all_distances, data){
 #'
 #' @param tp: a reduced version of data, with only the "top-scoring" genes
 #' @return A ggplot2 line plot object, displaying the top-scoring genes + query gene
+#' @importFrom ggplot2 ggplot aes geom_point geom_line theme element_text theme element_rect
+#' @importFrom plotly ggplotly
 #' @examples
 #' generate_clusterplot(tp)
 
@@ -671,6 +696,8 @@ generate_clusterplot <- function(tp, input){
 #' @param wide_exprdata: wide dataframe based of merged_data
 #' @return A ggplot2 point plot object, displaying the correlation between one
 #' query gene and one target gene
+#' @importFrom dplyr pull
+#' @importFrom ggplot2 ggplot aes geom_point geom_abline geom_text theme element_rect
 #' @examples
 #' generate_corr_plot(input,wide_exprdata)
 
@@ -718,6 +745,7 @@ generate_corr_plot <- function(input, wide_exprdata){
 #' @param data: a dataframe containing atleast gene names, expression values, and cancer types.
 #' @return a reduced version of data, with only the "top-scoring" genes
 #' (whether the user chose for most positive/most negative correlation)
+#' @importFrom dplyr filter arrange
 #' @examples
 #' determine_top_scoring(input, all_distances, data)
 
@@ -752,6 +780,8 @@ determine_top_scoring <- function(input, all_distances, data){
 #'
 #'@param data: a dataframe containing the OncotreePrimaryDisease.
 #'@return a piechart showing the top 10 cancer types in the dataframe
+#'@importFrom forcats fct_lump
+#'@importFrom paletteer scale_fill_paletteer_d
 #'@examples
 #'generate_homepage_viz(data)
 
