@@ -1,6 +1,6 @@
 usethis::use_package("shinyjs")
 
-server <- function(input, output, session) {
+app_server <- function(input, output, session) {
 
     # Read in .tsv files with expression data and metadata
     expression_path <- system.file("app/data/expression_data_subset.tsv", package = "depmapdashboard")
@@ -41,7 +41,7 @@ server <- function(input, output, session) {
         if (input$use_case == "explore_expression") {
 
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Summary plots")
+            updateTabsetPanel(inputId = "navcards", selected = "Summary plots", session = session)
 
             shinyjs::show("genes_accordion")
             shinyjs::show("cancer_types_accordion")
@@ -65,7 +65,7 @@ server <- function(input, output, session) {
         else if (input$use_case == "compare_pathway") {
 
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
+            updateTabsetPanel(inputId = "navcards", selected = "Heatmap", session = session)
 
             shinyjs::show("p_value_checkbox")
             shinyjs::show("pathway")
@@ -91,7 +91,7 @@ server <- function(input, output, session) {
         else  {
 
             # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot")
+            updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot", session = session)
 
             shinyjs::hide("pathway")
             shinyjs::hide("genes_accordion")
@@ -114,26 +114,26 @@ server <- function(input, output, session) {
     })
 
     # Updates all dropdown inputs using server-side selectize
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'gene_name',
                          choices = expression_data$gene,
                          selected = expression_data$gene[1],
                          server = TRUE)
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'gene_names',
                          choices = expression_data$gene,
                          selected = expression_data$gene[1],
                          server = TRUE)
 
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'pathway_name',
                          choices = human_pathways_hsa,
                          server = TRUE,
                          options = list(maxOptions = length(human_pathways_hsa)))
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'onco_type',
                          choices = valid_onco_types,
                          selected = "Acute Myeloid Leukemia",
@@ -141,14 +141,14 @@ server <- function(input, output, session) {
                          # Enables user to scroll through all options
                          options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'onco_types',
                          choices = valid_onco_types,
                          selected = "Acute Myeloid Leukemia",
                          server = TRUE,
                          options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'compare_pathway_onco_type',
                          choices = valid_onco_types,
                          selected = c("Acute Myeloid Leukemia", "Ampullary Carcinoma"),
@@ -156,13 +156,13 @@ server <- function(input, output, session) {
                          options = list(maxOptions = length(meta_data$OncotreePrimaryDisease)))
 
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          "sex",
                          choices = unique(meta_data$Sex),
                          selected = c("Female", "Male", "Unknown"),
                          server = TRUE)
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          "race",
                          choices = meta_data$PatientRace,
                          selected = c("caucasian", "asian", "black_or_african_american",
@@ -170,13 +170,13 @@ server <- function(input, output, session) {
                                       "east_indian", "north_african", "hispanic_or_latino", "Unknown"),
                          server = TRUE)
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          "age_category",
                          choices = meta_data$AgeCategory,
                          selected = c("Fetus", "Pediatric", "Adult", "Unknown"),
                          server = TRUE)
 
-    updateSelectizeInput(session,
+    updateSelectizeInput(session = session,
                          'correlation_gene',
                          choices = expression_data$gene,
                          selected = expression_data$gene[1],
