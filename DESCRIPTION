@@ -1,11 +1,13 @@
 Package: depmapdashboard
-Title: What the Package Does (One Line, Title Case)
+Title: Explore expression in different cancer types using depmap data.
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person("Yamila", "Timmer", email = "y.timmer.2@st.hanze.nl", role = c("aut", "cre")),
+    person("Mirte", "Draaijer", email = "mi.draaijer@st.hanze.nl", role = c("aut", "cre")))
+Description: On the depmap dashboard you can explore the expression of different
+    cancer types. Data can be visualized in a barplot, a boxplot, a violinplot, 
+    a heatmap, a datatable, a clusterplot, and a correlationplot.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
