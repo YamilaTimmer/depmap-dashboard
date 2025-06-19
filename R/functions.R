@@ -751,7 +751,7 @@ determine_top_scoring <- function(input, all_distances, data){
 #'This function generates the piechart shown on the homepage of the dashboard.
 #'
 #'@param data: a dataframe containing the OncotreePrimaryDisease.
-#'@return
+#'@return a piechart showing the top 10 cancer types in the dataframe
 #'@examples
 #'generate_homepage_viz(data)
 

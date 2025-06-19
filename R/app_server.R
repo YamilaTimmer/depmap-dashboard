@@ -1,6 +1,4 @@
-source("functions.R")
-source("../config.R")
-useShinyjs()
+usethis::use_package("shinyjs")
 
 server <- function(input, output, session) {
 

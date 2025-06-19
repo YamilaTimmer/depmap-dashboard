@@ -1,9 +1,9 @@
-source("functions.R")
+#source("functions.R")
 
 app_ui <- function(){
   page_fillable(
     # Used to dynamically show accordion filters
-    useShinyjs(),
+    usethis::use_package("shinyjs"),
 
     # Sidebar and Navbar
     page_navbar(
