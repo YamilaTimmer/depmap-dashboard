@@ -38,78 +38,78 @@ app_server <- function(input, output, session) {
     observeEvent(input$use_case, {
 
 
-        if (input$use_case == "explore_expression") {
+      if (input$use_case == "explore_expression") {
 
-            # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Summary plots", session = session)
+        # Select first tab to be shown in the UI, depending on chosen 'use_case'
+        updateTabsetPanel(inputId = "navcards", selected = "Summary plots")
 
-            shinyjs::show("genes_accordion")
-            shinyjs::show("cancer_types_accordion")
-            shinyjs::hide("singular_cancer_type")
-            shinyjs::hide("individual_gene")
-            shinyjs::hide("pathway")
-            shinyjs::hide("compare_pathway_cancertypes")
-            shinyjs::hide("p_value_checkbox")
+        shinyjs::show("genes_accordion")
+        shinyjs::show("cancer_types_accordion")
+        shinyjs::hide("singular_cancer_type")
+        shinyjs::hide("individual_gene")
+        shinyjs::hide("pathway")
+        shinyjs::hide("compare_pathway_cancertypes")
+        shinyjs::hide("p_value_checkbox")
 
-            nav_show("navcards", "Summary plots")
-            nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Clustering Plot")
-            nav_hide("navcards", "Correlation Plot")
-            nav_show("navcards", "help_explore")
-            nav_hide("navcards", "help_cluster")
-            nav_hide("navcards", "help_compare")
-
-
-        }
-
-        else if (input$use_case == "compare_pathway") {
-
-            # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Heatmap", session = session)
-
-            shinyjs::show("p_value_checkbox")
-            shinyjs::show("pathway")
-            shinyjs::hide("cancer_types_accordion")
-            shinyjs::hide("singular_cancer_type")
-            shinyjs::hide("individual_gene")
-            shinyjs::hide("genes_accordion")
-            shinyjs::show("compare_pathway_cancertypes")
-
-            nav_show("navcards", "Heatmap")
-            nav_hide("navcards", "Clustering Plot")
-            nav_hide("navcards", "Correlation Plot")
-            nav_hide("navcards", "Summary plots")
-            nav_hide("navcards", "help_explore")
-            nav_hide("navcards", "help_cluster")
-            nav_show("navcards", "help_compare")
+        nav_show("navcards", "Summary plots")
+        nav_show("navcards", "Heatmap")
+        nav_hide("navcards", "Clustering Plot")
+        nav_hide("navcards", "Correlation Plot")
+        nav_show("navcards", "help_explore")
+        nav_hide("navcards", "help_cluster")
+        nav_hide("navcards", "help_compare")
 
 
-        }
+      }
+
+      else if (input$use_case == "compare_pathway") {
+
+        # Select first tab to be shown in the UI, depending on chosen 'use_case'
+        updateTabsetPanel(inputId = "navcards", selected = "Heatmap")
+
+        shinyjs::show("p_value_checkbox")
+        shinyjs::show("pathway")
+        shinyjs::hide("cancer_types_accordion")
+        shinyjs::hide("singular_cancer_type")
+        shinyjs::hide("individual_gene")
+        shinyjs::hide("genes_accordion")
+        shinyjs::show("compare_pathway_cancertypes")
+
+        nav_show("navcards", "Heatmap")
+        nav_hide("navcards", "Clustering Plot")
+        nav_hide("navcards", "Correlation Plot")
+        nav_hide("navcards", "Summary plots")
+        nav_hide("navcards", "help_explore")
+        nav_hide("navcards", "help_cluster")
+        nav_show("navcards", "help_compare")
 
 
-        # for use case "gene_clustering"
-        else  {
-
-            # Select first tab to be shown in the UI, depending on chosen 'use_case'
-            updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot", session = session)
-
-            shinyjs::hide("pathway")
-            shinyjs::hide("genes_accordion")
-            shinyjs::hide("cancer_types_accordion")
-            shinyjs::show("singular_cancer_type")
-            shinyjs::show("individual_gene")
-            shinyjs::hide("compare_pathway_cancertypes")
-
-            nav_hide("navcards", "Summary plots")
-            nav_hide("navcards", "Heatmap")
-            nav_show("navcards", "Clustering Plot")
-            nav_show("navcards", "Correlation Plot")
-            nav_hide("navcards", "help_explore")
-            nav_show("navcards", "help_cluster")
-            nav_hide("navcards", "help_compare")
+      }
 
 
-        }
+      # for use case "gene_clustering"
+      else  {
+
+        # Select first tab to be shown in the UI, depending on chosen 'use_case'
+        updateTabsetPanel(inputId = "navcards", selected = "Clustering Plot")
+
+        shinyjs::hide("pathway")
+        shinyjs::hide("genes_accordion")
+        shinyjs::hide("cancer_types_accordion")
+        shinyjs::show("singular_cancer_type")
+        shinyjs::show("individual_gene")
+        shinyjs::hide("compare_pathway_cancertypes")
+
+        nav_hide("navcards", "Summary plots")
+        nav_hide("navcards", "Heatmap")
+        nav_show("navcards", "Clustering Plot")
+        nav_show("navcards", "Correlation Plot")
+        nav_hide("navcards", "help_explore")
+        nav_show("navcards", "help_cluster")
+        nav_hide("navcards", "help_compare")
+
+
+      }
 
     })
 
