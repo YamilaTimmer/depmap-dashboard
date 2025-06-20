@@ -17,14 +17,32 @@ usethis::use_package("org.Hs.eg.db")
 usethis::use_package("limma")
 usethis::use_package("forcats")
 
+library(ggplot2)
+library(shiny)
+library(bslib)
+library(shinyjs)
+library(bsicons)
+library(shinyjqui)
+library(plotly)
+library(feather)
+library(DT)
+library(tidyr)
+library(dplyr)
+library(paletteer)
+library(BiocManager)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(limma)
+library(forcats)
+
 # Set theme for all plots globally:
 ggplot2::theme_set(
     ggplot2::theme_minimal() +
-        theme(
-            plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
-            axis.text = element_text(size = 14),
-            axis.title = element_text(size = 14),
-            strip.text = element_text(size = 14, face = "bold")
+        ggplot2::theme(
+            plot.title = ggplot2::element_text(hjust = 0.5, size = 16, face = "bold"),
+            axis.text = ggplot2::element_text(size = 14),
+            axis.title = ggplot2::element_text(size = 14),
+            strip.text = ggplot2::element_text(size = 14, face = "bold")
         )
 )
 

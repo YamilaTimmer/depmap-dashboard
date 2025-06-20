@@ -326,3 +326,4 @@ app_server <- function(input, output, session) {
         generate_homepage_viz(meta_data)
     })
 }
+

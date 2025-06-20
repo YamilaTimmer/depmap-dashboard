@@ -1,6 +1,7 @@
-#source("functions.R")
+source("R/functions.R")
 
 app_ui <- function(){
+  usethis::use_package("bslib")
   page_fillable(
     # Used to dynamically show accordion filters
     usethis::use_package("shinyjs"),
@@ -53,7 +54,7 @@ app_ui <- function(){
 
                 # Dataset summary
                 tags$div(
-                  tags$h3(bs_icon("bar-chart-line"),
+                  tags$h3(bsicons::bs_icon("bar-chart-line"),
                           "Dataset summary"),
                   tags$p(style = "font-size: 16px;",
                          "On the dashboard the following data can be found:"),
@@ -74,7 +75,7 @@ app_ui <- function(){
 
                 # About us
                 tags$div(
-                  tags$h3(bs_icon("people-fill"),
+                  tags$h3(bsicons::bs_icon("people-fill"),
                           "About us"),
                   tags$p(style = "font-size: 16px;",
                          "The dashboard was created by a small team of
