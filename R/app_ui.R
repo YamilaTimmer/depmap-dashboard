@@ -1,16 +1,14 @@
 source("R/functions.R")
 
-library(bslib)
-library(shinyjs)
-
 app_ui <- function(){
-  page_fillable(
-    
+  usethis::use_package("bslib")
+  bslib::page_fillable(
     # Used to dynamically show accordion filters
-    useShinyjs(),
+    shinyjs::useShinyjs(),
+    usethis::use_package("shinyjs"),
 
     # Sidebar and Navbar
-    page_navbar(
+    bslib::page_navbar(
 
         title = "DepMap Data Dashboard",
 
