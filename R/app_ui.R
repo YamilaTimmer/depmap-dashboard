@@ -2,7 +2,7 @@ source("R/functions.R")
 
 app_ui <- function(){
   usethis::use_package("bslib")
-  page_fillable(
+  bslib::page_fillable(
     # Used to dynamically show accordion filters
     shinyjs::useShinyjs(),
     usethis::use_package("shinyjs"),
