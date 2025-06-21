@@ -1,11 +1,13 @@
 source("R/functions.R")
 
+library(bslib)
+library(shinyjs)
+
 app_ui <- function(){
-  usethis::use_package("bslib")
-  bslib::page_fillable(
+  page_fillable(
+    
     # Used to dynamically show accordion filters
-    shinyjs::useShinyjs(),
-    usethis::use_package("shinyjs"),
+    useShinyjs(),
 
     # Sidebar and Navbar
     page_navbar(
