@@ -113,7 +113,7 @@ app_ui <- function(){
                                                                       background-color: #f0f0f0 !important;")),
                                                       open = TRUE,
                                                       icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
-                                                      bslib::tooltip(span(bs_icon("info-circle")),
+                                                      bslib::tooltip(shiny::span(bsicons::bs_icon("info-circle")),
                                                         shiny::HTML("<strong>Explore expression:</strong><br/>
                                                              Explore the expression of one or more genes in one cancer type,<br/>
                                                              or compare the expression of one or more genes across multiple cancer types.<br/><br/>
@@ -237,7 +237,7 @@ app_ui <- function(){
                          bslib::navset_card_tab(id = "navcards",
                                          # Tab for summary plots
                                          bslib::nav_panel("Summary plots",
-                                                   bslib::layout_sidebar(sidebar = sidebar(
+                                                   bslib::layout_sidebar(sidebar = bslib::sidebar(
                                                        bslib::accordion(bslib::accordion_panel("Select plot type",
                                                                                  shiny::selectInput("summary_type",
                                                                                              label = NULL,
@@ -286,11 +286,11 @@ app_ui <- function(){
                                                        )
                                                    ),
 
-                                                   shinycssloaders::withSpinner(plotlyOutput("plot"))
+                                                   shinycssloaders::withSpinner(plotly::plotlyOutput("plot"))
                                                    )
                                          ),
                                          bslib::nav_panel("Heatmap",
-                                                  bslib::layout_sidebar(sidebar = sidebar(
+                                                  bslib::layout_sidebar(sidebar = bslib::sidebar(
                                                        bslib::accordion(bslib::accordion_panel("Select options",
 
                                                                                  shiny::selectInput("heatmap_palette",
@@ -375,7 +375,7 @@ app_ui <- function(){
                                                    )),
 
                                          bslib::nav_panel("Correlation Plot",
-                                                  bslib::layout_sidebar(sidebar = sidebar(
+                                                  bslib::layout_sidebar(sidebar = bslib::sidebar(
                                                        bslib::accordion(bslib::accordion_panel("Select correlation options",
                                                                                  shiny::selectizeInput("correlation_gene",
                                                                                                 label = "Select gene to compare with:",
@@ -414,7 +414,7 @@ app_ui <- function(){
 
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
+                                                   shinycssloaders::withSpinner(plotly::plotlyOutput("corr_plot"))
                                                    )),
 
                                         bslib::nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
@@ -510,7 +510,7 @@ app_ui <- function(){
                                                        not mean that the genes have
                                                        an equal expression, it
                                                        just indicates their, ",
-                                                       strong("expression profile "),
+                                                       shiny::strong("expression profile "),
                                                        "is similar. The same goes
                                                        for a negative correlation,
                                                        if gene A has a lowered
