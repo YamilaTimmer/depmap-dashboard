@@ -548,6 +548,7 @@ calc_dist <- function(x,y){
 #' @return a tibble with 3 columns, containing the query_gene [1], the target_gen [2]
 #' and the difference in expression between these two genes (also known as the 'distance') [3]
 #' @importFrom dplyr pull bind_rows
+#' @import tidyr tibble
 #' @examples
 #' determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
 

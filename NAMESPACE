@@ -2,6 +2,8 @@
 
 export(run_app)
 import(paletteer)
+import(tibble)
+import(tidyr)
 importFrom(DT,DTOutput)
 importFrom(DT,datatable)
 importFrom(DT,renderDataTable)
