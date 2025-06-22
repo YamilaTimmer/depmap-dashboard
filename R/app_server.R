@@ -4,6 +4,7 @@
 #' @importFrom plotly renderPlotly ggplotly
 #' @importFrom shiny observeEvent updateSelectizeInput updateTabsetPanel renderPlot req debounce
 #' @importFrom shinyjs show hide
+#' @importFrom bslib nav_show nav_hide
 
 app_server <- function(input, output, session) {
 

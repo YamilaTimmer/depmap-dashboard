@@ -1,40 +1,3 @@
-# Imports
-usethis::use_package("ggplot2") # make plots
-usethis::use_package("shiny")
-usethis::use_package("bslib")
-usethis::use_package("shinyjs")
-usethis::use_package("bsicons")
-usethis::use_package("shinyjqui")
-usethis::use_package("plotly") # make plots interactive
-usethis::use_package("feather")
-usethis::use_package("DT")
-usethis::use_package("tidyr")
-usethis::use_package("dplyr")
-usethis::use_package("paletteer")
-usethis::use_package("BiocManager")
-usethis::use_package("AnnotationDbi")
-usethis::use_package("org.Hs.eg.db")
-usethis::use_package("limma")
-usethis::use_package("forcats")
-
-library(ggplot2)
-library(shiny)
-library(bslib)
-library(shinyjs)
-library(bsicons)
-library(shinyjqui)
-library(plotly)
-library(feather)
-library(DT)
-library(tidyr)
-library(dplyr)
-library(paletteer)
-library(BiocManager)
-library(AnnotationDbi)
-library(org.Hs.eg.db)
-library(limma)
-library(forcats)
-
 # Set theme for all plots globally:
 ggplot2::theme_set(
     ggplot2::theme_minimal() +
@@ -245,7 +208,7 @@ check_significancy <- function(filtered_gene, input) {
 #'   - `"violin"`: Violin plot of expression values
 #'   - `"bar"`: Bar plot showing mean expression with error bars
 #' @return A ggplot2 plot object
-#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin stat_summary facet_wrap labs theme element_blank geom_point theme element_rect
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin geom_bar stat_summary facet_wrap labs theme element_blank geom_point theme element_rect
 #' @importFrom dplyr filter
 #' @importFrom plotly ggplotly layout
 #' @importFrom paletteer scale_fill_paletteer_d
@@ -261,8 +224,8 @@ xyplots <- function(input, data, type = "boxplot") {
     ))
 
 
-    chosen_palette <- palettes_d_names %>%
-        filter(palettes_d_names$palette %in% input$xyplot_palette)
+    chosen_palette <- paletteer::palettes_d_names %>%
+        filter(paletteer::palettes_d_names$palette %in% input$xyplot_palette)
     palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
 
     # Adjusting settings according to plot type
@@ -385,8 +348,8 @@ calculate_logfold_change <- function(data){
 generate_heatmap <- function(input, data){
 
     # Assigns palette to heatmap that aligns with chosen option
-    chosen_palette <- palettes_c_names %>%
-        filter(palettes_c_names$palette %in% input$heatmap_palette)
+    chosen_palette <- paletteer::palettes_c_names %>%
+        filter(paletteer::palettes_c_names$palette %in% input$heatmap_palette)
 
     palette <- paste0(chosen_palette$package, "::", chosen_palette$palette)
 
