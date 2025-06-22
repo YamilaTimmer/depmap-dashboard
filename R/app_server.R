@@ -1,5 +1,21 @@
-usethis::use_package("shinyjs")
-
+#' @import shiny
+#' @import shinyjs
+#' @import bslib
+#' @import bsicons
+#' @import plotly
+#' @import feather
+#' @import dplyr
+#' @import tidyr
+#' @import DT
+#' @import ggplot2
+#' @import forcats
+#' @import paletteer
+#' @import BiocManager
+#' @import AnnotationDbi
+#' @import org.Hs.eg.db
+#' @import limma
+#' 
+#' 
 app_server <- function(input, output, session) {
 
     # Read in .tsv files with expression data and metadata
