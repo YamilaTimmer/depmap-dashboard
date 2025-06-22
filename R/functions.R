@@ -1,11 +1,13 @@
+#' @importFrom ggplot2 theme_set theme_minimal theme element_text
+
 # Set theme for all plots globally:
-ggplot2::theme_set(
-    ggplot2::theme_minimal() +
-        ggplot2::theme(
-            plot.title = ggplot2::element_text(hjust = 0.5, size = 16, face = "bold"),
-            axis.text = ggplot2::element_text(size = 14),
-            axis.title = ggplot2::element_text(size = 14),
-            strip.text = ggplot2::element_text(size = 14, face = "bold")
+theme_set(
+    theme_minimal() +
+        theme(
+            plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+            axis.text = element_text(size = 14),
+            axis.title = element_text(size = 14),
+            strip.text = element_text(size = 14, face = "bold")
         )
 )
 
@@ -19,7 +21,6 @@ ggplot2::theme_set(
 #' @param meta_data dataframe with all the metadata
 #' @param input user input from filter options in application
 #' @return filtered_metadata, dataframe of metadata that is filtered on user inputs
-#' @importFrom dplyr filter
 #' @examples
 #' filter_metadata(meta_data, input)
 
