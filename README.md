@@ -34,7 +34,7 @@ If you would like to learn more about these running DepMap projects, it is highl
 
 ## Installation
 
-The dashboard can be installed as an R-package. For this the R-package `devtools` (v. 2.4.5) is needed.
+The dashboard can be installed as an R-package. For this the R-package [devtools](https://github.com/r-lib/devtools) (v. 2.4.5) is needed.
 
 ```r
 install.packages("devtools")
@@ -79,26 +79,52 @@ The application is made using R version [4.4.0](https://cran.r-project.org/bin/w
 
 
 ## Usage
+### Use-cases
+This dashboard offers three types of use-cases, which can be selected in a dropdown menu on the left side. 
+
+- `Explore expression`:
+This usecase allows for exploring the expression of one or more genes across one or more cancer types. Included in this use-case is visualization using 'summary plots' (bar plots, box plots and violin plots) or a heatmap.
+
+- `Gene clustering`:
+This usecase allows for exploring the correlation between expression profiles across genes, in order to see what genes are most positively/negatively related to a selected gene. The usecase also allows for visualization of distribution of cell line expression between two selected genes.
+
+- `Compare pathways`:
+This usecase allows for comparing expression in entire pathways across two selected cancer types. The selected cancer types determine what cell lines are selected and the selected pathway will automatically select all genes that belong to that pathway, the result gets visualized as a heatmap. Here it's also possible to filter on p-value <= 0.05.
+
+
 ### Select Parameters
-Use the sidebar to select the wanted genes, cancer types, and additional demographic filters, including patient sex, race, and age category.
+Use the sidebar to select the wanted genes, cancer types, and additional demographic filters, including patient sex, race, and age category. The use-case determines how many genes/cancer types can be selected in total.
 
 - **Genes**: include a total of 19194 humane genes
 - **Cancer types** (OncotreePrimaryDisease): contains a plethora of different cancer diseases of which the cell lines were extracted 
 - **Sex**: biological sex the patient was born with, contains 3 options, 'Female', 'Male' and 'unknown' (due to some missing values). 'Male' and 'Female' are selected by default.
-- **Race**: patient race, contains the following options: 'caucasian', 'asian', 'black_or_african_american', 'african', 'american_indian_or_native_american', 'east_indian', 'north_african' and unknown (due to some missing values)
+- **Ethnic background**: contains the following options: 'caucasian', 'asian', 'black_or_african_american', 'african', 'american_indian_or_native_american', 'east_indian', 'north_african' and unknown (due to some missing values)
 - **Age category**: age category of patient, contains 4 options: 'Fetus', 'Pediatric', 'Adult' and unknown (due to some missing values)
 
+> The DepMap dataset contains some missing values in the metadata, 'Unknown' is retained in the data, to allow larger amounts of data to be visualized and is by default selected for sex, ethnic background and age category. Feel free to unselect 'Unknown' if you want to filter on a specific sex, ethnic background or age category.
 
 After selecting the parameters, the sidebar can be collapsed to allow more space for the visualisation and data table.
 
 
 ## Generate Visualizations
 
-1. Select type of plot to generate in the tabs menu (options: barplot, boxplot/violin plot and heatmap)
-2. View the visualization in full screen by pressing the 'expand' button in the bottom right of the tab
-3. Further options can be selected, in the sidebar on the left, options differ per plot type
-4. The visualization can be resized by hovering over the edges of the plot and dragging the mouse
-5. The visualization can be saved by pressing the 'save as .png' button
+- `Explore expression`:
+  - **Summary plots**
+  1. Select type of plot to generate in the `select plot type` dropdown menu (options: barplot, boxplot/violin plot)
+  2. Further options can be selected, in the sidebar on the left (`Other options`), such as color palette and how to scale the y-axis when multiple genes are selected.
+  3. The visualization can be resized by dragging the height/width sliders under `size settings`
+  4. The visualization can be saved by pressing the 'save as .png' button
+
+  - **Heatmap**
+  1. A color palette can be selected in the sidebar on the left
+  2. The visualization can be resized by dragging the height/width sliders under `size settings`
+  3. The visualization can be saved by pressing the 'save as .png' button
+
+
+- `Gene clustering`:
+
+- `Compare pathways`:
+
 
 
 ## Explore data
