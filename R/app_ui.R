@@ -1,28 +1,24 @@
-library(bslib)
-library(shinyjs)
-library(bsicons)
-
 source("R/functions.R")
 
 app_ui <- function(){
   usethis::use_package("bslib")
-  page_fillable(
+  bslib::page_fillable(
     # Used to dynamically show accordion filters
     shinyjs::useShinyjs(),
     usethis::use_package("shinyjs"),
 
     # Sidebar and Navbar
-    page_navbar(
+    bslib::page_navbar(
 
         title = "DepMap Data Dashboard",
 
-        nav_item(
+        bslib::nav_item(
             text = "Home",
             icon = bsicons::bs_icon("house-door"),
             id = "home_nav"
         ),
 
-        nav_item(
+        bslib::nav_item(
             text = "Dashboard",
             icon = bsicons::bs_icon("app"),
             id = "dashboard_nav"
@@ -30,14 +26,14 @@ app_ui <- function(){
 
 
         # Adds github logo to navbar that links to repo
-        nav_item(tags$a(
+        bslib::nav_item(tags$a(
             href = "https://github.com/YamilaTimmer/depmap-dashboard",
             target = "_blank",
             bsicons::bs_icon("github", size = "2rem")
         )),
 
         # Home page
-        nav_panel(
+        bslib::nav_panel(
             id = "home_nav",
             "Home",
             tags$div(
@@ -95,7 +91,7 @@ app_ui <- function(){
         ),
 
         # Dashboard page
-        nav_panel(
+        bslib::nav_panel(
             id = "dashboard_nav",
             "Dashboard",
 
