@@ -210,7 +210,8 @@ app_server <- function(input, output, session) {
 
     # Generate output for XY plots
     output$plot <- renderPlotly({
-
+        set_theme()
+        
         # Retrieve data from reactive function
         data <- debounced_selected_data()
 
@@ -233,7 +234,8 @@ app_server <- function(input, output, session) {
 
     # Call functions needed for heatmap
     output$heatmap <- renderPlotly({
-
+        set_theme()
+        
         # Retrieve data from reactive function
         data <- debounced_selected_data()
 
@@ -251,7 +253,8 @@ app_server <- function(input, output, session) {
 
     # Call functions needed for clusterplot
     output$clusterplot <- renderPlotly({
-
+        set_theme()
+        
         req(debounced_selected_data()) # Ensure data is available
 
         # Load and reformat data for gene clustering
@@ -270,7 +273,7 @@ app_server <- function(input, output, session) {
 
     # Call functions needed for correlation plot
     output$corr_plot <- renderPlotly({
-
+        set_theme()
         req(debounced_selected_data()) # Ensure data is available
 
         # Obtain data in correct format
