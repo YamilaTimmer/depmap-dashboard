@@ -258,7 +258,7 @@ app_ui <- function(){
                                                        accordion_panel("Other options",
                                                                        selectInput("xyplot_palette",
                                                                                    label = "Select color palette",
-                                                                                   choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"],
+                                                                                   choices <- paletteer::palettes_d_names$palette[paletteer::palettes_d_names$package == "colorBlindness"],
                                                                                    selected = "PairedColor12Steps"),
                                                                        checkboxInput("geom_point_checkbox",
                                                                                      label = "Individual points",
@@ -305,7 +305,7 @@ app_ui <- function(){
 
                                                                                  selectInput("heatmap_palette",
                                                                                              label = "Select color scheme",
-                                                                                             choices <- (palettes_c_names$palette[palettes_c_names$package == "ggthemes"][4:10]),
+                                                                                             choices <- (paletteer::palettes_c_names$palette[paletteer::palettes_c_names$package == "ggthemes"][4:10]),
                                                                                              selected = "Blue"),
                                                                                  checkboxInput("border_checkbox_heatmap",
 
