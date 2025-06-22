@@ -208,7 +208,7 @@ check_significancy <- function(filtered_gene, input) {
 #'   - `"violin"`: Violin plot of expression values
 #'   - `"bar"`: Bar plot showing mean expression with error bars
 #' @return A ggplot2 plot object
-#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin geom_bar stat_summary facet_wrap labs theme element_blank geom_point theme element_rect
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin geom_bar stat_summary facet_wrap labs theme element_blank geom_point theme element_rect position_dodge
 #' @importFrom dplyr filter
 #' @importFrom plotly ggplotly layout
 #' @importFrom paletteer scale_fill_paletteer_d
@@ -761,6 +761,7 @@ determine_top_scoring <- function(input, all_distances, data){
 #'
 #'@param data: a dataframe containing the OncotreePrimaryDisease.
 #'@return a piechart showing the top 10 cancer types in the dataframe
+#'@importFrom ggplot2 coord_polar theme_void
 #'@importFrom forcats fct_lump
 #'@importFrom paletteer scale_fill_paletteer_d
 #'@examples
