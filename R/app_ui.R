@@ -1,5 +1,24 @@
 source("R/functions.R")
 
+# Imports
+usethis::use_package("shiny")
+usethis::use_package("shinyjs")
+usethis::use_package("shinycssloaders")
+usethis::use_package("bslib")
+usethis::use_package("bsicons")
+usethis::use_package("plotly")
+usethis::use_package("paletteer")
+usethis::use_package("DT")
+
+library(shiny)
+library(shinyjs)
+library(shinycssloaders)
+library(bslib)
+library(bsicons)
+library(plotly)
+library(paletteer)
+library(DT)
+
 app_ui <- function(){
   usethis::use_package("bslib")
   page_fillable(
