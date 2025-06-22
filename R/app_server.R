@@ -1,6 +1,7 @@
 #' @import shiny
 #' @import shinyjs
 #' @import bslib
+#' @importFrom magrittr %>%
 #' @import bsicons
 #' @import plotly
 #' @import feather
