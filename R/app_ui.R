@@ -71,7 +71,7 @@ app_ui <- function(){
                          the chart below shows the top 10 cancer types that
                          have the most available data.")
                 ),
-                plotOutput("homepage_plot", height = "400px"),
+                plotly::plotOutput("homepage_plot", height = "400px"),
                 shiny::tags$hr(style = "margin: 40px 0;"),
 
                 # About us
