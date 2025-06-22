@@ -248,7 +248,7 @@ app_ui <- function(){
                                                        bslib::accordion_panel("Other options",
                                                                        shiny::selectInput("xyplot_palette",
                                                                                    label = "Select color palette",
-                                                                                   choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"],
+                                                                                   choices <- paletteer::palettes_d_names$palette[paletteer::palettes_d_names$package == "colorBlindness"],
                                                                                    selected = "PairedColor12Steps"),
                                                                        shiny::checkboxInput("geom_point_checkbox",
                                                                                      label = "Individual points",
