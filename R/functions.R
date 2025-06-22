@@ -548,7 +548,7 @@ calc_dist <- function(x,y){
 #' @return a tibble with 3 columns, containing the query_gene [1], the target_gen [2]
 #' and the difference in expression between these two genes (also known as the 'distance') [3]
 #' @importFrom dplyr pull bind_rows
-#' @import tidyr tibble
+#' @importFrom tidyr tibble
 #' @examples
 #' determine_distances(data, input, target_matrix, query_profile, wide_exprdata)
 
@@ -625,6 +625,7 @@ determine_top_scoring <- function(input, all_distances, data){
 #' @return A ggplot2 line plot object, displaying the top-scoring genes + query gene
 #' @importFrom ggplot2 ggplot aes geom_point geom_line theme element_text theme element_rect
 #' @importFrom plotly ggplotly
+#' @importFrom dplyr n_distinct
 #' @examples
 #' generate_clusterplot(tp)
 
