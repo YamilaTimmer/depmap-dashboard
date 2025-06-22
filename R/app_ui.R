@@ -3,7 +3,7 @@ source("R/functions.R")
 app_ui <- function(){
   usethis::use_package("bslib")
   bslib::page_fillable(
-    # Used to dynamically show accordion filters
+    # Used to dynamically show bslib::accordion filters
     shinyjs::useShinyjs(),
     usethis::use_package("shinyjs"),
 
@@ -26,7 +26,7 @@ app_ui <- function(){
 
 
         # Adds github logo to navbar that links to repo
-        bslib::nav_item(tags$a(
+        bslib::nav_item(bslib::tags$a(
             href = "https://github.com/YamilaTimmer/depmap-dashboard",
             target = "_blank",
             bsicons::bs_icon("github", size = "2rem")
@@ -36,14 +36,14 @@ app_ui <- function(){
         bslib::nav_panel(
             id = "home_nav",
             "Home",
-            tags$div(
+            bslib::tags$div(
                 style = "max-width: 900px; margin: auto; padding: 50px;",
 
                 # Title and description
-                tags$h1(style = "text-align: center; font-size: 36px;
+                bslib::tags$h1(style = "text-align: center; font-size: 36px;
                         font-weight: bold; margin-bottom: 10px;",
                         "Depmap data explorer"),
-                tags$p(style = "font-size: 16px;",
+                bslib::tags$p(style = "font-size: 16px;",
                        "The Dependency Map",
                        a("(DepMap)", href = "https://depmap.org/portal/"),
                        " project provides insight
@@ -51,34 +51,34 @@ app_ui <- function(){
                        This dashboard helps in exploring expression, finding
                        similiar genes in cancer types, and comparing pathways
                        across different cancer types."),
-                tags$hr(style = "margin: 40px 0;"),
+                bslib::tags$hr(style = "margin: 40px 0;"),
 
                 # Dataset summary
-                tags$div(
-                  tags$h3(bsicons::bs_icon("bar-chart-line"),
+                bslib::tags$div(
+                  bslib::tags$h3(bsicons::bs_icon("bar-chart-line"),
                           "Dataset summary"),
-                  tags$p(style = "font-size: 16px;",
+                  bslib::tags$p(style = "font-size: 16px;",
                          "On the dashboard the following data can be found:"),
-                  tags$ul(
+                  bslib::tags$ul(
                     style = "font-size: 16px;",
-                    tags$li("17,000+ genes"),
-                    tags$li("1900+ different cell lines"),
-                    tags$li("60+ cancer types"),
-                    tags$li("Metadata consisting of sex, age, ethnic background, and more.")
+                    bslib::tags$li("17,000+ genes"),
+                    bslib::tags$li("1900+ different cell lines"),
+                    bslib::tags$li("60+ cancer types"),
+                    bslib::tags$li("Metadata consisting of sex, age, ethnic background, and more.")
                   ),
-                  tags$p(style = "font-size: 16px;",
+                  bslib::tags$p(style = "font-size: 16px;",
                          "The dashboard includes data on over 60 cancer types,
                          the chart below shows the top 10 cancer types that
                          have the most available data.")
                 ),
                 plotOutput("homepage_plot", height = "400px"),
-                tags$hr(style = "margin: 40px 0;"),
+                bslib::tags$hr(style = "margin: 40px 0;"),
 
                 # About us
-                tags$div(
-                  tags$h3(bsicons::bs_icon("people-fill"),
+                bslib::tags$div(
+                  bslib::tags$h3(bsicons::bs_icon("people-fill"),
                           "About us"),
-                  tags$p(style = "font-size: 16px;",
+                  bslib::tags$p(style = "font-size: 16px;",
                          "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and
                          Mirte Draaijer, two students from the bio-informatics
@@ -95,26 +95,26 @@ app_ui <- function(){
             id = "dashboard_nav",
             "Dashboard",
 
-            layout_sidebar(
-                sidebar = sidebar(width = 350,
+            bslib::layout_sidebar(
+                sidebar = bslib::sidebar(width = 350,
                                   style = "background-color: #f0f0f0;",
                                   # Input dropdown menus for all list variables
-                                  accordion(
-                                      accordion_panel("Select use-case",
+                                  bslib::accordion(
+                                      bslib::accordion_panel("Select use-case",
                                                       style = "background-color: #f0f0f0;",
-                                                      tags$style(HTML("
-                                                                      .accordion-item .accordion-header {
+                                                      bslib::tags$style(HTML("
+                                                                      .bslib::accordion-item .bslib::accordion-header {
                                                                       background-color: #f0f0f0 !important;}
 
-                                                                      .accordion-item .accordion-button:not(.collapsed){
+                                                                      .bslib::accordion-item .bslib::accordion-button:not(.collapsed){
                                                                       background-color: #f0f0f0 !important;}
 
-                                                                      .accordion-item .accordion-button.collapsed {
+                                                                      .bslib::accordion-item .bslib::accordion-button.collapsed {
                                                                       background-color: #f0f0f0 !important;")),
                                                       open = TRUE,
                                                       icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
-                                                      tooltip(span(bs_icon("info-circle")),
-                                                        HTML("<strong>Explore expression:</strong><br/>
+                                                      bslib::tooltip(span(bs_icon("info-circle")),
+                                                        bslib::HTML("<strong>Explore expression:</strong><br/>
                                                              Explore the expression of one or more genes in one cancer type,<br/>
                                                              or compare the expression of one or more genes across multiple cancer types.<br/><br/>
 
@@ -126,7 +126,7 @@ app_ui <- function(){
                                                              differences in expression in genes from the chosen pathway."),
                                                         placement = "auto",
                                                         options = list(trigger = "click")),
-                                                      selectInput('use_case',
+                                                      shiny::selectInput('use_case',
                                                                   label = NULL,
                                                                   choices = c("Explore Expression" = "explore_expression",
                                                                               "Gene Clustering" = "gene_clustering",
@@ -135,11 +135,11 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare genes"
-                                      div(id = "genes_accordion",
-                                          accordion_panel("Select Gene(s)",
+                                      div(id = "genes_bslib::accordion",
+                                          bslib::accordion_panel("Select Gene(s)",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput('gene_names',
+                                                          shiny::selectizeInput('gene_names',
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = TRUE))),
@@ -147,10 +147,10 @@ app_ui <- function(){
 
                                       # Shown when selected use-case is "compare genes"
                                       div(id = "individual_gene",
-                                          accordion_panel("Select Gene",
+                                          bslib::accordion_panel("Select Gene",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput('gene_name',
+                                                          shiny::selectizeInput('gene_name',
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = FALSE))),
@@ -158,10 +158,10 @@ app_ui <- function(){
 
                                       # Shown when selected use-case is "compare pathways"
                                       div(id = "pathway",
-                                          accordion_panel("Select Pathway",
+                                          bslib::accordion_panel("Select Pathway",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput('pathway_name',
+                                                          shiny::selectizeInput('pathway_name',
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = FALSE))),
@@ -169,11 +169,11 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare cancer types"
-                                      div(id = "cancer_types_accordion",
-                                          accordion_panel("Select Cancer Type(s)",
+                                      div(id = "cancer_types_bslib::accordion",
+                                          bslib::accordion_panel("Select Cancer Type(s)",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput("onco_types",
+                                                          shiny::selectizeInput("onco_types",
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = TRUE,
@@ -182,10 +182,10 @@ app_ui <- function(){
 
                                       # Shown when selected use-case is "compare cancer types"
                                       div(id = "singular_cancer_type",
-                                          accordion_panel("Select Cancer Type",
+                                          bslib::accordion_panel("Select Cancer Type",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput("onco_type",
+                                                          shiny::selectizeInput("onco_type",
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = FALSE))),
@@ -194,10 +194,10 @@ app_ui <- function(){
 
                                       # Shown when selected use-case is "compare cancer types"
                                       div(id = "compare_pathway_cancertypes",
-                                          accordion_panel("Select 2 Cancer Types",
+                                          bslib::accordion_panel("Select 2 Cancer Types",
                                                           style = "background-color: #f0f0f0;",
 
-                                                          selectizeInput("compare_pathway_onco_type",
+                                                          shiny::selectizeInput("compare_pathway_onco_type",
                                                                          label = NULL,
                                                                          choices = NULL,
                                                                          multiple = TRUE,
@@ -206,20 +206,20 @@ app_ui <- function(){
 
 
                                       # Filter panel for metadata
-                                      accordion_panel("Select metadata",
+                                      bslib::accordion_panel("Select metadata",
                                                       style = "background-color: #f0f0f0;",
 
-                                                      selectizeInput("sex",
+                                                      shiny::selectizeInput("sex",
                                                                      label = "Select sex",
                                                                      choices = NULL,
                                                                      multiple = TRUE),
 
-                                                      selectizeInput("race",
+                                                      shiny::selectizeInput("race",
                                                                      label = "Select ethnic background",
                                                                      choices = NULL,
                                                                      multiple = TRUE),
 
-                                                      selectizeInput("age_category",
+                                                      shiny::selectizeInput("age_category",
                                                                      label = "Select age category",
                                                                      choices = NULL,
                                                                      multiple = TRUE))
@@ -232,38 +232,38 @@ app_ui <- function(){
                 ),
 
                 # Main part of the dashboard, containing the plots/table/statistics
-                layout_columns(
-                    card(full_screen = TRUE,
-                         navset_card_tab(id = "navcards",
+                bslib::layout_columns(
+                    bslib::card(full_screen = TRUE,
+                         bslib::navset_card_tab(id = "navcards",
                                          # Tab for summary plots
-                                         nav_panel("Summary plots",
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select plot type",
-                                                                                 selectInput("summary_type",
+                                         bslib::nav_panel("Summary plots",
+                                                   bslib::layout_sidebar(sidebar = sidebar(
+                                                       bslib::accordion(bslib::accordion_panel("Select plot type",
+                                                                                 shiny::selectInput("summary_type",
                                                                                              label = NULL,
                                                                                              choices = c("Bar Plot", "Box Plot", "Violin Plot"),
                                                                                              selected = "Bar Plot")
                                                        ),
 
-                                                       accordion_panel("Other options",
-                                                                       selectInput("xyplot_palette",
+                                                       bslib::accordion_panel("Other options",
+                                                                       shiny::selectInput("xyplot_palette",
                                                                                    label = "Select color palette",
                                                                                    choices <- palettes_d_names$palette[palettes_d_names$package == "colorBlindness"],
                                                                                    selected = "PairedColor12Steps"),
-                                                                       checkboxInput("geom_point_checkbox",
+                                                                       shiny::checkboxInput("geom_point_checkbox",
                                                                                      label = "Individual points",
                                                                                      value = FALSE),
-                                                                       checkboxInput("border_checkbox",
+                                                                       shiny::checkboxInput("border_checkbox",
                                                                                      label = "Add border",
                                                                                      value = FALSE),
-                                                                       checkboxInput("y_labs_checkbox",
+                                                                       shiny::checkboxInput("y_labs_checkbox",
                                                                                      label = "Use same Y-axis",
                                                                                      value = FALSE)
 
 
                                                        ),
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("plot_height",
+                                                       bslib::accordion_panel("Size settings",
+                                                                       shiny::sliderInput("plot_height",
                                                                                    label = "Adjust height",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -271,7 +271,7 @@ app_ui <- function(){
                                                                                    step = 50,
                                                                                    ticks = FALSE),
 
-                                                                       sliderInput("plot_width",
+                                                                       shiny::sliderInput("plot_width",
                                                                                    label = "Adjust width",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -289,27 +289,27 @@ app_ui <- function(){
                                                    shinycssloaders::withSpinner(plotlyOutput("plot"))
                                                    )
                                          ),
-                                         nav_panel("Heatmap",
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select options",
+                                         bslib::nav_panel("Heatmap",
+                                                  bslib::layout_sidebar(sidebar = sidebar(
+                                                       bslib::accordion(bslib::accordion_panel("Select options",
 
-                                                                                 selectInput("heatmap_palette",
+                                                                                 shiny::selectInput("heatmap_palette",
                                                                                              label = "Select color scheme",
                                                                                              choices <- (palettes_c_names$palette[palettes_c_names$package == "ggthemes"][4:10]),
                                                                                              selected = "Blue"),
-                                                                                 checkboxInput("border_checkbox_heatmap",
+                                                                                 shiny::checkboxInput("border_checkbox_heatmap",
 
                                                                                                label = "Add border",
                                                                                                value = FALSE),
 
-                                                                                 checkboxInput("p_value_checkbox",
+                                                                                 shiny::checkboxInput("p_value_checkbox",
                                                                                                label = "Only show genes with p < 0.05?",
                                                                                                value = FALSE)),
 
 
 
-                                                                 accordion_panel("Size settings",
-                                                                                 sliderInput("heatmap_height",
+                                                                 bslib::accordion_panel("Size settings",
+                                                                                 shiny::sliderInput("heatmap_height",
                                                                                              label = "Adjust height",
                                                                                              min = 100,
                                                                                              max = 1500,
@@ -317,7 +317,7 @@ app_ui <- function(){
                                                                                              step = 50,
                                                                                              ticks = FALSE),
 
-                                                                                 sliderInput("heatmap_width",
+                                                                                 shiny::sliderInput("heatmap_width",
                                                                                              label = "Adjust width",
                                                                                              min = 100,
                                                                                              max = 1500,
@@ -328,31 +328,31 @@ app_ui <- function(){
                                                        )
                                                    ),
 
-                                                   shinycssloaders::withSpinner(plotlyOutput("heatmap"))
+                                                   shinycssloaders::withSpinner(plotly::plotlyOutput("heatmap"))
                                                    )),
 
-                                         nav_panel("Clustering Plot",
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select clustering options",
-                                                                                 selectInput("clustering_options",
+                                         bslib::nav_panel("Clustering Plot",
+                                                   bslib::layout_sidebar(sidebar = bslib::sidebar(
+                                                       bslib::accordion(bslib::accordion_panel("Select clustering options",
+                                                                                 shiny::selectInput("clustering_options",
                                                                                              label = "Select correlation to show:",
                                                                                              choices = c("Positive correlation", "Negative correlation"),
                                                                                              selected = "Positive correlation"),
-                                                                                 sliderInput("top_n_genes",
+                                                                                 shiny::sliderInput("top_n_genes",
                                                                                              label = "Number of genes to show:",
                                                                                              min = 1,
                                                                                              max = 10,
                                                                                              value = 5)
                                                        ),
-                                                       accordion_panel("Other options",
-                                                                       checkboxInput("border_checkbox_cluster",
+                                                       bslib::accordion_panel("Other options",
+                                                                       shiny::checkboxInput("border_checkbox_cluster",
 
                                                                                      label = "Add border",
                                                                                      value = FALSE)),
 
 
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("cluster_height",
+                                                       bslib::accordion_panel("Size settings",
+                                                                       shiny::sliderInput("cluster_height",
                                                                                    label = "Adjust height",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -360,7 +360,7 @@ app_ui <- function(){
                                                                                    step = 50,
                                                                                    ticks = FALSE),
 
-                                                                       sliderInput("cluster_width",
+                                                                       shiny::sliderInput("cluster_width",
                                                                                    label = "Adjust width",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -371,31 +371,31 @@ app_ui <- function(){
 
                                                        )
                                                    ),
-                                                   shinycssloaders::withSpinner(plotlyOutput("clusterplot"))
+                                                   shinycssloaders::withSpinner(plotly::plotlyOutput("clusterplot"))
                                                    )),
 
-                                         nav_panel("Correlation Plot",
-                                                   layout_sidebar(sidebar = sidebar(
-                                                       accordion(accordion_panel("Select correlation options",
-                                                                                 selectizeInput("correlation_gene",
+                                         bslib::nav_panel("Correlation Plot",
+                                                  bslib::layout_sidebar(sidebar = sidebar(
+                                                       bslib::accordion(bslib::accordion_panel("Select correlation options",
+                                                                                 shiny::selectizeInput("correlation_gene",
                                                                                                 label = "Select gene to compare with:",
                                                                                                 choices = NULL,
                                                                                                 multiple = FALSE),
                                                        ),
-                                                       accordion_panel("Other options",
-                                                                       checkboxInput("border_checkbox_correlation",
+                                                       bslib::accordion_panel("Other options",
+                                                                       shiny::checkboxInput("border_checkbox_correlation",
 
                                                                                      label = "Add border",
                                                                                      value = FALSE),
 
-                                                                       checkboxInput("label_checkbox",
+                                                                       shiny::checkboxInput("label_checkbox",
                                                                                      label = "Display cell line labels?",
                                                                                      value = TRUE)
 
                                                        ),
 
-                                                       accordion_panel("Size settings",
-                                                                       sliderInput("corr_height",
+                                                       bslib::accordion_panel("Size settings",
+                                                                       shiny::sliderInput("corr_height",
                                                                                    label = "Adjust height",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -403,7 +403,7 @@ app_ui <- function(){
                                                                                    step = 50,
                                                                                    ticks = FALSE),
 
-                                                                       sliderInput("corr_width",
+                                                                       shiny::sliderInput("corr_width",
                                                                                    label = "Adjust width",
                                                                                    min = 100,
                                                                                    max = 1500,
@@ -417,11 +417,11 @@ app_ui <- function(){
                                                    shinycssloaders::withSpinner(plotlyOutput("corr_plot"))
                                                    )),
 
-                                         nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
+                                        bslib::nav_panel("Data", shinycssloaders::withSpinner(DT::DTOutput("data"))),
 
-                                         nav_panel("Help",
+                                        bslib::nav_panel("Help",
                                                    value = "help_explore",
-                                                   fluidPage(
+                                                   shiny::fluidPage(
                                                      h3("Explore expression"),
                                                      p("This use case allows the
                                                        user to generate visualizations
@@ -485,9 +485,9 @@ app_ui <- function(){
                                                        'research' column.")
                                                    )),
 
-                                         nav_panel("Help",
+                                        bslib::nav_panel("Help",
                                                    value = "help_cluster",
-                                                   fluidPage(
+                                                  shiny::fluidPage(
                                                      h3("Gene clustering"),
                                                      p("This use case can be used
                                                        to find the top 10 positively
@@ -582,9 +582,9 @@ app_ui <- function(){
                                                        'research' column.")
                                                    )),
 
-                                         nav_panel("Help",
+                                        bslib::nav_panel("Help",
                                                    value = "help_compare",
-                                                   fluidPage(
+                                                  shiny::fluidPage(
                                                      h3("Compare pathways"),
                                                      p("This use case can be used
                                                        to compare humane biological
