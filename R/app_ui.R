@@ -26,7 +26,7 @@ app_ui <- function(){
 
 
         # Adds github logo to navbar that links to repo
-        bslib::nav_item(bslib::tags$a(
+        bslib::nav_item(shiny::tags$a(
             href = "https://github.com/YamilaTimmer/depmap-dashboard",
             target = "_blank",
             bsicons::bs_icon("github", size = "2rem")
@@ -36,14 +36,14 @@ app_ui <- function(){
         bslib::nav_panel(
             id = "home_nav",
             "Home",
-            bslib::tags$div(
+            shiny::tags$div(
                 style = "max-width: 900px; margin: auto; padding: 50px;",
 
                 # Title and description
-                bslib::tags$h1(style = "text-align: center; font-size: 36px;
+                shiny::tags$h1(style = "text-align: center; font-size: 36px;
                         font-weight: bold; margin-bottom: 10px;",
                         "Depmap data explorer"),
-                bslib::tags$p(style = "font-size: 16px;",
+                shiny::tags$p(style = "font-size: 16px;",
                        "The Dependency Map",
                        a("(DepMap)", href = "https://depmap.org/portal/"),
                        " project provides insight
@@ -51,34 +51,34 @@ app_ui <- function(){
                        This dashboard helps in exploring expression, finding
                        similiar genes in cancer types, and comparing pathways
                        across different cancer types."),
-                bslib::tags$hr(style = "margin: 40px 0;"),
+                shiny::tags$hr(style = "margin: 40px 0;"),
 
                 # Dataset summary
-                bslib::tags$div(
-                  bslib::tags$h3(bsicons::bs_icon("bar-chart-line"),
+                shiny::tags$div(
+                  shiny::tags$h3(bsicons::bs_icon("bar-chart-line"),
                           "Dataset summary"),
-                  bslib::tags$p(style = "font-size: 16px;",
+                  shiny::tags$p(style = "font-size: 16px;",
                          "On the dashboard the following data can be found:"),
-                  bslib::tags$ul(
+                  shiny::tags$ul(
                     style = "font-size: 16px;",
-                    bslib::tags$li("17,000+ genes"),
-                    bslib::tags$li("1900+ different cell lines"),
-                    bslib::tags$li("60+ cancer types"),
-                    bslib::tags$li("Metadata consisting of sex, age, ethnic background, and more.")
+                    shiny::tags$li("17,000+ genes"),
+                    shiny::tags$li("1900+ different cell lines"),
+                    shiny::tags$li("60+ cancer types"),
+                    shiny::tags$li("Metadata consisting of sex, age, ethnic background, and more.")
                   ),
-                  bslib::tags$p(style = "font-size: 16px;",
+                  shiny::tags$p(style = "font-size: 16px;",
                          "The dashboard includes data on over 60 cancer types,
                          the chart below shows the top 10 cancer types that
                          have the most available data.")
                 ),
                 plotOutput("homepage_plot", height = "400px"),
-                bslib::tags$hr(style = "margin: 40px 0;"),
+                shiny::tags$hr(style = "margin: 40px 0;"),
 
                 # About us
-                bslib::tags$div(
-                  bslib::tags$h3(bsicons::bs_icon("people-fill"),
+                shiny::tags$div(
+                  shiny::tags$h3(bsicons::bs_icon("people-fill"),
                           "About us"),
-                  bslib::tags$p(style = "font-size: 16px;",
+                  shiny::tags$p(style = "font-size: 16px;",
                          "The dashboard was created by a small team of
                          enthusiastic bio-informaticians. Yamila Timmer and
                          Mirte Draaijer, two students from the bio-informatics
@@ -102,7 +102,7 @@ app_ui <- function(){
                                   bslib::accordion(
                                       bslib::accordion_panel("Select use-case",
                                                       style = "background-color: #f0f0f0;",
-                                                      bslib::tags$style(HTML("
+                                                      shiny::tags$style(HTML("
                                                                       .bslib::accordion-item .bslib::accordion-header {
                                                                       background-color: #f0f0f0 !important;}
 
