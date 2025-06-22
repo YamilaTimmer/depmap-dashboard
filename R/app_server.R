@@ -1,4 +1,17 @@
+# Imports
+usethis::use_package("shiny")
 usethis::use_package("shinyjs")
+usethis::use_package("plotly")
+usethis::use_package("DT")
+usethis::use_package("dplyr")
+usethis::use_package("feather")
+
+library(shiny)
+library(shinyjs)
+library(plotly)
+library(DT)
+library(dplyr)
+library(feather)
 
 app_server <- function(input, output, session) {
 
