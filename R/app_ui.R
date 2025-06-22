@@ -1,3 +1,13 @@
+#' @importFrom bslib page_fillable page_navbar nav_item nav_panel layout_sidebar sidebar accordion accordion_panel tooltip navset_card_tab layout_columns card
+#' @importFrom shiny tags h3 p a fluidPage selectInput selectizeInput checkboxInput sliderInput plotOutput
+#' @importFrom shinyjs useShinyjs
+#' @importFrom bsicons bs_icon
+#' @importFrom shinycssloaders withSpinner
+#' @importFrom plotly plotlyOutput
+#' @importFrom DT DTOutput
+#' @import paletteer
+#' 
+#' 
 source("R/functions.R")
 
 app_ui <- function(){
