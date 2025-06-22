@@ -45,7 +45,7 @@ app_ui <- function(){
                         "Depmap data explorer"),
                 shiny::tags$p(style = "font-size: 16px;",
                        "The Dependency Map",
-                       a("(DepMap)", href = "https://depmap.org/portal/"),
+                       shiny::a("(DepMap)", href = "https://depmap.org/portal/"),
                        " project provides insight
                        into genetic dependecies and vulnerabilities in cancer.
                        This dashboard helps in exploring expression, finding
@@ -102,7 +102,7 @@ app_ui <- function(){
                                   bslib::accordion(
                                       bslib::accordion_panel("Select use-case",
                                                       style = "background-color: #f0f0f0;",
-                                                      shiny::tags$style(HTML("
+                                                      shiny::tags$style(shiny::HTML("
                                                                       .bslib::accordion-item .bslib::accordion-header {
                                                                       background-color: #f0f0f0 !important;}
 
@@ -114,7 +114,7 @@ app_ui <- function(){
                                                       open = TRUE,
                                                       icon = bsicons::bs_icon("clipboard-check", size = "2rem"),
                                                       bslib::tooltip(span(bs_icon("info-circle")),
-                                                        bslib::HTML("<strong>Explore expression:</strong><br/>
+                                                        shiny::HTML("<strong>Explore expression:</strong><br/>
                                                              Explore the expression of one or more genes in one cancer type,<br/>
                                                              or compare the expression of one or more genes across multiple cancer types.<br/><br/>
 
@@ -135,7 +135,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare genes"
-                                      div(id = "genes_bslib::accordion",
+                                     shiny::div(id = "genes_bslib::accordion",
                                           bslib::accordion_panel("Select Gene(s)",
                                                           style = "background-color: #f0f0f0;",
 
@@ -146,7 +146,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare genes"
-                                      div(id = "individual_gene",
+                                     shiny::div(id = "individual_gene",
                                           bslib::accordion_panel("Select Gene",
                                                           style = "background-color: #f0f0f0;",
 
@@ -157,7 +157,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare pathways"
-                                      div(id = "pathway",
+                                     shiny::div(id = "pathway",
                                           bslib::accordion_panel("Select Pathway",
                                                           style = "background-color: #f0f0f0;",
 
@@ -169,7 +169,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare cancer types"
-                                      div(id = "cancer_types_bslib::accordion",
+                                     shiny::div(id = "cancer_types_bslib::accordion",
                                           bslib::accordion_panel("Select Cancer Type(s)",
                                                           style = "background-color: #f0f0f0;",
 
@@ -181,7 +181,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare cancer types"
-                                      div(id = "singular_cancer_type",
+                                     shiny::div(id = "singular_cancer_type",
                                           bslib::accordion_panel("Select Cancer Type",
                                                           style = "background-color: #f0f0f0;",
 
@@ -193,7 +193,7 @@ app_ui <- function(){
 
 
                                       # Shown when selected use-case is "compare cancer types"
-                                      div(id = "compare_pathway_cancertypes",
+                                     shiny::div(id = "compare_pathway_cancertypes",
                                           bslib::accordion_panel("Select 2 Cancer Types",
                                                           style = "background-color: #f0f0f0;",
 
@@ -422,8 +422,8 @@ app_ui <- function(){
                                         bslib::nav_panel("Help",
                                                    value = "help_explore",
                                                    shiny::fluidPage(
-                                                     h3("Explore expression"),
-                                                     p("This use case allows the
+                                                    shiny::h3("Explore expression"),
+                                                    shiny::p("This use case allows the
                                                        user to generate visualizations
                                                        of expression across genes.
                                                        Possible plot types include
@@ -436,16 +436,16 @@ app_ui <- function(){
                                                        The log2 transformation is then
                                                        applied to normalize the data. "),
 
-                                                     h3("Selection"),
-                                                     p("On the left side select
+                                                    shiny::h3("Selection"),
+                                                    shiny::p("On the left side select
                                                      the gene(s) and cancer type(s)
                                                      you are interested in. If
                                                      you want you can select sex,
                                                      ethnic background, and age
                                                      category as well."),
 
-                                                     h3("Summary plots"),
-                                                     p("After making your selections,
+                                                    shiny::h3("Summary plots"),
+                                                    shiny::p("After making your selections,
                                                        you can choose between a
                                                        bar plot, a box plot, and
                                                        a violin plot on the first
@@ -457,16 +457,16 @@ app_ui <- function(){
                                                        shown on the y-axis and
                                                        cancer type on the x-axis."),
 
-                                                     h3("Heatmap"),
-                                                     p("On the next tab, a heatmap
+                                                    shiny::h3("Heatmap"),
+                                                    shiny::p("On the next tab, a heatmap
                                                        is shown. For the heatmap,
                                                        you can pick a color
                                                        palette. Here the gene
                                                        expression is shown across
                                                        the selected cell lines."),
 
-                                                     h3("Data"),
-                                                     p("On the 'data' tab a data
+                                                    shiny::h3("Data"),
+                                                    shiny::p("On the 'data' tab a data
                                                        table containing the data
                                                        is shown. At the top, you
                                                        can select which columns
@@ -488,8 +488,8 @@ app_ui <- function(){
                                         bslib::nav_panel("Help",
                                                    value = "help_cluster",
                                                   shiny::fluidPage(
-                                                     h3("Gene clustering"),
-                                                     p("This use case can be used
+                                                    shiny::h3("Gene clustering"),
+                                                    shiny::p("This use case can be used
                                                        to find the top 10 positively
                                                        or negatively correlated
                                                        genes with a selected gene.
@@ -518,16 +518,16 @@ app_ui <- function(){
                                                        then gene B is also
                                                        lowered in expression."),
 
-                                                     h3("Selection"),
-                                                     p("On the left side, select
+                                                    shiny::h3("Selection"),
+                                                    shiny::p("On the left side, select
                                                        the gene and the cancer
                                                        type you are interested in.
                                                        If you want you can select
                                                        sex, ethnic background,
                                                        and age category as well."),
 
-                                                     h3("Clustering plot"),
-                                                     p("Automatically the top 5
+                                                    shiny::h3("Clustering plot"),
+                                                    shiny::p("Automatically the top 5
                                                        positively correlated genes
                                                        show up. Using the
                                                        drop-down menu, you can
@@ -539,8 +539,8 @@ app_ui <- function(){
                                                        be changed from the top 1
                                                        all the way to the top 10."),
 
-                                                     h3("Correlation plot"),
-                                                     p("The correlation plot gives
+                                                    shiny::h3("Correlation plot"),
+                                                    shiny::p("The correlation plot gives
                                                        you the ability to compare
                                                        the expression of your
                                                        chosen gene to any other
@@ -562,8 +562,8 @@ app_ui <- function(){
                                                        indicating a correlation
                                                        between the two genes."),
 
-                                                     h3("Data"),
-                                                     p("On the 'data' tab a data
+                                                    shiny::h3("Data"),
+                                                    shiny::p("On the 'data' tab a data
                                                        table containing the data
                                                        is shown. At the top, you
                                                        can select which columns
@@ -585,8 +585,8 @@ app_ui <- function(){
                                         bslib::nav_panel("Help",
                                                    value = "help_compare",
                                                   shiny::fluidPage(
-                                                     h3("Compare pathways"),
-                                                     p("This use case can be used
+                                                    shiny::h3("Compare pathways"),
+                                                    shiny::p("This use case can be used
                                                        to compare humane biological
                                                        pathways, which are
                                                        collections of genes working
@@ -602,14 +602,14 @@ app_ui <- function(){
                                                        applied to normalize
                                                        the data."),
 
-                                                     h3("Selection"),
-                                                     p("On the left side, select
+                                                    shiny::h3("Selection"),
+                                                    shiny::p("On the left side, select
                                                        the pathway you are
                                                        interested in. The dropdown
                                                        selection for 'select pathways'
                                                        contains all humane pathways
                                                        from the",
-                                                       a("KEGG pathway database",
+                                                       shiny::a("KEGG pathway database",
                                                          href = "https://www.kegg.jp/kegg/kegg2.html",
                                                          target = "_blank")
                                                        ,"
@@ -622,8 +622,8 @@ app_ui <- function(){
                                                        in the chosen pathway,
                                                        across cancer types."),
 
-                                                     h3("Heatmap"),
-                                                     p("The result can be viewed
+                                                    shiny::h3("Heatmap"),
+                                                    shiny::p("The result can be viewed
                                                        in the heatmap, with genes
                                                        on the x-axis and cancer
                                                        types on the y-axis.
@@ -632,8 +632,8 @@ app_ui <- function(){
                                                        resemble the expression
                                                        rates in log2 TPM"),
 
-                                                     h3("Data"),
-                                                     p("On the 'data' tab a data
+                                                    shiny::h3("Data"),
+                                                    shiny::p("On the 'data' tab a data
                                                        table containing the data
                                                        is shown. At the top, you
                                                        can select which columns
