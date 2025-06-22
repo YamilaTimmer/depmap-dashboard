@@ -1,4 +1,9 @@
-usethis::use_package("shinyjs")
+#' @importFrom feather read_feather
+#' @importFrom dplyr %>% arrange count filter pull select distinct inner_join
+#' @importFrom DT renderDataTable
+#' @importFrom plotly renderPlotly ggplotly
+#' @importFrom shiny observeEvent updateSelectizeInput updateTabsetPanel renderPlot req debounce
+#' @importFrom shinyjs show hide
 
 app_server <- function(input, output, session) {
 
