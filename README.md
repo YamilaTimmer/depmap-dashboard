@@ -32,43 +32,26 @@ If you would like to learn more about these running DepMap projects, it is highl
 - OS: Linux
 - R: 4.0 or higher
 
-## Future plans
+## Installation
 
-This dashboard will be converted into an R package, which allows for easier installing and usage. Possibly it will also be hosted on a local server.
-
-### Installing tools
-Download the following DepMap datasets from [https://depmap.org/portal/data_page/?tab=allData](https://depmap.org/portal/data_page/?tab=allData):
-
-- `OmicsExpressionProteinCodingGenesTPMLogp1`
-- `Model.csv`
-
-Navigate to the top of the page and enter the two dataset names in the search bar.
-
-
-
-**Clone the repository**
-
-```bash
-
-git clone git@github.com:YamilaTimmer/depmap-dashboard.git
-
-```
-
-**Install the required R packages**
+The dashboard can be installed as an R-package. For this the R-package `devtools` (v. 2.4.5) is needed.
 
 ```r
-install.packages(c(
-  "ggplot2",
-  "shiny", 
-  "bslib", 
-  "shinyjs", 
-  "bsicons", 
-  "shinyjqui", 
-  "plotly", 
-  "feather", 
-  "DT",
-  "shinycssloaders"
-))
+install.packages("devtools")
+library(devtools)
+```
+
+Now, using devtools the package can be installed from the GitHub repo.
+
+```r
+devtools::install_github("YamilaTimmer/depmap-dashboard")
+library(depmapdashboard)
+```
+
+Lastly, the working directory needs to be set to the package and then the dashboard can be started.
+```r
+setwd(system.file(package = "depmapdashboard"))
+depmapdashboard::run_app()
 ```
 
 ### Version details
@@ -76,30 +59,24 @@ The application is made using R version [4.4.0](https://cran.r-project.org/bin/w
 
 | Package Name        | Description                                                 | Version   |
 |---------------------|-------------------------------------------------------------|-----------|
-| [Shiny](https://github.com/rstudio/shiny) | Package that allows creating interactive R applications |1.9.1|
-| [ggplot2](https://github.com/tidyverse/ggplot2)| Used for making all plots (bar plot, boxplot, violin plot, heatmap)|3.5.1|
-| [bslib](https://github.com/rstudio/bslib/) | Used for layout/structuring of application  |0.8.0|
-| [shinyjs](https://github.com/daattali/shinyjs) | Improves user experience, using JavaScript|2.1.0|
+| [AnnotationDbi](https://github.com/Bioconductor/AnnotationDbi) | For querying SQLite-based annotation data packages | 1.66.0|
+| [Biocmanager](https://github.com/Bioconductor/BiocManager) | For installing/managing Bioconductor packages | 1.30.26 |
 | [bsicons](https://github.com/rstudio/bsicons)| Used to add icons to application |0.1.2|
-| [shinyjqui](https://github.com/Yang-Tang/shinyjqui)| Used for making plots resizable |0.4.1|
-| [plotly](https://github.com/plotly/plotly.R)| Package that allows creating interactive graphs |4.10.4|
-| [feather](https://github.com/wesm/feather)| Package that allows storing/reading data more efficiently|0.3.5|
-| [shinycssloaders](https://github.com/daattali/shinycssloaders)| Used for adding loading icons in application |1.1.0|
+| [bslib](https://github.com/rstudio/bslib/) | Used for layout/structuring of application  |0.9.0|
+| [dplyr](https://github.com/tidyverse/dplyr) | Used for various methods of data manipulation |1.1.4|
 | [DT](https://github.com/rstudio/DT)| Used for interactive data table output in application |0.33|
+| [feather](https://github.com/wesm/feather)| Package that allows storing/reading data more efficiently|0.3.5|
+| [forcats](https://github.com/tidyverse/forcats) | Merging uncommon factors into "other" (used in homepage piechart)|1.0.0|
+| [ggplot2](https://github.com/tidyverse/ggplot2)| Used for making all plots (bar plot, boxplot, violin plot, heatmap)|3.5.2|
+| [limma](https://bioconductor.org/packages/release/bioc/html/limma.html) |Data analysis for omics data|3.60.6| 
+| [org.Hs.eg.db](https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html)|Genome wide annotation for humane genome|3.19.1|
+| [paletteer](https://github.com/EmilHvitfeldt/paletteer)|Collection of color palettes for plots|1.6.0|
+| [plotly](https://github.com/plotly/plotly.R)| Package that allows creating interactive graphs |4.11.0|
+| [Shiny](https://github.com/rstudio/shiny) | Package that allows creating interactive R applications |1.10.1|
+| [shinycssloaders](https://github.com/daattali/shinycssloaders)| Used for adding loading icons in application |1.1.0|
+| [shinyjs](https://github.com/daattali/shinyjs) | Improves user experience, using JavaScript|2.1.0|
+| [tidyr](https://github.com/tidyverse/tidyr)|For converting data to 'tidy' format|1.3.1|
 
-### Pre-processing
-
-Before the datasets can be used in the application, a little pre-processing will have to take place. This can be done by running the code in the following R-markdown file: [scripts/pre-processing.Rmd](https://github.com/YamilaTimmer/depmap-portal-data-visualizations/blob/main/scripts/pre-processing_data.R). (note: this step can take up to a few minutes, this is caused by the size of the dataset. This step will only have to be performed **once**):
-
-
-### Launch the app
-
-Now that the R data objects are created, the app itself can be run as follows:
-
-```r
-library(shiny)
-runApp('app')
-```
 
 ## Usage
 ### Select Parameters
