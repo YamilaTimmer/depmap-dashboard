@@ -295,7 +295,7 @@ app_ui <- function(){
 
                                                                                  shiny::selectInput("heatmap_palette",
                                                                                              label = "Select color scheme",
-                                                                                             choices <- (palettes_c_names$palette[palettes_c_names$package == "ggthemes"][4:10]),
+                                                                                             choices <- (paletteer::palettes_c_names$palette[paletteer::palettes_c_names$package == "ggthemes"][4:10]),
                                                                                              selected = "Blue"),
                                                                                  shiny::checkboxInput("border_checkbox_heatmap",
 
