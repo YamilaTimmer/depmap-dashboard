@@ -23,7 +23,7 @@ Imports:
     ggthemes (<= 5.1.0),
     paletteer (<= 1.6.0),
     plotly (<= 4.11.0),
-    shiny (<= 1.10.1),
+    shiny (<= 1.11.0),
     shinycssloaders (<= 1.1.0),
     shinyjs (<= 2.1.0),
     stats,
