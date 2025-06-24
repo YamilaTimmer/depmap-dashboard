@@ -21,6 +21,7 @@ Imports:
     feather (<= 0.3.5),
     forcats (<= 1.0.0),
     ggplot2 (<= 3.5.2),
+    ggthemes (<= 5.1.0),
     limma (<= 3.60.6),
     org.Hs.eg.db (<= 3.19.1),
     paletteer (<= 1.6.0),
