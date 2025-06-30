@@ -86,7 +86,7 @@ This dashboard offers three types of use-cases, which can be selected in a dropd
 This usecase allows for exploring the expression of one or more genes across one or more cancer types. Included in this use-case is visualization using 'summary plots' (bar plots, box plots and violin plots) or a heatmap.
 
 - `Gene clustering`:
-This usecase allows for exploring the correlation between expression profiles across genes, in order to see what genes are most positively/negatively related to a selected gene. The usecase also allows for visualization of distribution of cell line expression between two selected genes.
+This usecase allows for exploring the correlation between expression profiles across genes, in order to see what genes are most positively/negatively related to a selected gene. A positive relation meaning that the gene expression profile of the selected gene is similar to that of the shown genes and a negative relation meaning the expression profile of the selected gene is inverted to that of the shown genes. This is useful for finding genes with possible similar functions. The usecase also allows for visualization of distribution of cell line expression between two selected genes.
 
 - `Compare pathways`:
 This usecase allows for comparing expression in entire pathways across two selected cancer types. The selected cancer types determine what cell lines are selected and the selected pathway will automatically select all genes that belong to that pathway, the result gets visualized as a heatmap. Here it's also possible to filter on p-value <= 0.05.
@@ -109,28 +109,44 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 ## Generate Visualizations
 
 - `Explore expression`:
-  - **Summary plots**
+**Summary plots**
+  
   1. Select type of plot to generate in the `select plot type` dropdown menu (options: barplot, boxplot/violin plot)
   2. Further options can be selected, in the sidebar on the left (`Other options`), such as color palette and how to scale the y-axis when multiple genes are selected.
   3. The visualization can be resized by dragging the height/width sliders under `size settings`
   4. The visualization can be saved by pressing the 'save as .png' button
 
-  - **Heatmap**
+**Heatmap**
+  
   1. A color palette can be selected in the sidebar on the left
   2. The visualization can be resized by dragging the height/width sliders under `size settings`
   3. The visualization can be saved by pressing the 'save as .png' button
 
 
 - `Gene clustering`:
+**Clustering Plot**
+  
+  1. Under `Select clustering options`, select whether you want to find the genes with the most positive or most negative correlation to the target gene.
+  2. In the same menu, select the number of similar genes you want to be shown, from at minimum 1 to maximum 10, not counting the target gene.
+  3. The visualization can be resized by dragging the height/width sliders under `size settings`
+  4. The visualization can be saved by pressing the 'save as .png' button.
+
+**Correlation Plot**
+  1. Select the target gene in the `Select gene` dropdown menu under the `Select usecase` dropdown, this gene will be on the x-axis of the plot
+  2. Select the query gene in the `Select correlation options` dropdown, at 'Select gene to compare with', this gene will be on the y-axis of the plot
+  3. Further options can be selected, in the sidebar on the left (`Other options`), such as adding a border around the plot or choosing whether or not to display cell line labels.
+  3. The visualization can be resized by dragging the height/width sliders under `size settings`
+  4. The visualization can be saved by pressing the 'save as .png' button.
+
 
 - `Compare pathways`:
 
 
 
 ## Explore data
-View the data that is generated for the selected parameters, in the table on the right side. The data table can be viewed in full screen by pressing the 'expand' button in the bottom right of the tab. What columns will be displayed can be chosen in the column selector at the top. The data can be sorted on columns from low/high, or you can perform do a specific search using the search bar in the top right. Additional metadata can be viewed in the table, by choosing additional columns in the column selector. A short description for all columns can be found in the [appendix](README.md#appendix). Keep in mind, some columns have a lot of missing values (NA values). 
+View the data that is generated for the selected parameters, in the table on the right side. The data table can be viewed in full screen by pressing the 'expand' button in the bottom right of the tab. What columns will be displayed can be chosen in the column selector at the top. The data can be sorted on columns from low/high, or you can perform do a specific search using the search bar in the top right. Additional metadata can be viewed in the table, by choosing additional columns in the column selector. All use-cases include the same columns and `compare pathways` contains two additional columns containing the p-value and log2 fold change. A short description for all columns can be found in the [appendix](README.md#appendix). Keep in mind, some columns have a lot of missing values (NA values).
 
-The data can be sorted by clicking the arrows next to the column names (from high-low or low-high) and by clicking the gene names a new window will open with a link to [https://www.genecards.org/](https://www.genecards.org/) with the page corresponding to the selected gene, for more information about the gene. 
+The data can be sorted by clicking the arrows next to the column names (from high-low or low-high) and by clicking the gene names a new window will open with a link to [https://www.genecards.org/](https://www.genecards.org/) with the page corresponding to the selected gene, for more information about the gene. Clicking the link in the research column will lead to a [PubMed](https://pubmed.ncbi.nlm.nih.gov/) search of that protein + the searchword 'cancer'. 
 
 ### Saving the data
 Using the download buttons, the data can be saved as either a comma-seperated-value (.csv) file, or an excel file (.xslx)
