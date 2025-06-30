@@ -20,7 +20,10 @@ If you would like to learn more about these running DepMap projects, it is highl
 ### Key-features
 - Visualise large batches of DepMap data,
 - Allows selecting different metadata parameters, to fine-tune data,
-- Generating plots with the data, including bar plots, boxplots, violin plots and heatmaps,
+- Generating basic expression plots with the data, including bar plots, boxplots, violin plots and heatmaps,
+- Finding genes with a similar expression profile to a chosen gene (either positive or negative correlation),
+- Comparing gene expression profiles between selected genes,
+- Comparing pathways between two cancer types, where all involved genes are automatically selected,
 - Generating sortable tables with the filtered data,
 - The ability to save the generated visuals (.png) and the table data (.csv/.xlsx),
 - User-friendly dashboard interface.
@@ -101,6 +104,9 @@ Use the sidebar to select the wanted genes, cancer types, and additional demogra
 - **Ethnic background**: contains the following options: 'caucasian', 'asian', 'black_or_african_american', 'african', 'american_indian_or_native_american', 'east_indian', 'north_african' and unknown (due to some missing values)
 - **Age category**: age category of patient, contains 4 options: 'Fetus', 'Pediatric', 'Adult' and unknown (due to some missing values)
 
+![Different parameters that can be selected](img/filter_options.png)
+
+
 > The DepMap dataset contains some missing values in the metadata, 'Unknown' is retained in the data, to allow larger amounts of data to be visualized and is by default selected for sex, ethnic background and age category. Feel free to unselect 'Unknown' if you want to filter on a specific sex, ethnic background or age category.
 
 After selecting the parameters, the sidebar can be collapsed to allow more space for the visualisation and data table.
@@ -108,7 +114,7 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 ## Generate Visualizations
 
-- `Explore expression`:
+### Usecase: Explore expression
 
 **Summary plots**
 
@@ -117,6 +123,7 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
   3. The visualization can be resized by dragging the height/width sliders under `size settings`
   4. The visualization can be saved by pressing the 'save as .png' button
 
+![Selecting options for the summary plots](img/summary_plots.png)
 
 **Heatmap**
   
@@ -124,8 +131,9 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
   2. The visualization can be resized by dragging the height/width sliders under `size settings`
   3. The visualization can be saved by pressing the 'save as .png' button
 
+![Selecting options for the heatmap](img/heatmap_options.png)
 
-- `Gene clustering`:
+### Usecase: Gene clustering
 
 **Clustering Plot**
   
@@ -146,7 +154,7 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 ![Gene selection in correlation plot](img/corr_plot.png)
 
-- `Compare pathways`:
+### Usecase: Compare pathways
 
 **Heatmap**
   
