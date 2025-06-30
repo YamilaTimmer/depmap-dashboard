@@ -313,7 +313,7 @@ app_ui <- function(){
                                                                                                value = FALSE),
 
                                                                                  checkboxInput("p_value_checkbox",
-                                                                                               label = "Only show genes with p < 0.05?",
+                                                                                               label = "Only show genes with p ≤ 0.05?",
                                                                                                value = FALSE)),
 
 
