@@ -109,12 +109,14 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 ## Generate Visualizations
 
 - `Explore expression`:
+
 **Summary plots**
-  
+
   1. Select type of plot to generate in the `select plot type` dropdown menu (options: barplot, boxplot/violin plot)
   2. Further options can be selected, in the sidebar on the left (`Other options`), such as color palette and how to scale the y-axis when multiple genes are selected.
   3. The visualization can be resized by dragging the height/width sliders under `size settings`
   4. The visualization can be saved by pressing the 'save as .png' button
+
 
 **Heatmap**
   
@@ -124,6 +126,7 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 
 - `Gene clustering`:
+
 **Clustering Plot**
   
   1. Under `Select clustering options`, select whether you want to find the genes with the most positive or most negative correlation to the target gene.
@@ -131,25 +134,45 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
   3. The visualization can be resized by dragging the height/width sliders under `size settings`
   4. The visualization can be saved by pressing the 'save as .png' button.
 
+![Options of clustering plot](img/clustering_plot.png)
+
 **Correlation Plot**
+
   1. Select the target gene in the `Select gene` dropdown menu under the `Select usecase` dropdown, this gene will be on the x-axis of the plot
   2. Select the query gene in the `Select correlation options` dropdown, at 'Select gene to compare with', this gene will be on the y-axis of the plot
   3. Further options can be selected, in the sidebar on the left (`Other options`), such as adding a border around the plot or choosing whether or not to display cell line labels.
-  3. The visualization can be resized by dragging the height/width sliders under `size settings`
-  4. The visualization can be saved by pressing the 'save as .png' button.
+  4. The visualization can be resized by dragging the height/width sliders under `size settings`
+  5. The visualization can be saved by pressing the 'save as .png' button.
 
+![Gene selection in correlation plot](img/corr_plot.png)
 
 - `Compare pathways`:
 
+**Heatmap**
+  
+  1. A color palette can be selected under `Select options`
+  2. In the same menu, a checkbox can be clicked to only show genes with a p-value ≤ 0.05
+  3. The visualization can be resized by dragging the height/width sliders under `size settings`
+  4. The visualization can be saved by pressing the 'save as .png' button
 
+![Selecting statistically significant genes in heatmap](img/compare_pathway.png)
 
 ## Explore data
-View the data that is generated for the selected parameters, in the table on the right side. The data table can be viewed in full screen by pressing the 'expand' button in the bottom right of the tab. What columns will be displayed can be chosen in the column selector at the top. The data can be sorted on columns from low/high, or you can perform do a specific search using the search bar in the top right. Additional metadata can be viewed in the table, by choosing additional columns in the column selector. All use-cases include the same columns and `compare pathways` contains two additional columns containing the p-value and log2 fold change. A short description for all columns can be found in the [appendix](README.md#appendix). Keep in mind, some columns have a lot of missing values (NA values).
+View the data that is generated for the selected parameters, in the table on the right side. The data table can be viewed in full screen by pressing the 'expand' button in the bottom right of the tab. What columns will be displayed can be chosen in the `column selector` at the top. Clicking the `reset to default columns`, will make the column selection revert to the default columns, which include the cell line name (StrippedCellLineName), the cancer type (OncotreePrimaryDisease), the gene, the expression and a research column which links to a PubMed search for the gene. The data can be sorted on columns from low/high, or you can perform do a specific search using the search bar in the top right. Additional metadata can be viewed in the table, by choosing additional columns in the column selector.  A short description for all columns can be found in the [appendix](README.md#appendix). Keep in mind, some columns have a lot of missing values (NA values).
+
+![Selecting columns data](img/select_columns_data.png)
+
+
+All use-cases include the same columns and `compare pathways` contains two additional columns containing the p-value and log2 fold change.
+
+![Example data of compare pathway usecase](img/compare_pathway_data.png)
 
 The data can be sorted by clicking the arrows next to the column names (from high-low or low-high) and by clicking the gene names a new window will open with a link to [https://www.genecards.org/](https://www.genecards.org/) with the page corresponding to the selected gene, for more information about the gene. Clicking the link in the research column will lead to a [PubMed](https://pubmed.ncbi.nlm.nih.gov/) search of that protein + the searchword 'cancer'. 
 
 ### Saving the data
-Using the download buttons, the data can be saved as either a comma-seperated-value (.csv) file, or an excel file (.xslx)
+Using the download button under the `data` tab, the data can be saved as either a comma-seperated-value (.csv) file, or an excel file (.xslx).
+
+![Saving the data](img/save_data.png)
 
 # How to interpret the data
 ## Background info
@@ -159,6 +182,8 @@ This application shows gene expression over cell lines and can be used to interp
 A gene is a piece of DNA that codes for a protein. **Gene expression** means how much a gene is transcripted to RNA and then translated to a protein. The more this occurs, the higher a gene is expressed. Cancer can be linked to gene expression. For example, certain genes that prevent cancer (tumor-suppressor genes) might not be expressed as much in patients with cancer. It also works the other way around, genes that can cause cancer (oncogenes) are often seen in higher expression levels in patients with cancer. The expression of the genes can be found in `OmicsExpressionProteinCodingGenesTPMLogp1.csv`.
 
 The **cell lines** refer to populations of cells that are derived from patients with different types of cancer. Which allows for 'in vitro' research, which is done outside of the patient, which has the benefit that it can be studied without potentially harming the patient. Information about the cell lines can be found in `Model.csv`. 
+
+## Examples
 
 
 ## Support
