@@ -193,9 +193,21 @@ The **cell lines** refer to populations of cells that are derived from patients 
 
 ## Examples
 
+![An example of barplots](img/example_summaryplots.png)
+
+The selected cell lines are derived from three different cancer types, Ewing Sarcoma, Acute Myeloid Leukemia and Bladder Urothelial Carcinoma. Four genes are selected: CFH, FUCA2, SCYL3 and C1orf112, each gene is shown as a seperate plot, with the gene name shown above the plot. By checking the `Use same Y-axis` checkbox, it becomes easier to compare expression of genes between cancer types, as it will cause equal Y-axis scaling in all plots. The expression of C1orf112, CFH and SCYL3 seems to be pretty similar across all 3 cancer types. However the expression of FUCA2 seems to vary, with a noticeably low expression in Ewing Sarcoma. This points to possible further research on the role of FUCA2 in Ewing Sarcoma.
+
+![An example of clustering plots](img/clustering_plot_example.png)
+
+The selected cell lines are derived from Acute Myeloid Leukemia and the selected gene is TSPAN6 (blue in plot). The selected correlation is positive, meaning the genes with the most similar expression profile to that of TSPAN6 will be shown. In the plot 2 genes with similar expression profiles are shown, and it is visible that the 'shape' of the expression profiles are very similar, meaning that when TSPAN6 goes up in expression, the other genes often follow and the same goes for when TSPAN6 goes down in expression. Genes with similar expression profiles often have a related function so from this plot there could be a further investigation on how AASS, ETV1 and TSPAN6 are related.
+
+![An example of the heatmap for compare pathways](img/compare_pathway_example.png)
+
+The chosen cancer types are Acute Myeloid Leukemia and Ampullary Carcinoma. The genes are selected based on the chosen pathway. Choosing a pathway automatically selects all genes within the pathway (note: this screenshot was made using a subset, so not all genes are shown). The heatmap displays the average expression over all cell lines per cancer type, per gene and displays this as a color, in this case ranging from light blue to dark blue. The expression is ordered and low expression can be seen on the left side of the plot and high expression on the right side. If the color of a gene is equal or similar for both cancer types, then it means that the expression of that gene is similar across both cancer types. However if the colors seem to differ by a lot (e.g very light blue for ampullary carcinoma and very dark blue for acute myeloid leukemia), then expression differs over the two cancer types. An example of this is the gene CYP24A1, with an avg expression of 3.3 for ampullary carcinoma and 0.06 for acute myeloid leukemia. However these differences might not be statistically significant, as some cancer types contain a limited amount of cell lines, in order to only see significant genes the p-value checkbox can be checked. The exact p-value and log2FC can be found in the data tab. 
+
 
 ## Support
-In case of any bugs or needed support, open up an issue at [our repo](https://github.com/YamilaTimmer/depmap-portal-data-visualizations/issues).
+In case of any bugs or needed support, please open up an issue at [this repo](https://github.com/YamilaTimmer/depmap-portal-data-visualizations/issues).
 
 
 ## Appendix
