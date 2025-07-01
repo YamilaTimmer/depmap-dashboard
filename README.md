@@ -86,11 +86,11 @@ The application is made using R version [4.4.0](https://cran.r-project.org/bin/w
 
 
 ## Usage
-### Use-cases
-This dashboard offers three types of use-cases, which can be selected in a dropdown menu on the left side. 
+### Usecases
+This dashboard offers three types of usecases, which can be selected in a dropdown menu on the left side. 
 
 - `Explore expression`:
-This usecase allows for exploring the expression of one or more genes across one or more cancer types. Included in this use-case is visualization using 'summary plots' (bar plots, box plots and violin plots) or a heatmap.
+This usecase allows for exploring the expression of one or more genes across one or more cancer types. Included in this usecase is visualization using 'summary plots' (bar plots, box plots and violin plots) or a heatmap.
 
 - `Gene clustering`:
 This usecase allows for exploring the correlation between expression profiles across genes, in order to see what genes are most positively/negatively related to a selected gene. A positive relation meaning that the gene expression profile of the selected gene is similar to that of the shown genes and a negative relation meaning the expression profile of the selected gene is inverted to that of the shown genes. This is useful for finding genes with possible similar functions. The usecase also allows for visualization of distribution of cell line expression between two selected genes.
@@ -100,11 +100,11 @@ This usecase allows for comparing expression in entire pathways across two selec
 
 
 ### Select Parameters
-Use the sidebar to select the wanted genes, cancer types, and additional demographic filters, including patient sex, race, and age category. The use-case determines how many genes/cancer types can be selected in total.
+Use the sidebar to select the wanted genes, cancer types, and additional demographic filters, including patient sex, race, and age category. The usecase determines how many genes/cancer types can be selected in total.
 
 - **Genes**: include a total of 19194 humane genes
 - **Cancer types** (OncotreePrimaryDisease): contains a plethora of different cancer diseases of which the cell lines were extracted 
-- **Sex**: biological sex the patient was born with, contains 3 options, 'Female', 'Male', and 'unknown' (due to some missing values). 'Male' and 'Female' are selected by default.
+- **Sex**: biological sex the patient was born with, contains 3 options, 'Female', 'Male', and unknown (due to some missing values). 'Male' and 'Female' are selected by default.
 - **Ethnic background**: contains the following options: 'caucasian', 'asian', 'black_or_african_american', 'african', 'american_indian_or_native_american', 'east_indian', 'north_african' and unknown (due to some missing values)
 - **Age category**: age category of the patient, contains 4 options: 'Fetus', 'Pediatric', 'Adult' and unknown (due to some missing values)
 
