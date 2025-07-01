@@ -4,17 +4,18 @@
 #' ), the files are present in the package/repo. And will save the processed
 #' versions of the csv as .tsv feather encoded files.
 #' @return NULL
-
+#' @importFrom data.table fread
+#' @importFrom feather write_feather
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_longer
+#' 
 run_preprocessing <- function(input_path, output_path) {
-    
-    library(data.table)
-    library(dplyr)
-    library(tidyr)
-    library(feather)
+
+    pkg_path <- system.file(package = "depmapdashboard")
     
     # Load data
-    expression_data <- fread("../../OmicsExpressionProteinCodingGenesTPMLogp1.csv")
-    meta_data <- fread("../../Model.csv", na.strings = c("", "unknown", "Unknown", "None")) 
+    expression_data <- fread(paste0(pkg_path, "app/data/OmicsExpressionProteinCodingGenesTPMLogp1.csv")
+    meta_data <- fread(paste0(pkg_path, "app/data/Model.csv"), na.strings = c("", "unknown", "Unknown", "None")) 
 
     # Change colname in expression data to make merging easier
     colnames(expression_data)[1] <- "ModelID"
