@@ -12,8 +12,6 @@
 #' @param expression_path path to OmicsExpressionProteinCodingGenesTPMLogp1.csv
 #' @export
 run_preprocessing <- function(model_path, expression_path) {
-
-    pkg_path <- system.file(package = "depmapdashboard")
     
     # Load data
     expression_data <- fread(expression_path)
@@ -32,9 +30,10 @@ run_preprocessing <- function(model_path, expression_path) {
     # Removing entrez ID from the gene column:
     tidy_data$gene <- gsub(" \\(\\d+\\)", "", tidy_data$gene)
     
+    pkg_path <- system.file(package = "depmapdashboard")
     
     # Save the two seperate data files:
-    write_feather(x = tidy_data, path = "expression_data.tsv")
-    write_feather(x = meta_data, path = "meta_data.tsv")
+    write_feather(x = tidy_data, path = paste0(pkg_path, "/app/data/expression_data.tsv"))
+    write_feather(x = meta_data, path = paste0(pkg_path, "/app/data/meta_data.tsv"))
     
 }
