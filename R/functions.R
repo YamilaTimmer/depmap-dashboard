@@ -478,7 +478,7 @@ generate_datatable <- function(data, filter = "top") {
                         ),
                         columnDefs = list(
                             # Specify which columns to hide
-                            list(targets = c(0:2,4:5,7:ncol(data)), visible = FALSE)
+                            list(targets = c(0:2,4:5,7:49), visible = FALSE)
                         )
                     )
     )
