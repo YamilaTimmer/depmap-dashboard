@@ -17,7 +17,7 @@ run_preprocessing <- function(model_path, expression_path) {
     
     # Load data
     expression_data <- fread(expression_path)
-    meta_data <- fread(model_path, na.strings = c("", "unknown", "Unknown", "None")
+    meta_data <- fread(model_path, na.strings = c("", "unknown", "Unknown", "None"))
 
     # Change colname in expression data to make merging easier
     colnames(expression_data)[1] <- "ModelID"
