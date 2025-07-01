@@ -9,7 +9,7 @@
 app_server <- function(input, output, session) {
 
     # Read in .tsv files with expression data and metadata
-    expression_path <- system.file("app/data/expression_data_subset.tsv", package = "depmapdashboard")
+    expression_path <- system.file("app/data/expression_data.tsv", package = "depmapdashboard")
     expression_data <- read_feather(expression_path)
 
     meta_path <- system.file("app/data/meta_data.tsv", package = "depmapdashboard")
