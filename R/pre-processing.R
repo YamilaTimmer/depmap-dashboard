@@ -8,14 +8,16 @@
 #' @importFrom feather write_feather
 #' @importFrom dplyr %>%
 #' @importFrom tidyr pivot_longer
-#' 
-run_preprocessing <- function(input_path, output_path) {
+#' @param model_path path to Model.csv
+#' @param expression_path path to OmicsExpressionProteinCodingGenesTPMLogp1.csv
+#' @export
+run_preprocessing <- function(model_path, expression_path) {
 
     pkg_path <- system.file(package = "depmapdashboard")
     
     # Load data
-    expression_data <- fread(paste0(pkg_path, "/app/data/OmicsExpressionProteinCodingGenesTPMLogp1.csv"))
-    meta_data <- fread(paste0(pkg_path, "/app/data/Model.csv"), na.strings = c("", "unknown", "Unknown", "None"))
+    expression_data <- fread(expression_path)
+    meta_data <- fread(model_path), na.strings = c("", "unknown", "Unknown", "None")
 
     # Change colname in expression data to make merging easier
     colnames(expression_data)[1] <- "ModelID"
