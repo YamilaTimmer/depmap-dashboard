@@ -136,18 +136,18 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 **Summary plots**
 
-  1. Select the type of plot to generate in the `select plot type` dropdown menu (options: barplot, boxplot/violin plot)
-  2. Further options can be selected, in the sidebar on the left (`Other options`), such as color palette and how to scale the y-axis when multiple genes are selected.
-  3. The visualization can be resized by dragging the height/width sliders under `size settings`
-  4. The visualization can be saved by pressing the 'save as .png' button
+1. Select the type of plot to generate in the `select plot type` dropdown menu (options: barplot, boxplot/violin plot)
+2. Further options can be selected, in the sidebar on the left (`Other options`), such as color palette and how to scale the y-axis when multiple genes are selected.
+3. The visualization can be resized by dragging the height/width sliders under `size settings`
+4. The visualization can be saved by pressing the 'save as .png' button
 
 ![Selecting options for the summary plots](img/summary_plots.png)
 
 **Heatmap**
   
-  1. A color palette can be selected in the sidebar on the left
-  2. The visualization can be resized by dragging the height/width sliders under `size settings`
-  3. The visualization can be saved by pressing the 'save as .png' button
+1. A color palette can be selected in the sidebar on the left
+2. The visualization can be resized by dragging the height/width sliders under `size settings`
+3. The visualization can be saved by pressing the 'save as .png' button
 
 ![Selecting options for the heatmap](img/heatmap_options.png)
 
@@ -155,20 +155,20 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 **Clustering Plot**
   
-  1. Under `Select clustering options`, select whether you want to find the genes with the most positive or most negative correlation to the target gene.
-  2. In the same menu, select the number of similar genes you want to be shown, from at minimum 1 to maximum 10, not counting the target gene.
-  3. The visualization can be resized by dragging the height/width sliders under `size settings`
-  4. The visualization can be saved by pressing the 'save as .png' button.
+1. Under `Select clustering options`, select whether you want to find the genes with the most positive or most negative correlation to the target gene.
+2. In the same menu, select the number of similar genes you want to be shown, from at minimum 1 to maximum 10, not counting the target gene.
+3. The visualization can be resized by dragging the height/width sliders under `size settings`
+4. The visualization can be saved by pressing the 'save as .png' button.
 
 ![Options of clustering plot](img/clustering_plot.png)
 
 **Correlation Plot**
 
-  1. Select the target gene in the `Select gene` dropdown menu under the `Select usecase` dropdown, this gene will be on the x-axis of the plot
-  2. Select the query gene in the `Select correlation options` dropdown, at 'Select gene to compare with', this gene will be on the y-axis of the plot
-  3. Further options can be selected, in the sidebar on the left (`Other options`), such as adding a border around the plot or choosing whether or not to display cell line labels.
-  4. The visualization can be resized by dragging the height/width sliders under `size settings`
-  5. The visualization can be saved by pressing the 'save as .png' button.
+1. Select the target gene in the `Select gene` dropdown menu under the `Select usecase` dropdown, this gene will be on the x-axis of the plot
+2. Select the query gene in the `Select correlation options` dropdown, at 'Select gene to compare with', this gene will be on the y-axis of the plot
+3. Further options can be selected, in the sidebar on the left (`Other options`), such as adding a border around the plot or choosing whether or not to display cell line labels.
+4. The visualization can be resized by dragging the height/width sliders under `size settings`
+5. The visualization can be saved by pressing the 'save as .png' button.
 
 ![Gene selection in correlation plot](img/corr_plot.png)
 
@@ -176,10 +176,10 @@ After selecting the parameters, the sidebar can be collapsed to allow more space
 
 **Heatmap**
   
-  1. A color palette can be selected under `Select options`
-  2. In the same menu, a checkbox can be clicked to only show genes with a p-value ≤ 0.05
-  3. The visualization can be resized by dragging the height/width sliders under `size settings`
-  4. The visualization can be saved by pressing the 'save as .png' button
+1. A color palette can be selected under `Select options`
+2. In the same menu, a checkbox can be clicked to only show genes with a p-value ≤ 0.05
+3. The visualization can be resized by dragging the height/width sliders under `size settings`
+4. The visualization can be saved by pressing the 'save as .png' button
 
 ![Selecting statistically significant genes in heatmap](img/compare_pathway.png)
 
