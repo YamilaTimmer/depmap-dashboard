@@ -60,10 +60,10 @@ Now the required files need to be downloaded, two files are needed, one containi
 - [OmicsExpressionProteinCodingGenesTPMLogp1.csv](https://depmap.org/portal/data_page/?tab=allData&releasename=DepMap%20Public%2025Q2&filename=OmicsExpressionProteinCodingGenesTPMLogp1.csv)
 - [Model.csv](https://depmap.org/portal/data_page/?tab=allData&releasename=DepMap%20Public%2025Q2&filename=Model.csv)
 
-The files require some preprocessing, to make everything into the correct format for the application, this can be done running the code below by specifying the paths that the two files are downloaded to.
+The files require some preprocessing, to make everything into the correct format for the application, this can be done running the code below by specifying the paths that the two files are downloaded to. Make sure to change any '/' or '\' in the path to '//'.
 
 ```r
-depmapdashboard::run_preprocessing("path/to/Model.csv", "path/to/OmicsExpressionProteinCodingGenesTPMLogp1.csv")
+depmapdashboard::run_preprocessing("path//to//Model.csv", "path//to//OmicsExpressionProteinCodingGenesTPMLogp1.csv")
 ```
 
 > Note: this could take up to a few minutes
