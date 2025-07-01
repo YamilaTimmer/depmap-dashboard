@@ -14,8 +14,8 @@ run_preprocessing <- function(input_path, output_path) {
     pkg_path <- system.file(package = "depmapdashboard")
     
     # Load data
-    expression_data <- fread(paste0(pkg_path, "app/data/OmicsExpressionProteinCodingGenesTPMLogp1.csv")
-    meta_data <- fread(paste0(pkg_path, "app/data/Model.csv"), na.strings = c("", "unknown", "Unknown", "None")) 
+    expression_data <- fread(paste0(pkg_path, "/app/data/OmicsExpressionProteinCodingGenesTPMLogp1.csv"))
+    meta_data <- fread(paste0(pkg_path, "/app/data/Model.csv"), na.strings = c("", "unknown", "Unknown", "None"))
 
     # Change colname in expression data to make merging easier
     colnames(expression_data)[1] <- "ModelID"
